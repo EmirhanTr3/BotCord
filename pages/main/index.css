@@ -1,0 +1,776 @@
+@import url(https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap%27);
+
+/*? document.documentElement.style.setProperty("--main-color", "#ffffff") */
+:root {
+    --main-color: #222222;
+    --secondary-color: #303030;
+}
+
+* {
+    color: #c5cbd3;
+    font-family: 'Roboto', sans-serif, system-ui;
+}
+
+body {
+    background: var(--main-color);
+    background-size: cover;
+    position: fixed;
+    flex-direction: row;
+    display: flex;
+    margin: 0%;
+    width: 100%;
+    height: 100%;
+}
+
+/*! general features */
+
+.hover:hover {
+    background-color: var(--secondary-color);
+    border-radius: 5px;
+}
+
+img {
+    -webkit-user-drag: none;
+}
+
+#pfp {
+    border-radius: 50%;
+}
+
+#botbadge {
+    font-size: 10px;
+    display: inline-block;
+    margin: 0%;
+    position: relative;
+    bottom: 9px;
+    left: 17px;
+    padding: 1px 4px;
+    background: #5865f2;
+    border-radius: 3px;
+}
+
+#botbadge svg {
+    position: absolute;
+    left: 0px;
+    top: 0px;
+    height: 15px;
+    width: 15px;
+}
+
+#botbadge p {
+    margin: 0px;
+    color: #ffffff;
+    text-transform: uppercase;
+}
+
+#botbadge p.verified {
+    padding-left: 12px;
+}
+
+#botbadge.botbadge-ai {
+    background: #2dc770;
+}
+
+/*! loading screen */
+
+#loadingscreen {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background: var(--main-color);
+    z-index: 10;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.loading {
+    display : flex;
+}
+.loading .dot {
+    position: relative;
+    width: 1em;
+    height: 1em;
+    margin: 0.3em;
+    border-radius: 50%;
+}
+.loading .dot::before {
+    position: absolute;
+    content: "";
+    width: 100%;
+    height: 100%;
+    background: inherit;
+    border-radius: inherit;
+    animation: wave 2s ease-out infinite;
+}
+.loading .dot:nth-child(1) {
+    background: #7ef9ff;
+}
+.loading .dot:nth-child(1)::before {
+    animation-delay: 0.2s;
+}
+.loading .dot:nth-child(2) {
+    background: #89cff0;
+}
+.loading .dot:nth-child(2)::before {
+    animation-delay: 0.4s;
+}
+.loading .dot:nth-child(3) {
+    background: #4682b4;
+}
+.loading .dot:nth-child(3)::before {
+    animation-delay: 0.6s;
+}
+.loading .dot:nth-child(4) {
+    background: #0f52ba;
+}
+.loading .dot:nth-child(4)::before {
+    animation-delay: 0.8s;
+}
+.loading .dot:nth-child(5) {
+    background: #000080;
+}
+.loading .dot:nth-child(5)::before {
+    animation-delay: 1s;
+}
+@keyframes wave {
+    50%, 75% {
+        transform: scale(2.5);
+    }
+    80%, 100% {
+        opacity: 0;
+    }
+}
+
+/*! message box */
+
+#messageboxdiv {
+    position: absolute;
+    z-index: 10;
+    width: 100%;
+    height: 100%;
+    background: #00000091;
+}
+
+#messagebox {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    padding: 20px;
+    border-radius: 5px;
+    background: #202020;
+    width: 414px;
+    height: 224px;
+}
+
+#messagebox #move {
+    position: absolute;
+    width: 100%;
+    height: 50px;
+    top: 0;
+    left: 0;
+    z-index: 2;
+}
+
+#messagebox #title {
+    position: absolute;
+    top: 0;
+    width: inherit;
+    font-size: 17.4px;
+    text-align: center;
+    color: #efefef;
+}
+
+#messagebox #description {
+    position: absolute;
+    top: 40px;
+    width: inherit;
+}
+
+#messagebox button {
+    position: absolute;
+    left: 50%;
+    bottom: 15px;
+    transform: translate(-50%);
+    width: 350px;
+    height: 35px;
+    background: #101010;
+    padding: 0;
+    border: 0;
+    border-radius: 5px;
+    font-size: 15px;
+    cursor: pointer;
+}
+
+#messagebox #confirm, #messagebox #cancel {
+    width: 200px;
+}
+
+#messagebox #confirm {
+    left: 27%;
+    background: #126f12;
+}
+
+#messagebox #cancel {
+    left: 73%;
+    background: #711313;
+}
+
+/*! sidebar 1 - contains guild list */
+
+#sidebar {
+    padding: 0.7rem;
+    top: 0;
+    left: 0;
+    margin: 0;
+    overflow: auto;
+    height: calc(100% - 22px);
+}
+
+#sidebar::-webkit-scrollbar {
+    display: none;
+}
+
+#guildList {
+    padding-top: 0.6rem;
+    flex-direction: column;
+    display: flex;
+}
+
+#guildList #pfp {
+    margin-bottom: 0.4rem;
+    transition: border-radius .4s;
+    -webkit-transition: border-radius .4s;
+    cursor: pointer;
+}
+
+#guildList #pfp:hover {
+    transition: border-radius .4s;
+    -webkit-transition: border-radius .4s;
+    border-radius: 30%;
+}
+
+#guildSeparator {
+    height: 2px;
+    width: 32px;
+    margin-left: 0.5rem;
+    margin-top: 0.3rem;
+    border-radius: 1px;
+    background-color: #161616;
+}
+
+/*! sidebar 2 - contains channels and user */
+
+#sidebar2 {
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
+    border: 2px solid var(--secondary-color);
+    height: calc(100% - 4px);
+    width: 11rem;
+    position: relative;
+}
+
+#guild {
+    height: calc(100% - 57px);
+}
+
+#guild #guildname {
+    color: #eeeeee;
+    margin: 1rem;
+    font-size: 1em;
+}
+
+#guild #channels {
+    overflow: auto;
+    height: calc(100% - 35px);
+}
+
+#guild #channels::-webkit-scrollbar {
+    display: none;
+}
+
+#guild #channel {
+    padding-top: 0.15rem;
+    padding-bottom: 0.15rem;
+    cursor: pointer;
+}
+
+#guild #channel.current {
+    background: #404040;
+    border-radius: 5px;
+}
+
+#guild #channel.current #channelname {
+    color: #e3e3e3;
+}
+
+#guild #icon.category {
+    position: relative;
+    bottom: 1px;
+}
+#guild #category {
+    padding-bottom: 9px;
+}
+
+#guild #category #categoryname {
+    font-size: 12px;
+}
+
+#guild #category #channel {
+    padding-left: 3px;
+}
+
+#guild #channels p {
+    font-size: 15px;
+    display: inline-block;
+    margin: 0%;
+    position: relative;
+    bottom: 5px;
+    left: 3px;
+}
+
+#user {
+    position: absolute;
+    bottom: 4px;
+    width: 9.55rem;
+    cursor: pointer;
+    height: 2rem;
+    left: 3px;
+}
+
+#user #pfp {
+    position: relative;
+    bottom: -3px;
+    left: 5px;
+}
+
+#user #username {
+    font-size: 15px;
+    display: inline-block;
+    margin: 0%;
+    position: relative;
+    bottom: 3px;
+    left: 12px;
+}
+
+#settingsbutton {
+    position: absolute;
+    right: 3px;
+    bottom: 6px;
+    cursor: pointer;
+    width: 28px;
+    height: 28px;
+}
+
+#settingsbutton svg {
+    position: absolute;
+    bottom: 3px;
+    right: 3px;
+}
+
+/*! chat */
+
+#chat {
+    flex: 1;
+    width: 0;
+    position: relative;
+}
+
+#chat #channelInfo {
+    padding: 1rem;
+    padding-bottom: 0%;
+}
+
+#chat #channelInfo p {
+    display: inline-block;
+    margin: 0%;
+    position: relative;
+    bottom: 5px;
+    left: 3px;
+}
+
+#chat input {
+    padding: 0.5rem;
+    border-width: 0;
+    font-size: 15px;
+    border-radius: 8px;
+    background-color: var(--secondary-color);
+    margin-left: 10px;
+    width: calc(100% - 36px);
+    height: 20px;
+    outline: none;
+}
+
+#chat form {
+    position: absolute;
+    bottom: 10px;
+    width: 100%;
+}
+
+#chat #messages {
+    margin: 15px;
+    margin-left: 13px;
+    overflow: auto;
+    height: calc(100% - 107px);
+}
+
+#chat #messages::-webkit-scrollbar {
+    display: none;
+}
+
+#chat #messages #message {
+    margin-bottom: 10px;
+    flex-direction: row;
+    display: flex;
+    padding: 2px;
+}
+
+#chat #messages #message #pfp {
+    cursor: pointer;
+}
+
+#chat #messages #message p {
+    display: inline-block;
+    margin: 0%;
+}
+
+#chat #messages #message #content {
+    margin-left: 10px;
+}
+
+#chat #messages #message #username {
+    font-size: 15px;
+    color: #ffffff;
+    cursor: pointer;
+}
+
+#chat #messages #message #username:hover {
+    text-decoration: underline;
+}
+
+#chat #messages #message #time {
+    margin-left: 4px;
+    font-size: 11px;
+    color: #979fa8;
+}
+
+#chat #messages #message #msg {
+    font-size: 15px;
+    width: 100%;
+    word-wrap: break-word;
+}
+
+#chat #messages #message #msg * {
+    margin: 0;
+    color: #dbdee1;
+}
+
+#chat #messages #message.deleted {
+    border-radius: 5px;
+}
+
+#chat #messages #message.deleted #msg * {
+    color: #ff5959;
+}
+
+#chat #messages #message #msg a {
+    color: #00a8fc;
+    text-decoration-line: none;
+}
+
+#chat #messages #message #msg a:hover {
+    text-decoration-line: underline;
+}
+
+#chat #messages #message #botbadge {
+    bottom: 1px;
+    left: 3px;
+    margin-right: 2px;
+}
+
+#chat #autocomplete {
+    left: 10px;
+    width: calc(100% - 20px);
+    min-height: 45px;
+    max-height: 500px;
+    position: absolute;
+    bottom: 50px;
+    background: #151515;
+    border-radius: 5px;
+}
+
+#chat #autocomplete #content {
+    margin: 10px;
+    max-height: inherit;
+}
+
+#chat #autocomplete #title {
+    font-size: 11px;
+    position: relative;
+    margin: 0;
+}
+
+#chat #autocomplete #list {
+    padding-top: 10px;
+    position: relative;
+    overflow: auto;
+    max-height: calc(500px - 100px);
+}
+
+#chat #autocomplete #list::-webkit-scrollbar {
+    display: none;
+}
+
+#chat #autocomplete #list #member {
+    cursor: pointer;
+    position: relative;
+    height: 30px;
+    padding: 5px;
+}
+
+#chat #autocomplete #list.channels #member {
+    height: 25px;
+}
+
+#chat #autocomplete #list #member #pfp {
+    position: relative;
+    left: 3px;
+    bottom: -3px;
+    width: 24px;
+    height: 24px;
+}
+
+#chat #autocomplete #list.channels #member #pfp {
+    width: 20px;
+    height: 20px;
+}
+
+#chat #autocomplete #list #member #userstatus {
+    border-radius: 50%;
+    position: absolute;
+    bottom: 7px;
+    left: 26px;
+}
+
+#chat #autocomplete #list #member #displayname {
+    font-size: 15px;
+    display: inline-block;
+    margin: 0%;
+    position: relative;
+    bottom: 3px;
+    left: 10px;
+    color: #ededed;
+}
+#chat #autocomplete #list #member #username {
+    position: relative;
+    display: flex;
+    justify-content: flex-end;
+    font-size: 11px;
+    bottom: 30px;
+}
+
+/*! member list */
+
+#members {
+    padding: 15px;
+    padding-top: 0;
+    border: 2px solid var(--secondary-color);
+    height: calc(100% - 19px);
+    overflow: auto;
+    flex: 0 0 13rem;
+}
+
+#members::-webkit-scrollbar {
+    display: none;
+}
+
+#members #member {
+    padding-bottom: 5px;
+    cursor: pointer;
+    position: relative;
+    left: -3px;
+    height: 38px;
+}
+
+#members #member.offline {
+    opacity: 0.5;
+}
+
+#members #member #pfp {
+    position: relative;
+    left: 3px;
+    bottom: -3px;
+}
+
+#members #member #username {
+    font-size: 15px;
+    display: inline-block;
+    margin: 0%;
+    position: relative;
+    bottom: 8px;
+    left: 13px;
+    color: #ffffff;
+}
+
+#members #role #name {
+    font-size: 13px;
+}
+
+#members #member #userstatus {
+    border-radius: 50%;
+    position: absolute;
+    bottom: 7px;
+    left: 26px;
+}
+
+#members #member #ownercrown {
+    display: inline-block;
+    margin: 0;
+    position: relative;
+    left: 16px;
+    bottom: 6px;
+    font-size: 14px;
+}
+
+/*! user modal */
+
+#usermodal {
+    position: absolute;
+    background-color: #151515;
+    width: 340px;
+    height: 500px;
+    border-radius: 10px;
+    border: 3px solid #101010;
+    left: 100px;
+    top: 50px;
+}
+
+#usermodal #banner {
+    position: relative;
+    width: 340px;
+    height: 120px;
+    border-top-left-radius: 6px;
+    border-top-right-radius: 6px;
+}
+
+#usermodal #pfp {
+    position: absolute;
+    top: 70px;
+    left: 15px;
+    border: 6px solid #151515;
+}
+
+#usermodal #userstatus {
+    position: relative;
+    left: 84px;
+    top: 13px;
+}
+
+#usermodal #badges {
+    position: relative;
+    background-color: #101010;
+    width: fit-content;
+    max-width: 190px;
+    top: 12px;
+    right: 16px;
+    float: right;
+    border-radius: 8px;
+    padding: 4px;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 2px;
+}
+
+#usermodal #badges #badge {
+    cursor: pointer;
+}
+
+#usermodal #info {
+    position: absolute;
+    background-color: #101010;
+    border-radius: 10px;
+    border: 10px solid #101010;
+    top: 160px;
+    margin: 15px;
+    width: 290px;
+    height: 290px;
+}
+
+#usermodal #info p {
+    margin: 0;
+}
+
+#usermodal #info #displayname {
+    font-size: 17px;
+    color: #eeeeee;
+}
+
+#usermodal #info #username {
+    font-size: 13px;
+    color: #cccccc;
+    margin-top: 2px;
+    display: inline-block;
+}
+
+#usermodal #info #seperator {
+    height: 1px;
+    width: 290px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    border-radius: 1px;
+    background-color: #252525;
+}
+
+#usermodal #info #botbadge {
+    left: 3px;
+    bottom: 1px;
+}
+
+#usermodal #info #title {
+    font-size: 11px;
+    color: #e3e3e3;
+    margin: 0;
+    margin-bottom: 2px;
+}
+
+#usermodal #info #content {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+#usermodal #aboutme p {
+    font-size: 13px;
+    color: #bdc1c7;
+}
+
+#usermodal #membersince svg {
+    width: 18px;
+    height: 18px;
+}
+
+#usermodal #membersince #discord {
+    display: inline-block;
+    font-size: 13px;
+    position: relative;
+    bottom: 4px;
+    left: 4px;
+}
+
+/*! hover text */
+
+#hovertext {
+    position: absolute;
+    padding: 8px;
+    background: #000000;
+    border-radius: 5px;
+    max-width: 170px;
+    word-wrap: normal;
+}
+
+#hovertext p {
+    margin: 0;
+    font-size: 14px;
+}

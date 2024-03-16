@@ -1,0 +1,67 @@
+{
+  "productName": "BotCord",
+  "name": "botcord",
+  "version": "0.1.0-dev",
+  "description": "A discord bot client",
+  "main": "src/main.js",
+  "scripts": {
+    "start": "electron .",
+    "build-mac": "electron-builder -m",
+    "build-win": "electron-builder -w",
+    "build-linux": "electron-builder -l"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/EmirhanTr3/botcord.git"
+  },
+  "author": {
+    "name": "EmirhanTr3",
+    "email": "emir@emirdev.xyz"
+  },
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/EmirhanTr3/botcord/issues"
+  },
+  "homepage": "https://github.com/EmirhanTr3/botcord#readme",
+  "dependencies": {
+    "discord.js": "^14.14.1",
+    "dompurify": "^3.0.9",
+    "intl-messageformat": "^10.5.11",
+    "marked": "^12.0.1",
+    "moment": "^2.30.1"
+  },
+  "devDependencies": {
+    "electron": "^28.1.4",
+    "electron-builder": "^24.13.1"
+  },
+  "build": {
+    "appId": "BotCord",
+    "productName": "BotCord",
+    "artifactName": "${productName}-${version}-${os}-${arch}.${ext}",
+    "copyright": "Copyright © 2024 @emirdev.xyz",
+    "mac": {
+      "category": "public.app-category.social-networking",
+      "target": [
+        "dmg"
+      ],
+      "icon": "./assets/icon.png"
+    },
+    "linux": {
+      "target": [
+        "AppImage"
+      ],
+      "icon": "./assets/icon.png"
+    },
+    "win": {
+      "target": [
+        {
+          "target": "portable",
+          "arch": [
+            "x64"
+          ]
+        }
+      ],
+      "icon": "./assets/icon.ico"
+    }
+  }
+}
