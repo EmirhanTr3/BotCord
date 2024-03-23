@@ -28,9 +28,12 @@
     "dompurify": "^3.0.9",
     "intl-messageformat": "^10.5.11",
     "marked": "^12.0.1",
-    "moment": "^2.30.1"
+    "moment": "^2.30.1",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
   },
   "devDependencies": {
+    "@babel/preset-react": "^7.24.1",
     "electron": "^28.1.4",
     "electron-builder": "^24.13.1"
   },

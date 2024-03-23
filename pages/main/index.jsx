@@ -1,6 +1,13 @@
 const { ipcRenderer } = require("electron");
 const marked = require("marked");
 const DOMPurify = require("dompurify");
+const React = require("react");
+const { createRoot } = require("react-dom/client");
+
+let sex;
+//? Render your React component instead
+//* const root = createRoot(document.getElementById('app'));
+//* root.render(<h1>Hello, world</h1>);
 
 ipcRenderer.on("load", async (_, user, noLoading) => {
     const startedLoading = new Date()
@@ -54,28 +61,11 @@ async function displayGuildList() {
     console.log(guilds)
     const guildsDiv = document.getElementById("guildList")
     guildsDiv.replaceChildren()
-
-    guilds.forEach(guild => {
-        const guildImg = document.createElement("img")
-        guildImg.id = "pfp"
-        guildImg.height = 48
-        guildImg.width = 48
-        guildImg.src = guild.icon
+    
+    createRoot(guildsDiv).render(guilds.map(guild => {
         console.log(`appending guild ${guild.name} (${guild.id}) to guild list`)
-        guildsDiv.appendChild(guildImg)
-
-        guildImg.addEventListener("click", async () => {
-            console.log(`clicked on server ${guild.name} (${guild.id})`)
-            if ((await ipcRenderer.invoke("switchGuild", guild.id)) == false) return
-            displayChannelList()
-            displayMemberList()
-            displayChatMessages()
-        })
-
-        createHoverText(guildImg, guild.name)
-
-        // <img id="pfp" height="48px" width="48px" src="icon.png">
-    })
+        return <GuildImg key={guild.id} guild={guild}></GuildImg>
+    }))
 }
 
 //! display channel list
@@ -92,28 +82,9 @@ async function displayChannelList() {
 
     channels.filter(c => c.type != 4 && !c.category.id).forEach(appendChannel)
 
-    channels.filter(c => c.type == 4).forEach(category => {
-        const categoryDiv = document.createElement("div")
-        categoryDiv.id = "category"
-        categoryDiv.className = `category-${category.id}`
-
-        const iconImg = document.createElement("img")
-        iconImg.id = "icon"
-        iconImg.className = "category"
-        iconImg.height = 18
-        iconImg.width = 18
-        iconImg.src = getChannelIconPath(category.type)
-
-        const categoryName = document.createElement("p")
-        categoryName.id = "categoryname"
-        categoryName.innerText = ((category.name.length < 20) ? category.name : (category.name.substring(0, 20) + "...")).toUpperCase()
-
-        console.log(`appending category ${category.name} (${category.id}) to channel list`)
-        categoryDiv.appendChild(iconImg)
-        categoryDiv.appendChild(categoryName)
-        channelsDiv.appendChild(categoryDiv)
-        if (category.name.length >= 20) createHoverText(categoryName, category.name)
-    })
+    createRoot(channelsDiv).render(channels.filter(c => c.type == 4).map(category => {
+        return <ChannelCategory key={category.id} category={category}></ChannelCategory>
+    }))
 
     channels.filter(c => c.type != 4 && c.category.id).forEach(appendChannel)
 
@@ -136,7 +107,11 @@ async function displayChannelList() {
         console.log(`appending channel [${channel.type}] ${channel.name} (${channel.id}) to channel list`)
         channelDiv.appendChild(iconImg)
         channelDiv.appendChild(channelName)
-        if (channel.category.id) document.getElementsByClassName(`category-${channel.category.id}`).item(0).appendChild(channelDiv)
+        if (channel.category.id) {
+            sex = document.getElementsByClassName(`category-${channel.category.id}`)
+            console.log(sex)
+            document.getElementsByClassName(`category-${channel.category.id}`)[0].appendChild(channelDiv)
+        }
         else channelsDiv.appendChild(channelDiv)
         if (channel.name.length >= 20) createHoverText(channelName, channel.name)
 
@@ -582,6 +557,8 @@ async function getUserModal(user) {
     banner.id = "banner"
     banner.src = userBanner || "../../assets/bannerdefault.png"
 
+    if (!user.badges.includes("Nitro") && !user.bot && userBanner) user.badges.push("Nitro")
+
     const pfp = document.createElement("img")
     pfp.id = "pfp"
     pfp.height = 80
@@ -589,7 +566,7 @@ async function getUserModal(user) {
     pfp.src = user.avatar ?? ""
 
     let status
-    if (!user.badges.includes("BotHTTPInteractions")) {
+    if (!user.badges.includes("BotHTTPInteractions") && user.joinedAt) {
         status = document.createElement("img")
         status.id = "userstatus"
         status.height = 20
@@ -604,11 +581,8 @@ async function getUserModal(user) {
         badges = document.createElement("div")
         badges.id = "badges"
 
-        let badgeList = user.badges
-        if (!badgeList.includes("Nitro") && userBanner) badgeList.push("Nitro")
-
-        console.log(badgeList)
-        for (const badge of badgeList) {
+        console.log(user.badges)
+        for (const badge of user.badges) {
             if (getBadge(badge)) {
                 const badgeInfo = getBadge(badge)
                 const badgeImg = document.createElement("img")
@@ -620,13 +594,19 @@ async function getUserModal(user) {
 
                 createHoverText(badgeImg, badgeInfo.name)
 
-            } //else console.warn(`Badge '${badge}' does not have an icon specified.`)
+            }
         }
     }
     if (badges && badges.children.length == 0) badges = undefined
 
     const info = document.createElement("div")
     info.id = "info"
+
+    if (user.badges?.length > 8) {
+        const y = Math.floor(user.badges.length / 8) * 20
+        info.style.height = 290 - y + "px"
+        info.style.top = 160 + y + "px"
+    }
 
     const displayname = document.createElement("p")
     displayname.id = "displayname"
@@ -666,15 +646,43 @@ async function getUserModal(user) {
     membersinceTitle.id = "title"
     membersinceTitle.innerText = "MEMBER SINCE"
 
+    const membersinceDiscord = document.createElement("div")
+    membersinceDiscord.id = "discord"
+
     const membersinceDiscordImg = new DOMParser().parseFromString("<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"28\" height=\"28\" fill=\"#bbbbbb\" viewBox=\"0 0 24 24\"><path d=\"M19.73 4.87a18.2 18.2 0 0 0-4.6-1.44c-.21.4-.4.8-.58 1.21-1.69-.25-3.4-.25-5.1 0-.18-.41-.37-.82-.59-1.2-1.6.27-3.14.75-4.6 1.43A19.04 19.04 0 0 0 .96 17.7a18.4 18.4 0 0 0 5.63 2.87q.69-.93 1.2-1.98c-.65-.25-1.29-.55-1.9-.92.17-.12.32-.24.47-.37 3.58 1.7 7.7 1.7 11.28 0l.46.37c-.6.36-1.25.67-1.9.92.35.7.75 1.35 1.2 1.98 2.03-.63 3.94-1.6 5.64-2.87.47-4.87-.78-9.09-3.3-12.83ZM8.3 15.12c-1.1 0-2-1.02-2-2.27 0-1.24.88-2.26 2-2.26s2.02 1.02 2 2.26c0 1.25-.89 2.27-2 2.27m7.4 0c-1.1 0-2-1.02-2-2.27 0-1.24.88-2.26 2-2.26s2.02 1.02 2 2.26c0 1.25-.88 2.27-2 2.27\"/></svg>", "image/svg+xml").documentElement
 
     const membersinceDiscordText = document.createElement("p")
-    membersinceDiscordText.id = "discord"
     membersinceDiscordText.innerText = user.createdAt
 
+    membersinceDiscord.appendChild(membersinceDiscordImg)
+    membersinceDiscord.appendChild(membersinceDiscordText)
+
+    const membersinceSeperator = document.createElement("div")
+    membersinceSeperator.id = "seperator"
+
+    let membersinceServer;
+    if (user.joinedAt) {
+        membersinceServer = document.createElement("div")
+        membersinceServer.id = "server"
+
+        const currentGuild = await ipcRenderer.invoke("currentGuild")
+
+        const membersinceServerImg = document.createElement("img")
+        membersinceServerImg.height = 18
+        membersinceServerImg.width = 18
+        membersinceServerImg.src = currentGuild.pfp
+
+        const membersinceServerText = document.createElement("p")
+        membersinceServerText.innerText = user.joinedAt
+
+        membersinceServer.appendChild(membersinceServerImg)
+        membersinceServer.appendChild(membersinceServerText)
+    }
+
     membersince.appendChild(membersinceTitle)
-    membersince.appendChild(membersinceDiscordImg)
-    membersince.appendChild(membersinceDiscordText)
+    membersince.appendChild(membersinceDiscord)
+    if (membersinceServer) membersince.appendChild(membersinceSeperator)
+    if (membersinceServer) membersince.appendChild(membersinceServer)
     content.appendChild(membersince)
 
     info.appendChild(displayname)

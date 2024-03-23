@@ -267,7 +267,7 @@ img {
     padding-right: 0.5rem;
     border: 2px solid var(--secondary-color);
     height: calc(100% - 4px);
-    width: 11rem;
+    width: 178px;
     position: relative;
 }
 
@@ -679,7 +679,7 @@ img {
     padding: 4px;
     display: flex;
     flex-wrap: wrap;
-    justify-content: center;
+    justify-content: flex-end;
     gap: 2px;
 }
 
@@ -696,6 +696,11 @@ img {
     margin: 15px;
     width: 290px;
     height: 290px;
+    overflow: auto;
+}
+
+#usermodal #info::-webkit-scrollbar {
+    display: none;
 }
 
 #usermodal #info p {
@@ -751,12 +756,36 @@ img {
     height: 18px;
 }
 
-#usermodal #membersince #discord {
+#usermodal #membersince p {
     display: inline-block;
     font-size: 13px;
     position: relative;
     bottom: 4px;
     left: 4px;
+}
+
+#usermodal #membersince div {
+    display: inline-block;
+}
+
+#usermodal #membersince #seperator {
+    width: 5px;
+    height: 5px;
+    position: relative;
+    margin: 0;
+    bottom: 6px;
+    left: 12px;
+    border-radius: 50%;
+    background-color: #404040;
+}
+
+#usermodal #membersince #server {
+    position: relative;
+    left: 22px;
+}
+
+#usermodal #membersince #server img {
+    border-radius: 50%;
 }
 
 /*! hover text */
@@ -766,7 +795,7 @@ img {
     padding: 8px;
     background: #000000;
     border-radius: 5px;
-    max-width: 170px;
+    max-width: 180px;
     word-wrap: normal;
 }
 

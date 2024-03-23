@@ -65,8 +65,8 @@ app.on('window-all-closed', () => {
     if (process.platform !== 'darwin') app.quit()
 })
 
-var currentGuild// = "932659866110160936"
-var currentChannel// = "932659866110160939"
+var currentGuild;
+var currentChannel;
 
 function loadMainPage(noLoading = false) {
     window.loadFile("./pages/main/index.html").then(async e => {
@@ -112,7 +112,9 @@ ipcMain.handle("guilds", async () => {
 })
 
 ipcMain.handle("currentGuild", async () => {
-    return await client.guilds.fetch(currentGuild)
+    const guild = await client.guilds.fetch(currentGuild)
+    guild.pfp = guild.iconURL()
+    return guild
 })
 
 ipcMain.handle("currentChannel", async () => {
@@ -189,7 +191,8 @@ async function constructMember(input) {
                 name: member.roles.hoist?.name,
                 id: member.roles.hoist?.id
             },
-            isOwner: guild.ownerId == user.id
+            isOwner: guild.ownerId == user.id,
+            joinedAt: moment(member.joinedAt).format("D MMM YYYY")
         })
     }
 
