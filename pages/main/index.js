@@ -1,13 +1,6 @@
 const { ipcRenderer } = require("electron");
 const marked = require("marked");
 const DOMPurify = require("dompurify");
-const React = require("react");
-const { createRoot } = require("react-dom/client");
-
-let sex;
-//? Render your React component instead
-//* const root = createRoot(document.getElementById('app'));
-//* root.render(<h1>Hello, world</h1>);
 
 ipcRenderer.on("load", async (_, user, noLoading) => {
     const startedLoading = new Date()
@@ -62,10 +55,26 @@ async function displayGuildList() {
     const guildsDiv = document.getElementById("guildList")
     guildsDiv.replaceChildren()
     
-    createRoot(guildsDiv).render(guilds.map(guild => {
+
+    guilds.forEach(guild => {
+        const guildImg = document.createElement("img")
+        guildImg.id = "pfp"
+        guildImg.height = 48
+        guildImg.width = 48
+        guildImg.src = guild.icon
         console.log(`appending guild ${guild.name} (${guild.id}) to guild list`)
-        return <GuildImg key={guild.id} guild={guild}></GuildImg>
-    }))
+        guildsDiv.appendChild(guildImg)
+
+        guildImg.addEventListener("click", async () => {
+            console.log(`clicked on server ${guild.name} (${guild.id})`)
+            if ((await ipcRenderer.invoke("switchGuild", guild.id)) == false) return
+            displayChannelList()
+            displayMemberList()
+            displayChatMessages()
+        })
+
+        createHoverText(guildImg, guild.name)
+    })
 }
 
 //! display channel list
@@ -82,9 +91,28 @@ async function displayChannelList() {
 
     channels.filter(c => c.type != 4 && !c.category.id).forEach(appendChannel)
 
-    createRoot(channelsDiv).render(channels.filter(c => c.type == 4).map(category => {
-        return <ChannelCategory key={category.id} category={category}></ChannelCategory>
-    }))
+    channels.filter(c => c.type == 4).forEach(category => {
+        const categoryDiv = document.createElement("div")
+        categoryDiv.id = "category"
+        categoryDiv.className = `category-${category.id}`
+
+        const iconImg = document.createElement("img")
+        iconImg.id = "icon"
+        iconImg.className = "category"
+        iconImg.height = 18
+        iconImg.width = 18
+        iconImg.src = getChannelIconPath(category.type)
+
+        const categoryName = document.createElement("p")
+        categoryName.id = "categoryname"
+        categoryName.innerText = ((category.name.length < 20) ? category.name : (category.name.substring(0, 20) + "...")).toUpperCase()
+
+        console.log(`appending category ${category.name} (${category.id}) to channel list`)
+        categoryDiv.appendChild(iconImg)
+        categoryDiv.appendChild(categoryName)
+        channelsDiv.appendChild(categoryDiv)
+        if (category.name.length >= 20) createHoverText(categoryName, category.name)
+    })
 
     channels.filter(c => c.type != 4 && c.category.id).forEach(appendChannel)
 
@@ -107,11 +135,7 @@ async function displayChannelList() {
         console.log(`appending channel [${channel.type}] ${channel.name} (${channel.id}) to channel list`)
         channelDiv.appendChild(iconImg)
         channelDiv.appendChild(channelName)
-        if (channel.category.id) {
-            sex = document.getElementsByClassName(`category-${channel.category.id}`)
-            console.log(sex)
-            document.getElementsByClassName(`category-${channel.category.id}`)[0].appendChild(channelDiv)
-        }
+        if (channel.category.id) document.getElementsByClassName(`category-${channel.category.id}`).item(0).appendChild(channelDiv)
         else channelsDiv.appendChild(channelDiv)
         if (channel.name.length >= 20) createHoverText(channelName, channel.name)
 
