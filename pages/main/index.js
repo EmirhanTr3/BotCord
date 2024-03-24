@@ -478,7 +478,7 @@ async function checkChannelAutoComplete(e, message){
 }
 
 //! messages
-function createMessageDiv(message) {
+async function createMessageDiv(message) {
     const messageDiv = document.createElement("div")
     messageDiv.id = "message"
     messageDiv.classList.add("hover", `message-${message.id}`)
@@ -507,7 +507,23 @@ function createMessageDiv(message) {
 
     const msg = document.createElement("p")
     msg.id = "msg"
-    msg.innerHTML = DOMPurify.sanitize(marked.parse(message.content))
+
+    let parsed = DOMPurify.sanitize(marked.parse(message.content))
+    for (const [match, id] of parsed.matchAll(/&lt;@([0-9]{17,19})&gt;/g)) {
+        const user = await ipcRenderer.invoke("getUser", id)
+        parsed = parsed.replace(match, `<mention id="${user.id}">@${user.displayName}</mention>`)
+    }
+    for (const [match, id] of parsed.matchAll(/&lt;#([0-9]{17,19})&gt;/g)) {
+        const channel = await ipcRenderer.invoke("getChannel", id)
+        parsed = parsed.replace(match, `<mention># ${channel.name}</mention>`)
+    }
+
+    msg.innerHTML = parsed
+    msg.querySelectorAll("mention").forEach(async m => {
+        if (!m.id) return;
+        const user = await ipcRenderer.invoke("getUser", m.id)
+        m.addEventListener("click", async (e) => await openUserModalAtCursor(e, user))
+    })
 
     messageDiv.appendChild(pfp)
     usernameandtime.appendChild(username)
@@ -536,12 +552,14 @@ async function displayChatMessages() {
 
     const lastMessages = await ipcRenderer.invoke("lastMessagesFromCurrentChannel", 20)
     console.log(lastMessages)
-    lastMessages.forEach(message => appendMessage(createMessageDiv(message)))
+    for (const message of lastMessages) {
+        appendMessage(await createMessageDiv(message))
+    }
 }
 
-ipcRenderer.on("messageCreate", (_, message) => {
+ipcRenderer.on("messageCreate", async (_, message) => {
     console.log(`received messageCreate from ${message.author.username}: ${message.content}`)
-    appendMessage(createMessageDiv(message))
+    appendMessage(await createMessageDiv(message))
 })
 
 ipcRenderer.on("messageDelete", (_, message) => {

@@ -153,14 +153,19 @@ ipcMain.handle("memberRoleList", async () => {
     return list
 })
 
-/** @param {GuildMember|User} input */
+/** @param {GuildMember|User|string} input */
 async function constructMember(input) {
     // const startedLoading = new Date()
+    const id = typeof input == "string" ? input : input.id
     const guild = await client.guilds.fetch(currentGuild)
-    const member = await guild.members.fetch(input.id).catch(() => undefined)
+    const member = await guild.members.fetch(id).catch(() => undefined)
     const user = member ?
-        ((input instanceof GuildMember) ? member.user : input) :
-        await client.users.fetch(input.id)
+        (
+            (input instanceof GuildMember) ? member.user :
+            (input instanceof User) ? input :
+            await client.users.fetch(id)
+        ) :
+        await client.users.fetch(id)
 
     let badges = user.flags.toArray()
     if (["410781931727486976", "1197624693184802988"].includes(user.id)) badges = ["BotCordStaff"].concat(badges)
@@ -204,6 +209,14 @@ ipcMain.handle("getApplicationRPC", async (_, user) => {
     if (!user.bot) return
     const applicationRPC = await client.rest.get(`/applications/${user.id}/rpc`).catch(e => undefined)
     return applicationRPC?.description
+})
+
+ipcMain.handle("getUser", async (e, id) => {
+    return await constructMember(id)
+})
+
+ipcMain.handle("getChannel", async (e, id) => {
+    return await client.channels.fetch(id)
 })
 
 ipcMain.handle("members", async () => {
