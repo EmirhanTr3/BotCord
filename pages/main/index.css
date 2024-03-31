@@ -437,6 +437,7 @@ img {
 
 #chat #messages #message #content {
     margin-left: 10px;
+    width: 100%;
 }
 
 #chat #messages #message #username {
@@ -463,6 +464,7 @@ img {
 
 #chat #messages #message #msg * {
     margin: 0;
+    max-width: 100%;
 }
 
 #chat #messages #message.deleted {
@@ -492,12 +494,55 @@ img {
     background: #5865F24D;
     border-radius: 3px;
     cursor: pointer;
-    padding: 0px 2px;
+    padding: 0px 3px;
 }
 
 #chat #messages #message #msg mention:hover {
     background: #5865F2;
     color: #ffffff;
+}
+
+#chat #messages #message #msg img, #chat #messages #message #msg video {
+    max-width: 300px;
+    max-height: 300px;
+    display: block;
+}
+
+#chat #messages #message #msg #attachments {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    margin: 5px 0px
+}
+
+#chat #messages #message #msg #attachments #file {
+    background: #1b1b1b;
+    border: 1.5px solid #151515;
+    width: 250px;
+    height: 45px;
+    padding: 10px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    flex-direction: row;
+}
+
+#chat #messages #message #msg #attachments #file #info {
+    display: flex;
+    flex-direction: column;
+    font-size: 14px;
+    position: relative;
+    left: 2px;
+    flex: 1;
+}
+
+#chat #messages #message #msg #attachments #file #info #size {
+    font-size: 11px;
+    color: #b9b9b9;
+}
+
+#chat #messages #message #msg #attachments #file #download {
+    cursor: pointer;
 }
 
 #chat #autocomplete {
@@ -813,4 +858,75 @@ img {
 #hovertext p {
     margin: 0;
     font-size: 14px;
+}
+
+/*! toast */
+
+#toast {
+    position: absolute;
+    left: 50%;
+    transform: translate(-50%);
+    background: #202020;
+    border-radius: 20px;
+    padding: 13px 30px;
+    top: 15px;
+    border: 2px solid #404040;
+    z-index: 2;
+    animation: toast-appear 1s ease forwards;
+    display: flex;
+    align-items: center;
+    max-width: 80%;
+}
+
+#toast.disappearing {
+    animation: toast-disappear 1s ease forwards;
+}
+
+@keyframes toast-appear {
+    from {
+        top: -100px;
+    }
+    to {
+        top: 15px;
+    }
+}
+
+@keyframes toast-disappear {
+    from {
+        top: 15px;
+    }
+    to {
+        top: -100px;
+    }
+}
+
+#toast svg {
+    position: relative;
+    left: -10px;
+    flex: 1 0 26px;
+}
+
+#toast p {
+    margin: 0;
+    max-width: 100%;
+}
+
+#toast.info {
+    background: #294875;
+    border-color: #3f78c7;
+}
+
+#toast.warn {
+    background: #735f1b;
+    border-color: #d5b23e;
+}
+
+#toast.error {
+    background: #5d3b3b;
+    border-color: #d33d3d;  
+}
+
+#toast.success {
+    background: #1d7353;
+    border-color: #4bce97;
 }

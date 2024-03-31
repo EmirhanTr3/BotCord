@@ -155,6 +155,49 @@ function showConfirmationBox(title, description, confirmCallback, cancelCallback
     // </div>
 }
 
+/**
+ * 
+ * @param {"info"|"warn"|"error"|"success"} type 
+ * @param {string} message 
+ */
+function showToast(type, message) {
+    const toast = document.createElement("div")
+    toast.id = "toast"
+    toast.classList.add(type)
+
+    let svg
+    switch (type) {
+        case "info":
+            svg = '<svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" fill="#6caaff" viewBox="0 0 256 256"><path d="M128,24A104,104,0,1,0,232,128,104.11,104.11,0,0,0,128,24Zm0,192a88,88,0,1,1,88-88A88.1,88.1,0,0,1,128,216Zm16-40a8,8,0,0,1-8,8,16,16,0,0,1-16-16V128a8,8,0,0,1,0-16,16,16,0,0,1,16,16v40A8,8,0,0,1,144,176ZM112,84a12,12,0,1,1,12,12A12,12,0,0,1,112,84Z"></path></svg>'
+            break
+        case "warn":
+            svg = '<svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" fill="#ffc440" viewBox="0 0 256 256"><path d="M236.8,188.09,149.35,36.22h0a24.76,24.76,0,0,0-42.7,0L19.2,188.09a23.51,23.51,0,0,0,0,23.72A24.35,24.35,0,0,0,40.55,224h174.9a24.35,24.35,0,0,0,21.33-12.19A23.51,23.51,0,0,0,236.8,188.09ZM222.93,203.8a8.5,8.5,0,0,1-7.48,4.2H40.55a8.5,8.5,0,0,1-7.48-4.2,7.59,7.59,0,0,1,0-7.72L120.52,44.21a8.75,8.75,0,0,1,15,0l87.45,151.87A7.59,7.59,0,0,1,222.93,203.8ZM120,144V104a8,8,0,0,1,16,0v40a8,8,0,0,1-16,0Zm20,36a12,12,0,1,1-12-12A12,12,0,0,1,140,180Z"></path></svg>'
+            break
+        case "error":
+            svg = '<svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" fill="#ff5c5c" viewBox="0 0 256 256"><path d="M128,72a8,8,0,0,1,8,8v56a8,8,0,0,1-16,0V80A8,8,0,0,1,128,72ZM116,172a12,12,0,1,0,12-12A12,12,0,0,0,116,172Zm124-44a15.85,15.85,0,0,1-4.67,11.28l-96.05,96.06a16,16,0,0,1-22.56,0h0l-96-96.06a16,16,0,0,1,0-22.56l96.05-96.06a16,16,0,0,1,22.56,0l96.05,96.06A15.85,15.85,0,0,1,240,128Zm-16,0L128,32,32,128,128,224h0Z"></path></svg>'
+            break
+        case "success":
+            svg = '<svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" fill="#5fffbc" viewBox="0 0 256 256"><path d="M173.66,98.34a8,8,0,0,1,0,11.32l-56,56a8,8,0,0,1-11.32,0l-24-24a8,8,0,0,1,11.32-11.32L112,148.69l50.34-50.35A8,8,0,0,1,173.66,98.34ZM232,128A104,104,0,1,1,128,24,104.11,104.11,0,0,1,232,128Zm-16,0a88,88,0,1,0-88,88A88.1,88.1,0,0,0,216,128Z"></path></svg>'
+            break
+        default:
+            svg = '<svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" fill="#aaaaaa" viewBox="0 0 256 256"><path d="M140,180a12,12,0,1,1-12-12A12,12,0,0,1,140,180ZM128,72c-22.06,0-40,16.15-40,36v4a8,8,0,0,0,16,0v-4c0-11,10.77-20,24-20s24,9,24,20-10.77,20-24,20a8,8,0,0,0-8,8v8a8,8,0,0,0,16,0v-.72c18.24-3.35,32-17.9,32-35.28C168,88.15,150.06,72,128,72Zm104,56A104,104,0,1,1,128,24,104.11,104.11,0,0,1,232,128Zm-16,0a88,88,0,1,0-88,88A88.1,88.1,0,0,0,216,128Z"></path></svg>'
+    }
+    if (svg) toast.appendChild(new DOMParser().parseFromString(svg, "image/svg+xml").documentElement)
+
+    const msg = document.createElement("p")
+    msg.innerText = message
+    
+    toast.appendChild(msg)
+    document.body.appendChild(toast)
+
+    setTimeout(() => {
+        toast.classList.add("disappearing")
+        setTimeout(() => {
+            toast.remove()
+        }, 1000);
+    }, 5000);
+}
+
 const badges = {
     BotCordStaff: {name: "BotCord Staff", icon:  "../../assets/icon.png"},
     Staff: {name: "Discord Staff", icon: "https://cdn.discordapp.com/badge-icons/5e74e9b61934fc1f67c65515d1f7e60d.png"},

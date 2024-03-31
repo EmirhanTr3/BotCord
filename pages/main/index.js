@@ -519,6 +519,90 @@ async function createMessageDiv(message) {
     }
 
     msg.innerHTML = parsed
+
+    let attachments;
+    function createAttachmentsDiv() {
+        if (!attachments) {
+            const div = document.createElement("div")
+            div.id = "attachments"
+            attachments = div
+            msg.appendChild(div)
+        }
+    }
+
+    Array.from(msg.getElementsByTagName("a")).forEach(async element => {
+        if (!(await fetch(element.href)).ok) return;
+        createAttachmentsDiv()
+        if (/https:\/\/cdn.discordapp.com\/attachments\/(?:[0-9]{17,19})\/(?:[0-9]{17,19})\/.*.png\?.*/g.test(element.href)) {
+            const p = document.createElement("p")
+            p.innerHTML = "<mention>File: " + element.href.replace(/https:\/\/cdn.discordapp.com\/attachments\/(?:[0-9]{17,19})\/(?:[0-9]{17,19})\/(.*.png)\?.*/g, "$1") + "</mention>"
+            element.outerHTML = p.outerHTML
+
+            const img = document.createElement("img")
+            img.src = element.href
+            attachments.appendChild(img)
+
+        } else if (/https:\/\/cdn.discordapp.com\/attachments\/(?:[0-9]{17,19})\/(?:[0-9]{17,19})\/.*.mp4\?.*/g.test(element.href)) {
+            const p = document.createElement("p")
+            p.innerHTML = "<mention>File: " + element.href.replace(/https:\/\/cdn.discordapp.com\/attachments\/(?:[0-9]{17,19})\/(?:[0-9]{17,19})\/(.*.mp4)\?.*/g, "$1") + "</mention>"
+            element.outerHTML = p.outerHTML
+
+            const video = document.createElement("video")
+            video.src = element.href
+            video.type = "video/mp4"
+            video.controls = true
+            attachments.appendChild(video)
+        }
+    })
+
+    message.attachments.forEach(async attachment => {
+        createAttachmentsDiv()
+        if (attachment.contentType?.startsWith("image")) {
+            const img = document.createElement("img")
+            img.src = attachment.url
+            attachments.appendChild(img)
+            
+        } else if (attachment.contentType?.startsWith("videoe")) {
+            const video = document.createElement("video")
+            video.src = attachment.url
+            video.type = "video/mp4"
+            video.controls = true
+            attachments.appendChild(video)
+        } else {
+            const file = document.createElement("div")
+            file.id = "file"
+            file.url = attachment.url
+
+            const fileIcon = new DOMParser().parseFromString('<svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" fill="#ebebeb" viewBox="0 0 256 256"><path d="M213.66,82.34l-56-56A8,8,0,0,0,152,24H56A16,16,0,0,0,40,40V216a16,16,0,0,0,16,16H200a16,16,0,0,0,16-16V88A8,8,0,0,0,213.66,82.34ZM152,88V44l44,44Z"></path></svg>', "image/svg+xml").documentElement
+            
+            const info = document.createElement("div")
+            info.id = "info"
+
+            const fileName = document.createElement("p")
+            fileName.id = "name"
+            fileName.innerText = attachment.name
+
+            const fileSize = document.createElement("p")
+            fileSize.id = "size"
+            fileSize.innerText = `${attachment.size} bytes`
+
+            const download = new DOMParser().parseFromString('<svg id="download" class="hover" xmlns="http://www.w3.org/2000/svg" width="36" height="36" fill="#ebebeb" viewBox="0 0 256 256"><path d="M224,144v64a8,8,0,0,1-8,8H40a8,8,0,0,1-8-8V144a8,8,0,0,1,16,0v56H208V144a8,8,0,0,1,16,0Zm-101.66,5.66a8,8,0,0,0,11.32,0l40-40A8,8,0,0,0,168,96H136V32a8,8,0,0,0-16,0V96H88a8,8,0,0,0-5.66,13.66Z"></path></svg>', "image/svg+xml").documentElement
+            createHoverText(download, "Download")
+
+            download.addEventListener("click", async (e) => {
+                console.log("trying to download file:", attachment.name)
+                const download = await ipcRenderer.invoke("downloadAttachment", attachment)
+                console.log(download)
+                if (download.status == "canceled") return showToast("warn", "Cancelled attachment download.")
+                if (download.status == "success") return showToast("success", `Downloaded attachment named '${attachment.name}' as '${download.fileName}'!`)
+            })
+
+            info.replaceChildren(fileName, fileSize)
+            file.replaceChildren(fileIcon, info, download)
+            attachments.appendChild(file)
+        }
+    })
+
     msg.querySelectorAll("mention").forEach(async m => {
         if (!m.id) return;
         const user = await ipcRenderer.invoke("getUser", m.id)

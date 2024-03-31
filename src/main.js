@@ -1,4 +1,4 @@
-const { app, BrowserWindow, ipcMain, globalShortcut } = require("electron")
+const { app, BrowserWindow, ipcMain, globalShortcut, dialog } = require("electron")
 const { client } = require("./bot");
 const moment = require("moment");
 const { Message, GuildMember, User } = require("discord.js");
@@ -50,15 +50,49 @@ app.whenReady().then(() => {
 
 let loggedIn = false
 
+const globalShortcuts = [
+    {
+        keys: ["CommandOrControl+R"],
+        callback: () => {if (loggedIn) loadMainPage()}
+    }, {
+        keys: ["CommandOrControl+Shift+R"],
+        callback: () => {}
+    }, {
+        keys: ["CommandOrControl+Shift+I"],
+        callback: () => window.webContents.toggleDevTools()
+    }, {
+        keys: ["CommandOrControl+Plus", "CommandOrControl+numadd"],
+        callback: () => {
+            if (window.webContents.zoomFactor < 1.5) {
+                window.webContents.setZoomFactor(window.webContents.zoomFactor + 0.05)
+            }
+        }
+    }, {
+        keys: ["CommandOrControl+-", "CommandOrControl+numsub"],
+        callback: () => {
+            if (window.webContents.zoomFactor > 0.5) {
+                window.webContents.setZoomFactor(window.webContents.zoomFactor - 0.05)
+            }
+        }
+    }, {
+        keys: ["CommandOrControl+0"],
+        callback: () => window.webContents.setZoomFactor(1)
+    },
+]
+
 app.on('browser-window-focus', function () {
-    globalShortcut.register("CommandOrControl+R", () => {if (loggedIn) loadMainPage()})
-    globalShortcut.register("CommandOrControl+Shift+R", () => {})
-    globalShortcut.register("CommandOrControl+Shift+I", () => window.webContents.toggleDevTools())
-});
+    globalShortcuts.forEach(shortcut => {
+        shortcut.keys.forEach(key => {
+            globalShortcut.register(key, shortcut.callback)
+        })
+    })
+})
 app.on('browser-window-blur', function () {
-    globalShortcut.unregister("CommandOrControl+R")
-    globalShortcut.unregister("CommandOrControl+Shift+R")
-    globalShortcut.unregister("CommandOrControl+Shift+I")
+    globalShortcuts.forEach(shortcut => {
+        shortcut.keys.forEach(key => {
+            globalShortcut.unregister(key)
+        })
+    })
 })
 
 app.on('window-all-closed', () => {
@@ -309,4 +343,30 @@ ipcMain.on("openLink", (e, url) => {
 
 ipcMain.handle("eval", async (e, code) => {
     return await eval(code)
+})
+
+ipcMain.on("lightthemedumbass", (e) => {
+    const whiteWindow = new BrowserWindow({
+        parent: window,
+        fullscreen: true,
+        frame: false,
+        backgroundColor: "#ffffff"
+    })
+    setTimeout(() => {
+        whiteWindow.close()
+    }, 5000);
+})
+
+ipcMain.handle("downloadAttachment", async (e, attachment) => {
+    const saveDialog = await dialog.showSaveDialog(window, {
+        defaultPath: attachment.name
+    })
+    if (saveDialog.canceled) return {status: "canceled"}
+    const path = saveDialog.filePath
+
+    const content = await (await fetch(attachment.url)).arrayBuffer()
+    fs.writeFileSync(path, Buffer.from(content))
+
+    const split = path.split(/[\/\\]/g)
+    return {status: "success", fileName: split[split.length - 1]}
 })
