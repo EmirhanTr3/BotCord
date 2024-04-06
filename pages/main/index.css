@@ -426,6 +426,10 @@ img {
     padding: 2px;
 }
 
+#chat #messages #message.hasothermessages {
+    margin-bottom: 0;
+}
+
 #chat #messages #message #pfp {
     cursor: pointer;
 }
@@ -438,6 +442,11 @@ img {
 #chat #messages #message #content {
     margin-left: 10px;
     width: 100%;
+}
+
+#chat #messages #message.anothermessage #content {
+    position: relative;
+    left: 42px;
 }
 
 #chat #messages #message #username {

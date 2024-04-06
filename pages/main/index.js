@@ -482,6 +482,7 @@ async function createMessageDiv(message) {
     const messageDiv = document.createElement("div")
     messageDiv.id = "message"
     messageDiv.classList.add("hover", `message-${message.id}`)
+    messageDiv.setAttribute("userid", message.author.id)
 
     const pfp = document.createElement("img")
     pfp.id = "pfp"
@@ -609,13 +610,27 @@ async function createMessageDiv(message) {
         m.addEventListener("click", async (e) => await openUserModalAtCursor(e, user))
     })
 
-    messageDiv.appendChild(pfp)
-    usernameandtime.appendChild(username)
-    appendBotBadge(usernameandtime, message.modifiedMember)
-    usernameandtime.appendChild(time)
-    content.appendChild(usernameandtime)
+    const messagesDiv = document.querySelector("#chat #messages")
+    const lastMessage = messagesDiv.lastElementChild
+    console.log("last message", lastMessage)
+
+    let isAnotherMessage = false
+    if (lastMessage && lastMessage.getAttribute("userid") == message.author.id) {
+        messageDiv.classList.add("anothermessage")
+        lastMessage.classList.add("hasothermessages")
+        isAnotherMessage = true
+    }
+
+    if (!isAnotherMessage) {
+        messageDiv.appendChild(pfp)
+        usernameandtime.appendChild(username)
+        appendBotBadge(usernameandtime, message.modifiedMember)
+        usernameandtime.appendChild(time)
+        content.appendChild(usernameandtime)
+    }
     content.appendChild(msg)
     messageDiv.appendChild(content)
+
     return messageDiv
 }
 
