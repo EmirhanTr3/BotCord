@@ -6,6 +6,7 @@ ipcRenderer.on("load", async (_, user, noLoading) => {
     const startedLoading = new Date()
     console.log("got load event")
     console.log(user)
+    window.client = user
     //! immediately delete the loading screen if its a reload
     if (noLoading) document.getElementById("loadingscreen").remove()
 
@@ -612,7 +613,6 @@ async function createMessageDiv(message) {
 
     const messagesDiv = document.querySelector("#chat #messages")
     const lastMessage = messagesDiv.lastElementChild
-    console.log("last message", lastMessage)
 
     let isAnotherMessage = false
     if (lastMessage && lastMessage.getAttribute("userid") == message.author.id) {

@@ -862,6 +862,7 @@ img {
     border-radius: 5px;
     max-width: 180px;
     word-wrap: normal;
+    z-index: 5;
 }
 
 #hovertext p {

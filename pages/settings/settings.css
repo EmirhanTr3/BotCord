@@ -16,6 +16,10 @@
     z-index: 1;
 }
 
+#settings #close:hover {
+    fill: #e9e9e9;
+}
+
 #settings-nothinghereyet {
     position: absolute;
     margin: 0%;
@@ -92,18 +96,7 @@
     font-size: 13px;
 }
 
-/* #settings #content * {
-    width: fit-content;
-} */
-
-/* CUSTOM THEME SUPPORT WILL BE SOON
-#settings #content #maincolor, #settings #content #secondarycolor {
-    width: 55px;
-    height: 55px;
-    border-radius: 50%;
-    border: 2px solid;
-} */
-
+/*! appearance settings */
 #settings #content input[type="color"] {
     width: 100%;
     height: 100%;
@@ -124,4 +117,258 @@
 
 #settings #content .theme#dark {
     background: #000000;
+}
+
+/*! account settings */
+#settings #content #account {
+    width: 600px;
+    height: 260px;
+    background: #101010;
+    border-radius: 10px;
+}
+
+#settings #content #account #useraccount {
+    width: 100%;
+    height: 100%;
+}
+
+#settings #content #account #banner {
+    width: 100%;
+    height: 100px;
+    border-top-right-radius: 10px;
+    border-top-left-radius: 10px;
+}
+
+#settings #content #account #pfp {
+    position: absolute;
+    left: 17px;
+    top: 103px;
+    border: 5px solid #101010;
+}
+
+#settings #content #account #userstatus {
+    position: absolute;
+    left: 81px;
+    top: 165px;
+}
+
+#settings #content #account #name {
+    position: absolute;
+    left: 120px;
+    font-size: 18px;
+    color: #ffffff;
+    top: 150px;
+    margin: 0;
+}
+
+#settings #content #account #badges {
+    position: absolute;
+    left: 120px;
+    top: 178px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2px;
+}
+
+#settings #content #account #info {
+    position: absolute;
+    top: 205px;
+    margin: 20px;
+    margin-top: 0;
+    background: #191919;
+    border-radius: 10px;
+    width: 530px;
+    height: calc(100% - 255px);
+    padding: 15px;
+}
+#settings #content #account #info h2 {
+    margin: 0;
+    color: #d9d9d9;
+}
+
+#settings #content #account #info #username {
+    margin: 0;
+    position: relative;
+    top: 5px;
+    font-size: 15px;
+}
+
+#switchaccountdiv {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background: #00000091;
+    z-index: 2;
+}
+
+#switchaccountdiv #switchaccount {
+    position: absolute;
+    width: 440px;
+    max-height: 600px;
+    background: #202020;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    border-radius: 5px;
+}
+
+#switchaccountdiv #switchaccount h1 {
+    font-size: 22px;
+    display: flex;
+    justify-content: center;
+    position: relative;
+    margin: 20px 0px 15px 0px;
+    color: #eeeeee;
+}
+
+#switchaccountdiv #switchaccount #accounts {
+    position: relative;
+    width: calc(100% - 60px);
+    background: #191919;
+    margin: 0px 15px;
+    border-radius: 5px;
+    padding: 11px 15px;
+    display: flex;
+    flex-direction: column;
+    gap: 11px;
+}
+
+#switchaccountdiv #switchaccount #accounts #seperator {
+    height: 1px;
+    background-color: #202020;
+}
+
+#switchaccountdiv #switchaccount #accounts #account {
+    height: 40px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+#switchaccountdiv #switchaccount #accounts #account #texts {
+    position: relative;
+    display: inline-flex;
+    left: 7px;
+    justify-content: center;
+    flex-direction: column;
+    flex: 1;
+}
+
+#switchaccountdiv #switchaccount #accounts #account #texts #username {
+    margin: 0;
+    font-size: 16px;
+    color: #eeeeee;
+    font-weight: 500;
+}
+
+#switchaccountdiv #switchaccount #accounts #account #texts #loggedin {
+    margin: 0;
+    font-size: 14px;
+    color: #2DC770;
+}
+
+#switchaccountdiv #switchaccount #accounts #account button {
+    background: #3E3E3E;
+    border: none;
+    border-radius: 4px;
+    height: 38px;
+    flex: 0 0 96px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+#switchaccountdiv #switchaccount #accounts #account button:hover {
+    background: #6D6F78;
+    transition: background 0.3s;
+}
+
+#switchaccountdiv #switchaccount #accounts #account svg {
+    margin-left: 8px;
+    margin-right: -5px;
+    cursor: pointer;
+}
+
+#switchaccountdiv #switchaccount #addaccount {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    margin: 10px 0px;
+    font-size: 14px;
+}
+
+#switchaccountdiv #switchaccount #addaccount p {
+    margin: 0;
+    padding: 10px;
+    cursor: pointer;
+}
+
+#switchaccountdiv #switchaccount #addaccount p:hover {
+    text-decoration: underline;
+}
+
+#logindiv {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background: #00000091;
+    z-index: 2;
+}
+
+#logindiv #login {
+    position: absolute;
+    width: 400px;
+    height: 180px;
+    background: #202020;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    border-radius: 5px;
+}
+
+#logindiv #login h1 {
+    font-size: 22px;
+    display: flex;
+    justify-content: center;
+    position: relative;
+    margin: 20px 0px 15px 0px;
+    color: #eeeeee;
+}
+
+#logindiv #login p {
+    margin: 0;
+    font-size: 11px;
+    position: relative;
+    left: 20px;
+}
+
+#logindiv #login input {
+    position: relative;
+    left: 20px;
+    width: calc(100% - 60px);
+    height: 15px;
+    background: #151515;
+    border: none;
+    border-radius: 4px;
+    padding: 10px;
+    top: 4px;
+}
+
+#logindiv #login button {
+    position: relative;
+    left: 20px;
+    width: calc(100% - 40px);
+    height: 35px;
+    background: #303030;
+    border: none;
+    border-radius: 4px;
+    padding: 10px;
+    top: 18px;
+    transition: background 0.3s;
+    cursor: pointer;
+}
+
+#logindiv #login button:hover {
+    background: #6D6F78;
+    transition: background 0.3s;
 }

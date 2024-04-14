@@ -1,13 +1,11 @@
 const { app, BrowserWindow, ipcMain, globalShortcut, dialog } = require("electron")
-const { client } = require("./bot");
+const { BotCordClient } = require("./bot");
 const moment = require("moment");
 const { Message, GuildMember, User } = require("discord.js");
 const fs = require("fs");
 const path = require("path");
-
-const paths = {
-    tokenFile: path.join(app.getPath("userData"), "token.file")
-}
+const { getCurrentToken, setCurrentAccount, deleteAccountsFile } = require("./accounts");
+let client;
 
 /** @type {BrowserWindow} */
 let window;
@@ -30,8 +28,7 @@ const createWindow = () => {
     })
     window = mainWindow
 
-    const token = fs.existsSync(paths.tokenFile) ?
-        fs.readFileSync(paths.tokenFile, {encoding: "utf-8"}) : undefined
+    const token = getCurrentToken()
 
     if (token) login(token)
     else mainWindow.loadFile('./pages/login/index.html')
@@ -110,12 +107,14 @@ function loadMainPage(noLoading = false) {
 
 async function login(token) {
     await window.loadFile("./pages/main/index.html")
-    const lclient = await client.start(token).catch(e => {
+    const lclient = await new BotCordClient().start(token).catch(e => {
         window.webContents.send("error", "An error occured while logging into client.", e.message)
         return undefined
     })
     if (!lclient) return
-    fs.writeFileSync(paths.tokenFile, token)
+    client = lclient
+    registerEvents()
+    setCurrentAccount(token)
     loggedIn = true
     if (!currentGuild) currentGuild = (await client.guilds.fetch()).first().id
     if (!currentChannel) currentChannel = (await (await client.guilds.fetch(currentGuild)).channels.fetch()).filter(c => c.isTextBased()).first().id
@@ -129,10 +128,30 @@ ipcMain.on("login", async (e, token) => {
 ipcMain.on("logout", async (e) => {
     console.log(`Logged out of ${client.user.tag}`)
     client.destroy()
-    fs.rmSync(paths.tokenFile)
+    deleteAccountsFile()
     loggedIn = false
     window.loadFile("./pages/login/index.html")
 })
+
+ipcMain.on("switchAccount", async (e, token) => {
+    currentGuild = undefined
+    currentChannel = undefined
+    await client.destroy()
+    await login(token)
+    console.log(`Switched account to ${client.user.tag}`)
+})
+
+function registerEvents() {
+    client.on("messageCreate", async (message) => {
+        if (message.channel.id !== currentChannel) return
+        window.webContents.send("messageCreate", await makeMessage(message))
+    })
+    
+    client.on("messageDelete", async (message) => {
+        if (message.channel.id !== currentChannel) return
+        window.webContents.send("messageDelete", await makeMessage(message))
+    })
+}
 
 ipcMain.handle("client-avatar", () => {
     return client.user.displayAvatarURL()
@@ -197,10 +216,11 @@ async function constructMember(input) {
         (
             (input instanceof GuildMember) ? member.user :
             (input instanceof User) ? input :
-            await client.users.fetch(id)
+            await client.users.fetch(id).catch(() => undefined)
         ) :
-        await client.users.fetch(id)
+        await client.users.fetch(id).catch(() => undefined)
 
+    if (!user) return {};
     let badges = user.flags.toArray()
     if (["410781931727486976", "1197624693184802988"].includes(user.id)) badges = ["BotCordStaff"].concat(badges)
     if (!user.bot && user.displayAvatarURL().endsWith(".gif")) badges.push("Nitro")
@@ -283,16 +303,6 @@ async function makeMessage(message) {
     message.modifiedMember = await constructMember(message.member || message.author)
     return message
 }
-
-client.on("messageCreate", async (message) => {
-    if (message.channel.id !== currentChannel) return
-    window.webContents.send("messageCreate", await makeMessage(message))
-})
-
-client.on("messageDelete", async (message) => {
-    if (message.channel.id !== currentChannel) return
-    window.webContents.send("messageDelete", await makeMessage(message))
-})
 
 ipcMain.handle("switchGuild", async (_, id) => {
     if (currentGuild == id) return false
