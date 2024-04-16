@@ -258,7 +258,11 @@ function openLoginUI() {
 
     button.addEventListener("click", async (e) => {
         const token = input.value
-        await ipcRenderer.invoke("addAccount", token)
+        const response = await ipcRenderer.invoke("addAccount", token)
+        
+        if (response == "maxed") showToast("error", "Maximum amount of accounts reached! (7)")
+        if (response == "invalid") showToast("error", "Invalid bot token provided!")
+
         settingsSwitchAccount()
         logindiv.remove()
     })

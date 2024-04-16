@@ -40,12 +40,16 @@ function setCurrentAccount(token) {
 async function addAccount(token) {
     const file = getTokenFile()
 
+    if (file.accounts && Object.keys(file.accounts).length >= 7) return "maxed"
+
     const user = await (await fetch("https://discord.com/api/v10/users/@me", { 
         method: "GET",
         headers: {
             "Authorization": `Bot ${token}`
         }
     })).json()
+
+    if (!user.id) return "invalid"
 
     const account = {
         id: user.id,
@@ -58,6 +62,7 @@ async function addAccount(token) {
 
     file.accounts[token] = account
     fs.writeFileSync(filePath, stringify(file))
+    return true
 }
 
 function removeAccount(token) {
@@ -78,7 +83,7 @@ ipcMain.handle("getAccounts", () => {
 })
 
 ipcMain.handle("addAccount", async (e, token) => {
-    await addAccount(token)
+    return await addAccount(token)
 })
 
 ipcMain.on("removeAccount", (e, token) => {

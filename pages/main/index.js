@@ -42,6 +42,7 @@ ipcRenderer.on("load", async (_, user, noLoading) => {
     document.addEventListener("click", (e) => {
         remove("usermodal", e.target)
         remove("autocomplete", e.target)
+        remove("dropdown", e.target)
     })
 
     //! after everything is done delete loading div

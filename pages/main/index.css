@@ -881,7 +881,7 @@ img {
     padding: 13px 30px;
     top: 15px;
     border: 2px solid #404040;
-    z-index: 2;
+    z-index: 4;
     animation: toast-appear 1s ease forwards;
     display: flex;
     align-items: center;
@@ -939,4 +939,45 @@ img {
 #toast.success {
     background: #1d7353;
     border-color: #4bce97;
+}
+
+/*! dropdown */
+
+#dropdown {
+    top: 50px;
+    left: 50px;
+    position: absolute;
+    min-width: 170px;
+    background: #101010;
+    border-radius: 5px;
+    z-index: 3;
+}
+
+#dropdown #buttons {
+    display: flex;
+    flex-direction: column;
+    margin: 7px;
+}
+
+#dropdown #buttons #button {
+    padding: 7px;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+#dropdown #buttons #button:hover {
+    background: #212121;
+}
+
+#dropdown #buttons #button p {
+    margin: 0;
+    font-size: 14px;
+}
+
+#buttons #button.normal p {
+    color: #b9b9b9;
+}
+
+#buttons #button.danger p {
+    color: #ff5b5b;
 }

@@ -11,8 +11,6 @@ function formatMessage(key, values = {}) {
     return new IntlMessageFormat(lang[key]).format(values)
 }
 
-
-/** @param {Element} element  */
 function dragElement(element, moveElement) {
     var pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0
     if (moveElement) {
@@ -53,12 +51,6 @@ function dragElement(element, moveElement) {
     }
 }
 
-/**
- * 
- * @param {string} title 
- * @param {string} description 
- * @param {boolean} moveable 
- */
 function showMessageBox(title, description, moveable = false) {
     const messageBoxDiv = document.createElement("div")
     messageBoxDiv.id = "messageboxdiv"
@@ -97,14 +89,6 @@ function showMessageBox(title, description, moveable = false) {
     // </div>
 }
 
-/**
- * 
- * @param {string} title 
- * @param {string} description 
- * @param {() => void} confirmCallback 
- * @param {() => void} cancelCallback
- * @param {boolean} moveable 
- */
 function showConfirmationBox(title, description, confirmCallback, cancelCallback, moveable = false) {
     const messageBoxDiv = document.createElement("div")
     messageBoxDiv.id = "messageboxdiv"
@@ -155,11 +139,6 @@ function showConfirmationBox(title, description, confirmCallback, cancelCallback
     // </div>
 }
 
-/**
- * 
- * @param {"info"|"warn"|"error"|"success"} type 
- * @param {string} message 
- */
 function showToast(type, message) {
     const toast = document.createElement("div")
     toast.id = "toast"
@@ -197,6 +176,126 @@ function showToast(type, message) {
         }, 1000);
     }, 5000);
 }
+
+function openDropdownMenu(event, ...options) {
+    if (document.getElementById("dropdown")) document.getElementById("dropdown").remove()
+
+    // format:
+    // {
+    //     type: "normal"|"danger" = "normal"
+    //     text: string,
+    //     callback: function
+    // }
+
+    const dropdown = document.createElement("div")
+    dropdown.id = "dropdown"
+
+    const buttons = document.createElement("div")
+    buttons.id = "buttons"
+
+    for (const option of options) {
+        const button = document.createElement("div")
+        button.id = "button"
+        button.classList.add(option.type ?? "normal")
+
+        const text = document.createElement("p")
+        text.innerText = option.text
+        
+        button.addEventListener("click", (e) => {
+            const event = {
+                mouseEvent: e,
+                close: () => dropdown.remove()
+            }
+            option.callback(event, option)
+        })
+        
+        button.appendChild(text)
+        buttons.appendChild(button)
+    }
+
+    dropdown.appendChild(buttons)
+
+    document.body.append(dropdown)
+
+    dropdown.style.top = (
+        (event.clientY + dropdown.clientHeight > document.body.clientHeight) ?
+        document.body.clientHeight - (dropdown.clientHeight + 10) :
+        event.clientY
+        ) + "px"
+    dropdown.style.left = (
+        (event.clientX + dropdown.clientWidth > document.body.clientWidth) ?
+        event.clientX - dropdown.clientWidth :
+        event.clientX
+        ) + "px"
+
+}
+
+window.addEventListener("contextmenu", (e) => {
+    openDropdownMenu(e, 
+        {
+            text: "test",
+            callback: (e, button) => {
+                console.log(button.text)
+            }
+        }, 
+        {
+            text: "test2",
+            callback: (e, button) => {
+                console.log(button.text)
+            }
+        }, 
+        {
+            text: "test3",
+            callback: (e, button) => {
+                console.log(button.text)
+            }
+        }, 
+        {
+            text: "test4",
+            callback: (e, button) => {
+                console.log(button.text)
+            }
+        },
+        {
+            text: "test5",
+            callback: (e, button) => {
+                console.log(button.text)
+            }
+        },
+        {
+            text: "test6",
+            callback: (e, button) => {
+                console.log(button.text)
+            }
+        },
+        {
+            text: "test7",
+            callback: (e, button) => {
+                console.log(button.text)
+            }
+        },
+        {
+            text: "test8",
+            callback: (e, button) => {
+                console.log(button.text)
+            }
+        },
+        {
+            text: "test9",
+            callback: (e, button) => {
+                console.log(button.text)
+            }
+        },
+        {
+            type: "danger",
+            text: "Close Context Menu",
+            callback: (e, button) => {
+                console.log(button.text)
+                e.close()
+            }
+        },
+    )
+})
 
 const badges = {
     BotCordStaff: {name: "BotCord Staff", icon:  "../../assets/icon.png"},
