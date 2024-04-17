@@ -182,7 +182,7 @@ function openDropdownMenu(event, ...options) {
 
     // format:
     // {
-    //     type: "normal"|"danger" = "normal"
+    //     type: "normal"|"danger"|"seperator" = "normal"
     //     text: string,
     //     callback: function
     // }
@@ -194,23 +194,30 @@ function openDropdownMenu(event, ...options) {
     buttons.id = "buttons"
 
     for (const option of options) {
-        const button = document.createElement("div")
-        button.id = "button"
-        button.classList.add(option.type ?? "normal")
+        if (option.type == "seperator") {
+            const seperator = document.createElement("div")
+            seperator.id = "seperator"
+            
+            buttons.append(seperator)
+        } else {
+            const button = document.createElement("div")
+            button.id = "button"
+            button.classList.add(option.type ?? "normal")
 
-        const text = document.createElement("p")
-        text.innerText = option.text
-        
-        button.addEventListener("click", (e) => {
-            const event = {
-                mouseEvent: e,
-                close: () => dropdown.remove()
-            }
-            option.callback(event, option)
-        })
-        
-        button.appendChild(text)
-        buttons.appendChild(button)
+            const text = document.createElement("p")
+            text.innerText = option.text
+            
+            button.addEventListener("click", (e) => {
+                const event = {
+                    mouseEvent: e,
+                    close: () => dropdown.remove()
+                }
+                option.callback(event, option)
+            })
+            
+            button.appendChild(text)
+            buttons.appendChild(button)
+        }
     }
 
     dropdown.appendChild(buttons)
@@ -286,6 +293,7 @@ window.addEventListener("contextmenu", (e) => {
                 console.log(button.text)
             }
         },
+        { type: "seperator" },
         {
             type: "danger",
             text: "Close Context Menu",

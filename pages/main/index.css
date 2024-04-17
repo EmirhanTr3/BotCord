@@ -972,12 +972,19 @@ img {
 #dropdown #buttons #button p {
     margin: 0;
     font-size: 14px;
+    user-select: none;
 }
 
-#buttons #button.normal p {
+#dropdown #buttons #button.normal p {
     color: #b9b9b9;
 }
 
-#buttons #button.danger p {
+#dropdown #buttons #button.danger p {
     color: #ff5b5b;
+}
+
+#dropdown #buttons #seperator {
+    height: 1px;
+    background-color: #202020;
+    margin: 2px 4px;
 }
