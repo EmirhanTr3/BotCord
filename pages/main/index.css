@@ -941,9 +941,9 @@ img {
     border-color: #4bce97;
 }
 
-/*! dropdown */
+/*! contextmenu */
 
-#dropdown {
+#contextmenu {
     top: 50px;
     left: 50px;
     position: absolute;
@@ -953,37 +953,37 @@ img {
     z-index: 3;
 }
 
-#dropdown #buttons {
+#contextmenu #buttons {
     display: flex;
     flex-direction: column;
     margin: 7px;
 }
 
-#dropdown #buttons #button {
+#contextmenu #buttons #button {
     padding: 7px;
     border-radius: 4px;
     cursor: pointer;
 }
 
-#dropdown #buttons #button:hover {
+#contextmenu #buttons #button:hover {
     background: #212121;
 }
 
-#dropdown #buttons #button p {
+#contextmenu #buttons #button p {
     margin: 0;
     font-size: 14px;
     user-select: none;
 }
 
-#dropdown #buttons #button.normal p {
+#contextmenu #buttons #button.normal p {
     color: #b9b9b9;
 }
 
-#dropdown #buttons #button.danger p {
+#contextmenu #buttons #button.danger p {
     color: #ff5b5b;
 }
 
-#dropdown #buttons #seperator {
+#contextmenu #buttons #seperator {
     height: 1px;
     background-color: #202020;
     margin: 2px 4px;

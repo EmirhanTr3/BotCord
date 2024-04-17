@@ -177,8 +177,9 @@ function showToast(type, message) {
     }, 5000);
 }
 
-function openDropdownMenu(event, ...options) {
-    if (document.getElementById("dropdown")) document.getElementById("dropdown").remove()
+function openContextMenu(event, ...options) {
+    if (document.getElementById("contextmenu")) document.getElementById("contextmenu").remove()
+    event.handled = true
 
     // format:
     // {
@@ -187,8 +188,8 @@ function openDropdownMenu(event, ...options) {
     //     callback: function
     // }
 
-    const dropdown = document.createElement("div")
-    dropdown.id = "dropdown"
+    const contextmenu = document.createElement("div")
+    contextmenu.id = "contextmenu"
 
     const buttons = document.createElement("div")
     buttons.id = "buttons"
@@ -210,7 +211,7 @@ function openDropdownMenu(event, ...options) {
             button.addEventListener("click", (e) => {
                 const event = {
                     mouseEvent: e,
-                    close: () => dropdown.remove()
+                    close: () => contextmenu.remove()
                 }
                 option.callback(event, option)
             })
@@ -220,89 +221,31 @@ function openDropdownMenu(event, ...options) {
         }
     }
 
-    dropdown.appendChild(buttons)
+    contextmenu.appendChild(buttons)
 
-    document.body.append(dropdown)
+    document.body.append(contextmenu)
 
-    dropdown.style.top = (
-        (event.clientY + dropdown.clientHeight > document.body.clientHeight) ?
-        document.body.clientHeight - (dropdown.clientHeight + 10) :
+    contextmenu.style.top = (
+        (event.clientY + contextmenu.clientHeight > document.body.clientHeight) ?
+        document.body.clientHeight - (contextmenu.clientHeight + 10) :
         event.clientY
         ) + "px"
-    dropdown.style.left = (
-        (event.clientX + dropdown.clientWidth > document.body.clientWidth) ?
-        event.clientX - dropdown.clientWidth :
+    contextmenu.style.left = (
+        (event.clientX + contextmenu.clientWidth > document.body.clientWidth) ?
+        event.clientX - contextmenu.clientWidth :
         event.clientX
         ) + "px"
 
 }
 
 window.addEventListener("contextmenu", (e) => {
-    openDropdownMenu(e, 
-        {
-            text: "test",
-            callback: (e, button) => {
-                console.log(button.text)
-            }
-        }, 
-        {
-            text: "test2",
-            callback: (e, button) => {
-                console.log(button.text)
-            }
-        }, 
-        {
-            text: "test3",
-            callback: (e, button) => {
-                console.log(button.text)
-            }
-        }, 
-        {
-            text: "test4",
-            callback: (e, button) => {
-                console.log(button.text)
-            }
-        },
-        {
-            text: "test5",
-            callback: (e, button) => {
-                console.log(button.text)
-            }
-        },
-        {
-            text: "test6",
-            callback: (e, button) => {
-                console.log(button.text)
-            }
-        },
-        {
-            text: "test7",
-            callback: (e, button) => {
-                console.log(button.text)
-            }
-        },
-        {
-            text: "test8",
-            callback: (e, button) => {
-                console.log(button.text)
-            }
-        },
-        {
-            text: "test9",
-            callback: (e, button) => {
-                console.log(button.text)
-            }
-        },
-        { type: "seperator" },
-        {
-            type: "danger",
-            text: "Close Context Menu",
-            callback: (e, button) => {
-                console.log(button.text)
-                e.close()
-            }
-        },
-    )
+    if (e.handled) return;
+    if (
+        document.getElementById("contextmenu") &&
+        !document.getElementById("contextmenu").contains(e.target)
+    ){
+        document.getElementById("contextmenu").remove()
+    }
 })
 
 const badges = {

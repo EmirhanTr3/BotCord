@@ -42,7 +42,7 @@ ipcRenderer.on("load", async (_, user, noLoading) => {
     document.addEventListener("click", (e) => {
         remove("usermodal", e.target)
         remove("autocomplete", e.target)
-        remove("dropdown", e.target)
+        remove("contextmenu", e.target)
     })
 
     //! after everything is done delete loading div
@@ -631,6 +631,24 @@ async function createMessageDiv(message) {
     }
     content.appendChild(msg)
     messageDiv.appendChild(content)
+
+    messageDiv.addEventListener("contextmenu", (e) => openContextMenu(e,
+        {
+            text: "Copy Text",
+            callback: (e) => {
+                navigator.clipboard.writeText(message.content)
+                e.close()
+            }
+        },
+        {type: "seperator"},
+        {
+            text: "Copy Message ID",
+            callback: (e) => {
+                navigator.clipboard.writeText(message.id)
+                e.close()
+            }
+        }
+    ))
 
     return messageDiv
 }

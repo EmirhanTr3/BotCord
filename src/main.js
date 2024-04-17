@@ -50,7 +50,7 @@ let loggedIn = false
 const globalShortcuts = [
     {
         keys: ["CommandOrControl+R"],
-        callback: () => {if (loggedIn) loadMainPage()}
+        callback: () => {if (loggedIn) loadMainPage(); else window.loadFile('./pages/login/index.html')}
     }, {
         keys: ["CommandOrControl+Shift+R"],
         callback: () => {}
