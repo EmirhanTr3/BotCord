@@ -325,7 +325,7 @@ function getBotBadge(user) {
     botBadge.id = "botbadge"
 
     const name = document.createElement("p")
-    name.innerText = "BOT"
+    name.innerText = "APP"
 
     if (user.username == "clyde") {
         botBadge.classList.add("botbadge-ai")
