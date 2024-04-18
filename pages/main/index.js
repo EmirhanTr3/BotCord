@@ -87,7 +87,10 @@ async function displayChannelList() {
     const channels = await ipcRenderer.invoke("channels")
     console.log(channels)
 
+    const guildnameElement = document.getElementById("guildname")
     document.getElementById("guildname").innerText = currentGuild.name
+    if (guildnameElement.offsetWidth < guildnameElement.scrollWidth) createHoverText(guildnameElement, currentGuild.name)
+
     const channelsDiv = document.getElementById("channels")
     channelsDiv.replaceChildren()
 
@@ -107,13 +110,13 @@ async function displayChannelList() {
 
         const categoryName = document.createElement("p")
         categoryName.id = "categoryname"
-        categoryName.innerText = ((category.name.length < 20) ? category.name : (category.name.substring(0, 20) + "...")).toUpperCase()
+        categoryName.innerText = category.name.toUpperCase()
 
         console.log(`appending category ${category.name} (${category.id}) to channel list`)
         categoryDiv.appendChild(iconImg)
         categoryDiv.appendChild(categoryName)
         channelsDiv.appendChild(categoryDiv)
-        if (category.name.length >= 20) createHoverText(categoryName, category.name)
+        if (categoryName.offsetWidth < categoryName.scrollWidth) createHoverText(categoryName, category.name)
     })
 
     channels.filter(c => c.type != 4 && c.category.id).forEach(appendChannel)
@@ -132,14 +135,14 @@ async function displayChannelList() {
 
         const channelName = document.createElement("p")
         channelName.id = "channelname"
-        channelName.innerText = (channel.name.length < 20) ? channel.name : (channel.name.substring(0, 20) + "...")
+        channelName.innerText = channel.name
 
         console.log(`appending channel [${channel.type}] ${channel.name} (${channel.id}) to channel list`)
         channelDiv.appendChild(iconImg)
         channelDiv.appendChild(channelName)
         if (channel.category.id) document.getElementsByClassName(`category-${channel.category.id}`).item(0).appendChild(channelDiv)
         else channelsDiv.appendChild(channelDiv)
-        if (channel.name.length >= 20) createHoverText(channelName, channel.name)
+        if (channelName.offsetWidth < channelName.scrollWidth) createHoverText(channelName, channel.name)
 
         channelDiv.addEventListener("click", async () => {
             if ([0, 2, 5].includes(channel.type)) {
