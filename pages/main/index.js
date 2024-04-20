@@ -1,3 +1,5 @@
+/// <reference path="utils.d.ts"/>
+
 const { ipcRenderer } = require("electron");
 const marked = require("marked");
 const DOMPurify = require("dompurify");
@@ -89,7 +91,8 @@ async function displayChannelList() {
 
     const guildnameElement = document.getElementById("guildname")
     document.getElementById("guildname").innerText = currentGuild.name
-    if (guildnameElement.offsetWidth < guildnameElement.scrollWidth) createHoverText(guildnameElement, currentGuild.name)
+    //! this has a bug where the hover text event stays even after switching servers
+    // if (guildnameElement.offsetWidth < guildnameElement.scrollWidth) createHoverText(guildnameElement, currentGuild.name)
 
     const channelsDiv = document.getElementById("channels")
     channelsDiv.replaceChildren()
@@ -526,6 +529,134 @@ async function createMessageDiv(message) {
 
     msg.innerHTML = parsed
 
+    let embeds;
+    message.embeds.forEach(async embed => {
+        if (!embeds) {
+            embeds = document.createElement("div")
+            embeds.id = "embeds"
+            msg.appendChild(embeds)
+        }
+        const data = embed.data
+
+        const embedDiv = document.createElement("div")
+        embedDiv.id = "embed"
+
+        const content = document.createElement("div")
+        content.id = "embedcontent"
+
+        const contentData = document.createElement("div")
+        contentData.id = "embedcontentdata"
+
+        const contentDataContent = document.createElement("div")
+        contentDataContent.id = "embedcontentdatacontent"
+
+        const color = document.createElement("div")
+        color.id = "color"
+        color.style.background = "#" + (data.color ? data.color.toString(16).padStart(6, '0') : "101010")
+
+        let author;
+        if (data.author) {
+            author = document.createElement("div")
+            author.id = "author"
+
+            if (data.author.icon_url) {
+                const authorIcon  = document.createElement("img")
+                authorIcon.id = "authoricon"
+                authorIcon.src = data.author.icon_url
+                author.appendChild(authorIcon)
+            }
+
+            const authorName = document.createElement(data.author.url ? "a" : "p")
+            authorName.id = "authorname"
+            authorName.innerText = data.author.name
+            authorName.href = data.author.url
+            author.appendChild(authorName)
+        }
+
+        let title;
+        if (data.title) {
+            title = document.createElement(data.url ? "a" : "p")
+            title.id = "title"
+            title.innerText = data.title
+            title.href = data.url
+        }
+
+        let description
+        if (data.description) {
+            description = document.createElement("p")
+            description.id = "description"
+            description.innerText = data.description
+        }
+
+        let fields
+        if (data.fields) {
+            fields = document.createElement("div")
+            fields.id = "fields"
+            
+            for (const field of data.fields) {
+                const fieldDiv = document.createElement("div")
+                fieldDiv.id = "field"
+                
+                const fieldName = document.createElement("p")
+                fieldName.id = "fieldname"
+                fieldName.innerText = field.name
+
+                const fieldValue = document.createElement("p")
+                fieldValue.id = "fieldvalue"
+                fieldValue.innerText = field.value
+
+                fieldDiv.replaceChildren(fieldName, fieldValue)
+                fields.appendChild(fieldDiv)
+            }
+        }
+
+        let thumbnail
+        if (data.thumbnail) {
+            thumbnail = document.createElement("img")
+            thumbnail.id = "thumbnail"
+            thumbnail.src = data.thumbnail.url
+        }
+
+        let image
+        if (data.image) {
+            image = document.createElement("img")
+            image.id = "image"
+            image.src = data.image.url
+        }
+
+        let footer;
+        if (data.footer) {
+            footer = document.createElement("div")
+            footer.id = "footer"
+
+            if (data.footer.icon_url) {
+                const footerIcon  = document.createElement("img")
+                footerIcon.id = "footericon"
+                footerIcon.src = data.footer.icon_url
+                footer.appendChild(footerIcon)
+            }
+
+            const footerText = document.createElement("p")
+            footerText.id = "footertext"
+            footerText.innerText = data.footer.text
+            footer.appendChild(footerText)
+
+            embedDiv.appendChild(footer)
+        }
+
+        if (author) contentDataContent.appendChild(author)
+        if (title) contentDataContent.appendChild(title)
+        if (description) contentDataContent.appendChild(description)
+        if (fields) contentDataContent.appendChild(fields)
+        contentData.appendChild(contentDataContent)
+        if (thumbnail) contentData.appendChild(thumbnail)
+        content.appendChild(contentData)
+        if (image) content.appendChild(image)
+        if (footer) content.appendChild(footer)
+        embedDiv.replaceChildren(color, content)
+        embeds.appendChild(embedDiv)
+    })
+
     let attachments;
     function createAttachmentsDiv() {
         if (!attachments) {
@@ -537,6 +668,7 @@ async function createMessageDiv(message) {
     }
 
     Array.from(msg.getElementsByTagName("a")).forEach(async element => {
+        if (element.id) return;
         if (!(await fetch(element.href)).ok) return;
         createAttachmentsDiv()
         if (/https:\/\/cdn.discordapp.com\/attachments\/(?:[0-9]{17,19})\/(?:[0-9]{17,19})\/.*.png\?.*/g.test(element.href)) {
@@ -671,7 +803,10 @@ async function displayChatMessages() {
     const messagesDiv = document.querySelector("#chat #messages")
     messagesDiv.replaceChildren()
 
-    const lastMessages = await ipcRenderer.invoke("lastMessagesFromCurrentChannel", 20)
+    const startedloadlastmessages = new Date()
+    console.warn("started loading last messages")
+    const lastMessages = await ipcRenderer.invoke("lastMessagesFromCurrentChannel", 30)
+    console.warn(`loaded last messages in ${new Date() - startedloadlastmessages}ms`)
     console.log(lastMessages)
     for (const message of lastMessages) {
         appendMessage(await createMessageDiv(message))
@@ -689,6 +824,17 @@ ipcRenderer.on("messageDelete", (_, message) => {
     if (!messageDiv) return;
     messageDiv.classList.add("deleted")
 })
+
+// ipcRenderer.on("messageUpdate", async (_, oldMessage, newMessage) => {
+//     console.log(`received messageUpdate from ${oldMessage.author.username}: ${oldMessage.content} -> ${newMessage.content}`)
+//     const messageDiv = document.querySelector(`#chat #messages #message.message-${oldMessage.id}`)
+//     if (!messageDiv) return;
+//     console.log(messageDiv.outerHTML)
+//     const newdiv = await createMessageDiv(newMessage)
+//     console.log(newdiv.outerHTML)
+//     messageDiv.outerHTML = newdiv.outerHTML
+//     console.log(messageDiv.outerHTML)
+// })
 
 //! user modal
 async function openUserModalAtCursor(event, user) {
@@ -720,7 +866,7 @@ async function getUserModal(user) {
     banner.id = "banner"
     banner.src = userBanner || "../../assets/bannerdefault.png"
 
-    if (!user.badges.includes("Nitro") && !user.bot && userBanner) user.badges.push("Nitro")
+    if (!user.badges?.includes("Nitro") && !user.bot && userBanner) user.badges.push("Nitro")
 
     const pfp = document.createElement("img")
     pfp.id = "pfp"
@@ -729,7 +875,7 @@ async function getUserModal(user) {
     pfp.src = user.avatar ?? ""
 
     let status
-    if (!user.badges.includes("BotHTTPInteractions") && user.joinedAt) {
+    if (!user.badges?.includes("BotHTTPInteractions") && user.joinedAt) {
         status = document.createElement("img")
         status.id = "userstatus"
         status.height = 20

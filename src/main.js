@@ -1,10 +1,11 @@
 const { app, BrowserWindow, ipcMain, globalShortcut, dialog } = require("electron")
 const { BotCordClient } = require("./bot");
 const moment = require("moment");
-const { Message, GuildMember, User } = require("discord.js");
+const { Message, GuildMember, User, Collection } = require("discord.js");
 const fs = require("fs");
 const path = require("path");
 const { getCurrentToken, setCurrentAccount, deleteAccountsFile } = require("./accounts");
+/** @type {BotCordClient} */
 let client;
 
 /** @type {BrowserWindow} */
@@ -151,6 +152,11 @@ function registerEvents() {
         if (message.channel.id !== currentChannel) return
         window.webContents.send("messageDelete", await makeMessage(message))
     })
+
+    client.on("messageUpdate", async (oldMessage, newMessage) => {
+        if (newMessage.channel.id !== currentChannel) return
+        window.webContents.send("messageUpdate", await makeMessage(oldMessage), await makeMessage(newMessage))
+    })
 }
 
 ipcMain.handle("client-avatar", () => {
@@ -206,10 +212,19 @@ ipcMain.handle("memberRoleList", async () => {
     return list
 })
 
+const MemberCache = new Collection()
+
 /** @param {GuildMember|User|string} input */
 async function constructMember(input) {
     // const startedLoading = new Date()
     const id = typeof input == "string" ? input : input.id
+
+    const cacheId = `${currentGuild}.${id}`
+    if (MemberCache.has(cacheId) && (new Date() - (MemberCache.get(cacheId).lastFetched ?? 0)) < 20000) {
+        // console.log(`tried to get ${cacheId} but it was already cached`)
+        return MemberCache.get(cacheId)
+    }
+
     const guild = await client.guilds.fetch(currentGuild)
     const member = await guild.members.fetch(id).catch(() => undefined)
     const user = member ?
@@ -220,7 +235,15 @@ async function constructMember(input) {
         ) :
         await client.users.fetch(id).catch(() => undefined)
 
-    if (!user) return {};
+    // console.log(`got user and member information of ${user?.user?.username} (${id}) in ${new Date() - startedLoading}ms`)
+
+    if (!user) {
+        const none = {}
+        none.lastFetched = new Date()
+        MemberCache.set(cacheId, none)
+        return {}
+    }
+    // console.log("passed user check")
     let badges = user.flags.toArray()
     if (["410781931727486976", "1197624693184802988"].includes(user.id)) badges = ["BotCordStaff"].concat(badges)
     if (!user.bot && user.displayAvatarURL().endsWith(".gif")) badges.push("Nitro")
@@ -236,7 +259,8 @@ async function constructMember(input) {
         avatar: (member) ? member.displayAvatarURL({size: 128}) : user.displayAvatarURL({size: 128}),
         badges: badges,
         status: member?.presence?.status || "offline",
-        createdAt: moment(user.createdAt).format("D MMM YYYY")
+        createdAt: moment(user.createdAt).format("D MMM YYYY"),
+        lastFetched: new Date()
     }
 
     if (member) {
@@ -256,6 +280,7 @@ async function constructMember(input) {
     }
 
     // console.log(`constructed member ${user.username} in ${new Date() - startedLoading}ms`)
+    MemberCache.set(cacheId, data)
     return data
 }
 
@@ -295,12 +320,14 @@ ipcMain.on("message", async (_, message) => {
 
 /** @param {Message} message */
 async function makeMessage(message) {
+    // const time = new Date()
     message.authorDisplayColor = (message.member?.displayHexColor !== "#000000") ? message.member?.displayHexColor ?? "#ffffff" : "#ffffff",
     message.avatar = message.author.displayAvatarURL()
     message.authorName = (message.author.discriminator !== "0") ? `${message.author.username}#${message.author.discriminator}`: message.author.username
     message.authorDisplayName = message.member?.displayName || message.author.displayName
     message.time = moment(message.createdAt).calendar()
     message.modifiedMember = await constructMember(message.member || message.author)
+    // console.log(`built message in ${new Date() - time}ms`)
     return message
 }
 

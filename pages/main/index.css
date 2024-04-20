@@ -521,7 +521,6 @@ img {
 
 #chat #messages #message #msg img, #chat #messages #message #msg video {
     max-width: 300px;
-    max-height: 300px;
     display: block;
 }
 
@@ -560,6 +559,126 @@ img {
 
 #chat #messages #message #msg #attachments #file #download {
     cursor: pointer;
+}
+
+#chat #messages #message #msg #embeds {
+    position: relative;
+    top: 3px;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+#chat #messages #message #msg #embed {
+    max-width: 450px;
+    min-width: 200px;
+    min-height: 40px;
+    display: flex;
+    flex-direction: row;
+}
+
+#chat #messages #message #msg #embed #color {
+    flex: 0 0 5px;
+    border-top-left-radius: 5px;
+    border-bottom-left-radius: 5px;
+}
+
+#chat #messages #message #msg #embed #embedcontent {
+    background: #191919;
+    border-top-right-radius: 5px;
+    border-bottom-right-radius: 5px;
+    padding: 10px;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+#chat #messages #message #msg #embed #embedcontent p {
+    font-size: 14px;
+}
+
+#chat #messages #message #msg #embed #embedcontentdata {
+    display: flex;
+    flex-direction: row;
+}
+
+#chat #messages #message #msg #embed #embedcontentdatacontent {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    flex: 1;
+}
+
+#chat #messages #message #msg #embed #title {
+    font-size: 16px;
+    font-weight: 500;
+    width: fit-content;
+}
+
+#chat #messages #message #msg #embed p#title {
+    color: #ffffff;
+}
+
+#chat #messages #message #msg #embed #author {
+    height: 30px;
+    display: flex;
+    align-items: center;
+}
+
+#chat #messages #message #msg #embed #author #authoricon {
+    width: 25px;
+    border-radius: 50%;
+    margin-right: 5px
+}
+
+#chat #messages #message #msg #embed #author #authorname {
+    font-size: 14px;
+    color: #ffffff;
+    position: relative;
+}
+
+#chat #messages #message #msg #embed #fields {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+#chat #messages #message #msg #embed #fields #field {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+#chat #messages #message #msg #embed #fields #field #fieldname {
+    color: #ffffff;
+    font-weight: 400;
+}
+
+#chat #messages #message #msg #embed #thumbnail {
+    height: 50px;
+    border-radius: 5px;
+}
+
+#chat #messages #message #msg #embed #image {
+    max-width: 100%;
+}
+
+#chat #messages #message #msg #embed #footer {
+    height: 20px;
+    display: flex;
+    align-items: center;
+}
+
+#chat #messages #message #msg #embed #footer #footericon {
+    width: 25px;
+    border-radius: 50%;
+}
+
+#chat #messages #message #msg #embed #footer #footertext {
+    font-size: 11px;
+    position: relative;
+    margin-right: 5px
 }
 
 #chat #autocomplete {
