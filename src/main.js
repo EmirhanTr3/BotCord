@@ -327,6 +327,7 @@ async function makeMessage(message) {
     message.authorDisplayName = message.member?.displayName || message.author.displayName
     message.time = moment(message.createdAt).calendar()
     message.modifiedMember = await constructMember(message.member || message.author)
+    if (message.reference) message.referenceMessage = await makeMessage(await message.fetchReference())
     // console.log(`built message in ${new Date() - time}ms`)
     return message
 }

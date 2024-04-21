@@ -429,13 +429,66 @@ img {
 
 #chat #messages #message {
     margin-bottom: 10px;
-    flex-direction: row;
-    display: flex;
-    padding: 2px;
 }
 
 #chat #messages #message.hasothermessages {
     margin-bottom: 0;
+}
+
+#chat #messages #messagecontent {
+    flex-direction: row;
+    display: flex;
+    padding: 2px
+}
+
+#chat #messages #message #extradata {
+    position: relative;
+    left: 23px;
+    display: flex;
+    align-items: center;
+    padding-top: 2px;
+}
+
+#chat #messages #message #extradata #line {
+    width: 26px;
+    height: 8px;
+    margin: 5px 4px -4px -1px;
+    border-top: 2px solid #404040;
+    border-left: 2px solid #404040;
+    border-top-left-radius: 7px;
+}
+
+#chat #messages #message #extradata p {
+    font-size: 14px;
+    margin-left: 3px;
+    opacity: 0.9;
+}
+
+#chat #messages #message #extradata #referencecontent {
+    cursor: pointer;
+}
+
+#chat #messages #message #extradata #referencecontent.italic {
+    font-style: italic;
+}
+
+#chat #messages #message #extradata #referencecontent:hover {
+    color: #ffffff;
+}
+
+#chat #messages #message #extradata #command {
+    margin-left: 3px;
+    background: #5865F24D;
+    border-radius: 3px;
+    cursor: default;
+    padding: 0px 3px;
+    color: #34bbff;
+    opacity: 1;
+}
+
+#chat #messages #message #extradata #command:hover {
+    background: #5865F2;
+    color: #ffffff;
 }
 
 #chat #messages #message #pfp {
@@ -517,6 +570,14 @@ img {
 #chat #messages #message #msg mention:hover {
     background: #5865F2;
     color: #ffffff;
+}
+
+#chat #messages #message #msg code {
+    background: #191919;
+    display: block;
+    padding: 10px;
+    border-radius: 5px;
+    width: fit-content;
 }
 
 #chat #messages #message #msg img, #chat #messages #message #msg video {

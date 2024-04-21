@@ -492,6 +492,66 @@ async function createMessageDiv(message) {
     messageDiv.classList.add("hover", `message-${message.id}`)
     messageDiv.setAttribute("userid", message.author.id)
 
+    let extradata;
+    if (message.interaction || message.referenceMessage) {
+        extradata = document.createElement("div")
+        extradata.id = "extradata"
+        extradata.classList.add("interaction")
+        
+        const user = (message.interaction) ? await ipcRenderer.invoke("getUser", message.interaction.user.id) : message.referenceMessage.modifiedMember
+
+        const line = document.createElement("div")
+        line.id = "line"
+
+        const pfp = document.createElement("img")
+        pfp.id = "pfp"
+        pfp.height = 16
+        pfp.width = 16
+        pfp.src = user.avatar
+        pfp.addEventListener("click", async (e) => await openUserModalAtCursor(e, user))
+
+        const username = document.createElement("p")
+        username.id = "username"
+        username.innerText = user.displayName
+        username.style.color = user.displayColor
+        username.addEventListener("click", async (e) => await openUserModalAtCursor(e, user))
+
+        extradata.replaceChildren(line, pfp, username)
+
+        if (message.interaction) {
+            const p1 = document.createElement("p")
+            p1.innerText = "used "
+
+            const command = document.createElement("p")
+            command.id = "command"
+            command.innerText = "/" + message.interaction.commandName
+            extradata.appendChild(p1)
+            extradata.appendChild(command)
+
+        } else if (message.referenceMessage) {
+            const replyDiv = document.querySelector("#chat #messages").getElementsByClassName(`message-${message.referenceMessage.id}`).item(0)
+            
+            const reply = document.createElement("p")
+            reply.id = "referencecontent"
+            if (message.referenceMessage.content.length > 0) reply.innerText = message.referenceMessage.content
+            else {
+                reply.innerText = (replyDiv) ? "Click to view message" : "Unknown message"
+                reply.classList.add("italic")
+            }
+            extradata.appendChild(reply)
+
+            if (replyDiv) {
+                reply.addEventListener("click", () => {
+                    replyDiv.scrollIntoView({behavior: "smooth"})
+                })
+            }
+        }
+
+    }
+
+    const messageContent = document.createElement("div")
+    messageContent.id = "messagecontent"
+
     const pfp = document.createElement("img")
     pfp.id = "pfp"
     pfp.height = 42
@@ -751,21 +811,23 @@ async function createMessageDiv(message) {
     const lastMessage = messagesDiv.lastElementChild
 
     let isAnotherMessage = false
-    if (lastMessage && lastMessage.getAttribute("userid") == message.author.id) {
+    if (!extradata && lastMessage && lastMessage.getAttribute("userid") == message.author.id) {
         messageDiv.classList.add("anothermessage")
         lastMessage.classList.add("hasothermessages")
         isAnotherMessage = true
     }
 
+    if (extradata) messageDiv.appendChild(extradata)
     if (!isAnotherMessage) {
-        messageDiv.appendChild(pfp)
+        messageContent.appendChild(pfp)
         usernameandtime.appendChild(username)
         appendBotBadge(usernameandtime, message.modifiedMember)
         usernameandtime.appendChild(time)
         content.appendChild(usernameandtime)
     }
     content.appendChild(msg)
-    messageDiv.appendChild(content)
+    messageContent.appendChild(content)
+    messageDiv.appendChild(messageContent)
 
     messageDiv.addEventListener("contextmenu", (e) => openContextMenu(e,
         {
