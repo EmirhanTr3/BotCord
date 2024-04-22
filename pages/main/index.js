@@ -155,6 +155,7 @@ async function displayChannelList() {
                 document.querySelector("#chat #messages").replaceChildren()
                 document.querySelector("#chat #channelInfo p").innerText = channel.name
                 document.querySelector("#chat #channelInfo #icon").src = iconImg.src
+                if (document.getElementById("reply")) document.getElementById("reply").remove()
 
                 for (const c of document.getElementsByClassName("current")) c.classList.remove("current")
                 channelDiv.classList.add("current")
@@ -304,7 +305,14 @@ document.querySelector("#chat form").addEventListener("submit", async (e) => {
 
     if (message.replaceAll(" ", "") == "") return;
 
-    ipcRenderer.send("message", message)
+    const replyDiv = document.querySelector("#chat #reply")
+    let reply;
+    if (replyDiv) {
+        reply = replyDiv.getAttribute("messageid")
+        replyDiv.remove()
+    }
+
+    ipcRenderer.send("message", message, reply)
     input.value = ""
     lastTypingSentAt = undefined
 })
@@ -831,6 +839,13 @@ async function createMessageDiv(message) {
 
     messageDiv.addEventListener("contextmenu", (e) => openContextMenu(e,
         {
+            text: "Reply",
+            callback: (e) => {
+                showReplyDiv(message)
+                e.close()
+            }
+        },
+        {
             text: "Copy Text",
             callback: (e) => {
                 navigator.clipboard.writeText(message.content)
@@ -897,6 +912,37 @@ ipcRenderer.on("messageDelete", (_, message) => {
 //     messageDiv.outerHTML = newdiv.outerHTML
 //     console.log(messageDiv.outerHTML)
 // })
+
+function showReplyDiv(message) {
+    if (document.getElementById("reply")) document.getElementById("reply").remove()
+    const chat = document.getElementById("chat")
+
+    const reply = document.createElement("div")
+    reply.id = "reply"
+    reply.setAttribute("messageid", message.id)
+
+    const textdiv = document.createElement("div")
+    textdiv.id = "textdiv"
+
+    const text = document.createElement("p")
+    text.id = "text"
+    text.innerText = "Replying to "
+
+    const username = document.createElement("p")
+    username.id = "username"
+    username.innerText = message.modifiedMember.displayName
+    username.style.color = message.modifiedMember.displayColor
+
+    const close = new DOMParser().parseFromString('<div id="close"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="#c3c3c3" viewBox="0 0 256 256"><path d="M128,24A104,104,0,1,0,232,128,104.11,104.11,0,0,0,128,24Zm37.66,130.34a8,8,0,0,1-11.32,11.32L128,139.31l-26.34,26.35a8,8,0,0,1-11.32-11.32L116.69,128,90.34,101.66a8,8,0,0,1,11.32-11.32L128,116.69l26.34-26.35a8,8,0,0,1,11.32,11.32L139.31,128Z"></path></svg></div>', "application/xml").documentElement
+
+    close.addEventListener("click", (e) => {
+        reply.remove()
+    })
+
+    textdiv.replaceChildren(text, username)
+    reply.replaceChildren(textdiv, close)
+    chat.appendChild(reply)
+}
 
 //! user modal
 async function openUserModalAtCursor(event, user) {

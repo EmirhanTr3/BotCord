@@ -313,9 +313,9 @@ ipcMain.handle("getBannerURL", async (_, id) => {
     return (await client.users.fetch(id, {force: true}).catch(e => undefined))?.bannerURL({size: 512})
 })
 
-ipcMain.on("message", async (_, message) => {
+ipcMain.on("message", async (_, message, reply) => {
     const channel = await client.channels.fetch(currentChannel)
-    channel.send({content: message})
+    channel.send({content: message, reply: {messageReference: reply}})
 })
 
 /** @param {Message} message */

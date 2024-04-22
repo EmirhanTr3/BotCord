@@ -815,6 +815,7 @@ img {
     left: 10px;
     color: #ededed;
 }
+
 #chat #autocomplete #list #member #username {
     position: relative;
     display: flex;
@@ -822,6 +823,55 @@ img {
     font-size: 11px;
     bottom: 30px;
 }
+
+#chat #reply {
+    left: 10px;
+    width: calc(100% - 20px);
+    height: 34px;
+    position: absolute;
+    bottom: 46px;
+    background: #1c1c1c;
+    border-radius: 5px;
+    display: flex;
+    align-items: center;
+}
+
+#chat #reply #textdiv {
+    display: flex;
+    gap: 3px;
+    position: relative;
+    flex: 1;
+    margin-left: 10px;
+}
+
+#chat #reply #text {
+    margin: 0;
+    font-size: 13px;
+}
+
+#chat #reply #username {
+    margin: 0;
+    font-size: 13px;
+    font-weight: 500;
+}
+
+#chat #reply #close {
+    height: 34px;
+    width: 40px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+}
+
+#chat #reply #close svg {
+    fill: #c3c3c3;
+}
+
+#chat #reply #close:hover svg {
+    fill: #e7e7e7;
+}
+
 
 /*! member list */
 
