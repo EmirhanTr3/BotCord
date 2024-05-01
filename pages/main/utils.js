@@ -334,6 +334,10 @@ function getBotBadge(user) {
         name.innerText = "AI"
     }
 
+    if (user.webhook) {
+        name.innerText = "WEBHOOK"
+    }
+
     if (overrides[user.id]) {
         name.innerText = overrides[user.id].name
         if (overrides[user.id].color) botBadge.style.backgroundColor = overrides[user.id].color

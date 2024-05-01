@@ -219,6 +219,25 @@ async function constructMember(input) {
     // const startedLoading = new Date()
     const id = typeof input == "string" ? input : input.id
 
+    // console.log(input)
+    if (input && input instanceof User && input.bot && input.discriminator == "0000") {
+        return {
+            id: input.id,
+            bot: input.bot,
+            webhook: true,
+            username: input.username,
+            discriminator: input.discriminator,
+            name: input.username + "#0000",
+            displayName: input.username,
+            displayColor: "#ffffff",
+            avatar: input.displayAvatarURL({size: 128}),
+            badges: [],
+            status: "offline",
+            createdAt: moment(0).format("D MMM YYYY"),
+            lastFetched: new Date()
+        }
+    }
+
     const cacheId = `${currentGuild}.${id}`
     if (MemberCache.has(cacheId) && (new Date() - (MemberCache.get(cacheId).lastFetched ?? 0)) < 20000) {
         // console.log(`tried to get ${cacheId} but it was already cached`)
@@ -226,17 +245,14 @@ async function constructMember(input) {
     }
 
     const guild = await client.guilds.fetch(currentGuild)
-    const member = await guild.members.fetch(id).catch(() => undefined)
-    const user = member ?
-        (
-            (input instanceof GuildMember) ? member.user :
-            (input instanceof User) ? input :
-            await client.users.fetch(id).catch(() => undefined)
-        ) :
+    const member = (input instanceof GuildMember) ? input : await guild.members.fetch(id).catch(() => undefined)
+    const user = member ? member.user :
+        (input instanceof User) ? input :
         await client.users.fetch(id).catch(() => undefined)
 
-    // console.log(`got user and member information of ${user?.user?.username} (${id}) in ${new Date() - startedLoading}ms`)
+    // console.log(`got user and member information of ${user?.username} (${id}) in ${new Date() - startedLoading}ms`)
 
+    // console.log(input, user)
     if (!user) {
         const none = {}
         none.lastFetched = new Date()

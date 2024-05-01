@@ -813,7 +813,11 @@ async function createMessageDiv(message) {
     const lastMessage = messagesDiv.lastElementChild
 
     let isAnotherMessage = false
-    if (!extradata && lastMessage && lastMessage.getAttribute("userid") == message.author.id) {
+    if (!extradata &&
+        lastMessage &&
+        lastMessage.getAttribute("userid") == message.author.id &&
+        ((lastMessage.querySelector("#messagecontent").querySelector("#messagecontent #content div #username")?.innerText ?? message.author.username) == message.author.username)
+    ) {
         messageDiv.classList.add("anothermessage")
         lastMessage.classList.add("hasothermessages")
         isAnotherMessage = true
