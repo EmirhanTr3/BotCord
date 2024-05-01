@@ -1,4 +1,6 @@
 const { IntlMessageFormat } = require("intl-messageformat");
+const { parse } = require("discord-markdown-parser");
+const DOMPurify = require("dompurify");
 
 /**
  * 
@@ -388,4 +390,74 @@ function getStatusData(status) {
 
 async function eval(x) {
     return ipcRenderer.invoke("eval", x)
+}
+
+function getTypeHTML(t, d) {
+    console.log("td:", t, d)
+    if (!t) return {a: "", b: ""};
+    switch(t) {
+        case "strong": return {a: "<b>", b: "</b>"}
+        case "text": return {a: "", b: ""}
+        case "user": return {a: `<mention id="${d}">`, b: "</mention>"};
+        case "channel": case "everyone": case "here": return {a: "<mention>", b: "</mention>"};
+        case "url": return {a: `<a href=${d}>`, b: "</a>"};
+        case "br": return {a: "<br>", b: ""}
+        case "underline": return {a: "<u>", b: "</u>"}
+        case "strikethrough": return {a: "<s>", b: "</s>"}
+
+        default: return {a: `<${t.toLowerCase()}>`, b: `</${t.toLowerCase()}>`}
+    }
+}
+
+async function parseContent(content) {
+    const arr = (typeof content == "string") ? parse(content) : content
+
+    let r = ""
+    for (const p of arr) {
+        let c;
+        console.log("p:", p)
+        if (typeof p.content == "object") {
+            c = await parseContent(p.content)
+            console.log(1, c)
+        } else {
+            console.log(2, p)
+            c = p
+        }
+        console.log("c:", c)
+
+        let data;
+        switch(c.type) {
+            case "user":
+                const user = await ipcRenderer.invoke("getUser", c.id)
+                data = c.id
+                c.content = "@" + user.displayName
+                break
+
+            case "channel":
+                const channel = await ipcRenderer.invoke("getChannel", c.id)
+                c.content = "# " + channel.name
+                break
+
+            case "everyone": case "here": c.content = "@" + c.type; break
+
+            case "br":
+                c.content = ""
+                break
+        }
+
+        if (c.type == "url" || p.type == "url") data = c.target ?? p.target 
+
+        let type;
+        if (typeof p.content == "object") {
+            type = getTypeHTML(p.type, data)
+        } else {
+            type = getTypeHTML(c.type, data)
+        }
+        
+        console.log("type: ", type)
+        console.log(`${type.a + DOMPurify.sanitize(c.content ?? c) + type.b}`)
+        r = r + type.a + DOMPurify.sanitize(c.content ?? c) + type.b
+    }
+    console.log("r:", r)
+    return r
 }

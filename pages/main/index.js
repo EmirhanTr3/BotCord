@@ -1,8 +1,6 @@
 /// <reference path="utils.d.ts"/>
 
 const { ipcRenderer } = require("electron");
-const marked = require("marked");
-const DOMPurify = require("dompurify");
 
 ipcRenderer.on("load", async (_, user, noLoading) => {
     const startedLoading = new Date()
@@ -41,10 +39,17 @@ ipcRenderer.on("load", async (_, user, noLoading) => {
             document.getElementById(e).remove()
         }
     }
-    document.addEventListener("click", (e) => {
+    document.addEventListener("click", async (e) => {
         remove("usermodal", e.target)
         remove("autocomplete", e.target)
         remove("contextmenu", e.target)
+
+        //! handle user mention click
+        if (e.target.nodeName == "MENTION") {
+            if (!e.target.id) return;
+            const user = await ipcRenderer.invoke("getUser", e.target.id)
+            await openUserModalAtCursor(e, user)
+        }
     })
 
     //! after everything is done delete loading div
@@ -585,17 +590,12 @@ async function createMessageDiv(message) {
     const msg = document.createElement("p")
     msg.id = "msg"
 
-    let parsed = DOMPurify.sanitize(marked.parse(message.content))
-    for (const [match, id] of parsed.matchAll(/&lt;@([0-9]{17,19})&gt;/g)) {
-        const user = await ipcRenderer.invoke("getUser", id)
-        parsed = parsed.replace(match, `<mention id="${user.id}">@${user.displayName}</mention>`)
+    if (message.content) {
+        const msgcontent = document.createElement("p")
+        msgcontent.id = "msgcontent"
+        msgcontent.innerHTML = await parseContent(message.content)
+        msg.appendChild(msgcontent)
     }
-    for (const [match, id] of parsed.matchAll(/&lt;#([0-9]{17,19})&gt;/g)) {
-        const channel = await ipcRenderer.invoke("getChannel", id)
-        parsed = parsed.replace(match, `<mention># ${channel.name}</mention>`)
-    }
-
-    msg.innerHTML = parsed
 
     let embeds;
     message.embeds.forEach(async embed => {
@@ -653,7 +653,7 @@ async function createMessageDiv(message) {
         if (data.description) {
             description = document.createElement("p")
             description.id = "description"
-            description.innerText = data.description
+            description.innerHTML = await parseContent(data.description)
         }
 
         let fields
@@ -671,7 +671,7 @@ async function createMessageDiv(message) {
 
                 const fieldValue = document.createElement("p")
                 fieldValue.id = "fieldvalue"
-                fieldValue.innerText = field.value
+                fieldValue.innerHTML = await parseContent(field.value)
 
                 fieldDiv.replaceChildren(fieldName, fieldValue)
                 fields.appendChild(fieldDiv)
@@ -807,12 +807,6 @@ async function createMessageDiv(message) {
             file.replaceChildren(fileIcon, info, download)
             attachments.appendChild(file)
         }
-    })
-
-    msg.querySelectorAll("mention").forEach(async m => {
-        if (!m.id) return;
-        const user = await ipcRenderer.invoke("getUser", m.id)
-        m.addEventListener("click", async (e) => await openUserModalAtCursor(e, user))
     })
 
     const messagesDiv = document.querySelector("#chat #messages")
@@ -1049,7 +1043,8 @@ async function getUserModal(user) {
         aboutmeTitle.innerText = "ABOUT ME"
 
         const aboutmeText = document.createElement("p")
-        aboutmeText.innerText = (user.bot) ? aboutmeData : "Due to discord not allowing bots to obtain user about me information, this is not possible to add."
+        if (user.bot) aboutmeText.innerHTML = await parseContent(aboutmeData)
+        else aboutmeText.innerText = "Due to discord not allowing bots to obtain user about me information, this is not possible to add."
 
         aboutme.appendChild(aboutmeTitle)
         aboutme.appendChild(aboutmeText)

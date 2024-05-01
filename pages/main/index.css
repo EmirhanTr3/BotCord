@@ -545,12 +545,12 @@ img {
     color: #ff5959;
 }
 
-#chat #messages #message #msg a {
+a {
     color: #00a8fc;
     text-decoration-line: none;
 }
 
-#chat #messages #message #msg a:hover {
+a:hover {
     text-decoration-line: underline;
 }
 
@@ -560,24 +560,34 @@ img {
     margin-right: 2px;
 }
 
-#chat #messages #message #msg mention {
+#chat #messages #message #msg #msgcontent {
+    width: 100%;
+}
+
+mention {
     background: #5865F24D;
     border-radius: 3px;
     cursor: pointer;
     padding: 0px 3px;
 }
 
-#chat #messages #message #msg mention:hover {
+mention:hover {
     background: #5865F2;
     color: #ffffff;
 }
 
-#chat #messages #message #msg code {
+codeblock {
     background: #191919;
     display: block;
     padding: 10px;
+    margin-top: 5px;
     border-radius: 5px;
-    width: fit-content;
+}
+
+inlinecode {
+    background: #191919;
+    padding: 3px 5px;
+    border-radius: 4px;
 }
 
 #chat #messages #message #msg img, #chat #messages #message #msg video {
@@ -669,6 +679,15 @@ img {
     flex-direction: column;
     gap: 10px;
     flex: 1;
+}
+
+#chat #messages #message #msg #embed inlinecode {
+    background: #101010;
+    padding: 0px 4px;
+}
+
+#chat #messages #message #msg #embed codeblock {
+    background: #101010;
 }
 
 #chat #messages #message #msg #embed #title {

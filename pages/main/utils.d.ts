@@ -31,3 +31,5 @@ declare function getBotBadge(user: any): Element | undefined
 declare function appendBotBadge(div: Element, user: any): void
 
 declare function getStatusData(status: string): { name: string, icon: string }
+
+declare function parseContent(content: string): Promise<string>
