@@ -593,7 +593,7 @@ async function createMessageDiv(message) {
     if (message.content) {
         const msgcontent = document.createElement("p")
         msgcontent.id = "msgcontent"
-        msgcontent.innerHTML = await parseContent(message.content)
+        msgcontent.innerHTML = twemoji.parse(await parseContent(message.content))
         msg.appendChild(msgcontent)
     }
 

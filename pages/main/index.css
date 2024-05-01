@@ -590,6 +590,18 @@ inlinecode {
     border-radius: 4px;
 }
 
+twemoji {
+    display: inline-block;
+    width: 20px;
+    height: 15px;
+    position: relative;
+}
+
+twemoji img, .emoji {
+    width: 20px;
+    height: 20px;
+}
+
 #chat #messages #message #msg img, #chat #messages #message #msg video {
     max-width: 300px;
     display: block;

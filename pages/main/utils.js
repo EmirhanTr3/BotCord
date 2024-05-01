@@ -318,8 +318,15 @@ function createHoverText(parent, text) {
 }
 
 function getBotBadge(user) {
+    const colorPresets = {
+        Rainbow: "linear-gradient(90deg, rgba(255,0,0,1) 0%, rgba(255,145,0,1) 8%, rgba(244,211,0,1) 16%, rgba(236,255,0,1) 23%, rgba(69,241,0,1) 31%, rgba(0,230,38,1) 40%, rgba(8,223,87,1) 48%, rgba(15,216,136,1) 56%, rgba(22,209,166,1) 64%, rgba(30,202,200,1) 72%, rgba(37,176,195,1) 82%, rgba(45,142,188,1) 92%, rgba(45,89,188,1) 99%)",
+        Test: "linear-gradient(90deg, rgba(238,174,174,1) 0%, rgba(194,226,178,1) 25%, rgba(180,208,216,1) 50%, rgba(225,164,222,1) 75%, rgba(148,233,226,1) 100%, rgba(233,148,148,1) 100%)"
+    }
+
     const overrides = {
-        "249668571297218560": {name: "q man", color: "#719FC9", verified: true}
+        "249668571297218560": {name: "q man", color: colorPresets.Rainbow /*"#719FC9"*/, verified: true},
+        "386491431583350784": {name: "Cousit mispar 1 yoter mi Mustafa Sarıgül yapılan", color: "#db1414", verified: true},
+        "410781931727486976": {name: "smth long so i can see", color: colorPresets.Test, textColor: "#000000", verified: true}
     }
 
     if (!user.bot && !overrides[user.id]) return;
@@ -341,6 +348,8 @@ function getBotBadge(user) {
     if (overrides[user.id]) {
         name.innerText = overrides[user.id].name
         if (overrides[user.id].color) botBadge.style.backgroundColor = overrides[user.id].color
+        if (overrides[user.id].color && !overrides[user.id].color.startsWith("#")) botBadge.style.background = overrides[user.id].color
+        if (overrides[user.id].textColor) name.style.color = overrides[user.id].textColor
     }
 
     if (
@@ -355,6 +364,8 @@ function getBotBadge(user) {
         checkmark.innerHTML = "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"16\" height=\"16\" fill=\"#ffffff\" viewBox=\"0 0 24 24\"><path d=\"M18.7 7.3a1 1 0 0 1 0 1.4l-8 8a1 1 0 0 1-1.4 0l-4-4a1 1 0 1 1 1.4-1.4l3.3 3.29 7.3-7.3a1 1 0 0 1 1.4 0Z\"></path></svg>"
         botBadge.appendChild(checkmark)
         createHoverText(checkmark, `Verified ${name.innerText.split(" ").map(n => n.substring(0,1).toUpperCase() + n.substring(1).toLowerCase()).join(" ")}`)
+        
+        if (overrides[user.id]?.textColor) checkmark.getElementsByTagName("svg").item(0).style.fill = overrides[user.id].textColor
     }
     
     botBadge.appendChild(name)
