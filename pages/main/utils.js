@@ -1,5 +1,5 @@
 const { IntlMessageFormat } = require("intl-messageformat");
-const { parse } = require("discord-markdown-parser");
+const { parse, rules } = require("discord-markdown-parser");
 const DOMPurify = require("dompurify");
 
 /**
@@ -390,6 +390,17 @@ function getStatusData(status) {
 
 async function eval(x) {
     return ipcRenderer.invoke("eval", x)
+}
+
+rules.twemoji.parse = (capture) => {
+    return {
+        content: capture[0]
+    }
+}
+rules.emoji.parse = (capture) => {
+    return {
+        content: capture[0]
+    }
 }
 
 function getTypeHTML(t, d) {
