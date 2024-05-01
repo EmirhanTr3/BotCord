@@ -811,12 +811,13 @@ async function createMessageDiv(message) {
 
     const messagesDiv = document.querySelector("#chat #messages")
     const lastMessage = messagesDiv.lastElementChild
+    const lastMessageUsername = lastMessage?.querySelector("#messagecontent")?.querySelector("#messagecontent #content div #username")?.innerText
 
     let isAnotherMessage = false
     if (!extradata &&
         lastMessage &&
         lastMessage.getAttribute("userid") == message.author.id &&
-        ((lastMessage.querySelector("#messagecontent").querySelector("#messagecontent #content div #username")?.innerText ?? message.author.username) == message.author.username)
+        (lastMessageUsername ? (lastMessageUsername == message.authorDisplayName) : true)
     ) {
         messageDiv.classList.add("anothermessage")
         lastMessage.classList.add("hasothermessages")
