@@ -393,7 +393,7 @@ async function eval(x) {
 }
 
 function getTypeHTML(t, d) {
-    console.log("td:", t, d)
+    // console.log("td:", t, d)
     if (!t) return {a: "", b: ""};
     switch(t) {
         case "strong": return {a: "<b>", b: "</b>"}
@@ -415,15 +415,15 @@ async function parseContent(content) {
     let r = ""
     for (const p of arr) {
         let c;
-        console.log("p:", p)
+        // console.log("p:", p)
         if (typeof p.content == "object") {
             c = await parseContent(p.content)
-            console.log(1, c)
+            // console.log(1, c)
         } else {
-            console.log(2, p)
+            // console.log(2, p)
             c = p
         }
-        console.log("c:", c)
+        // console.log("c:", c)
 
         let data;
         switch(c.type) {
@@ -454,10 +454,10 @@ async function parseContent(content) {
             type = getTypeHTML(c.type, data)
         }
         
-        console.log("type: ", type)
-        console.log(`${type.a + DOMPurify.sanitize(c.content ?? c) + type.b}`)
+        // console.log("type: ", type)
+        // console.log(`${type.a + DOMPurify.sanitize(c.content ?? c) + type.b}`)
         r = r + type.a + DOMPurify.sanitize(c.content ?? c) + type.b
     }
-    console.log("r:", r)
+    // console.log("r:", r)
     return r
 }
