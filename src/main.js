@@ -337,13 +337,14 @@ ipcMain.on("message", async (_, message, reply) => {
 /** @param {Message} message */
 async function makeMessage(message) {
     // const time = new Date()
+    if (!message) return;
     message.authorDisplayColor = (message.member?.displayHexColor !== "#000000") ? message.member?.displayHexColor ?? "#ffffff" : "#ffffff",
     message.avatar = message.author.displayAvatarURL()
     message.authorName = (message.author.discriminator !== "0") ? `${message.author.username}#${message.author.discriminator}`: message.author.username
     message.authorDisplayName = message.member?.displayName || message.author.displayName
     message.time = moment(message.createdAt).calendar()
     message.modifiedMember = await constructMember(message.member || message.author)
-    if (message.reference) message.referenceMessage = await makeMessage(await message.fetchReference())
+    if (message.reference) message.referenceMessage = await makeMessage(await message.fetchReference().catch(e => undefined))
     // console.log(`built message in ${new Date() - time}ms`)
     return message
 }
