@@ -587,15 +587,85 @@ async function createMessageDiv(message) {
     time.id = "time"
     time.innerText = message.time
 
-    const msg = document.createElement("p")
+    const msg = document.createElement("div")
     msg.id = "msg"
 
-    if (message.content) {
+    await buildMessage(msg, message)
+
+    const messagesDiv = document.querySelector("#chat #messages")
+    const lastMessage = messagesDiv.lastElementChild
+    const lastMessageUsername = lastMessage?.querySelector("#messagecontent")?.querySelector("#messagecontent #content div #username")?.innerText
+
+    let isAnotherMessage = false
+    if (!extradata &&
+        lastMessage &&
+        lastMessage.getAttribute("userid") == message.author.id &&
+        (lastMessageUsername ? (lastMessageUsername == message.authorDisplayName) : true)
+    ) {
+        messageDiv.classList.add("anothermessage")
+        lastMessage.classList.add("hasothermessages")
+        isAnotherMessage = true
+    }
+
+    if (extradata) messageDiv.appendChild(extradata)
+    if (!isAnotherMessage) {
+        messageContent.appendChild(pfp)
+        usernameandtime.appendChild(username)
+        appendBotBadge(usernameandtime, message.modifiedMember)
+        usernameandtime.appendChild(time)
+        content.appendChild(usernameandtime)
+    }
+    content.appendChild(msg)
+    messageContent.appendChild(content)
+    messageDiv.appendChild(messageContent)
+
+    messageDiv.addEventListener("contextmenu", (e) => openContextMenu(e,
+        {
+            text: "Reply",
+            callback: (e) => {
+                showReplyDiv(message)
+                e.close()
+            }
+        },
+        {
+            text: "Copy Text",
+            callback: (e) => {
+                navigator.clipboard.writeText(message.content)
+                e.close()
+            }
+        },
+        {type: "seperator"},
+        {
+            text: "Copy Message ID",
+            callback: (e) => {
+                navigator.clipboard.writeText(message.id)
+                e.close()
+            }
+        }
+    ))
+
+    return messageDiv
+}
+
+async function buildMessage(msg, message) {
+    if (message.content || message.editedTimestamp) {
         const msgcontent = document.createElement("p")
         msgcontent.id = "msgcontent"
-        msgcontent.innerHTML = twemoji.parse(await parseContent(message.content))
+
+        if (message.content) {
+            msgcontent.innerHTML = twemoji.parse(await parseContent(message.content))
+        }
+        
+        if (message.editedTimestamp) {
+            const edited = document.createElement("p")
+            edited.id = "edited"
+            edited.innerText = "(edited)"
+            msgcontent.appendChild(edited)
+        }
+
         msg.appendChild(msgcontent)
     }
+
 
     let embeds;
     message.embeds.forEach(async embed => {
@@ -808,60 +878,6 @@ async function createMessageDiv(message) {
             attachments.appendChild(file)
         }
     })
-
-    const messagesDiv = document.querySelector("#chat #messages")
-    const lastMessage = messagesDiv.lastElementChild
-    const lastMessageUsername = lastMessage?.querySelector("#messagecontent")?.querySelector("#messagecontent #content div #username")?.innerText
-
-    let isAnotherMessage = false
-    if (!extradata &&
-        lastMessage &&
-        lastMessage.getAttribute("userid") == message.author.id &&
-        (lastMessageUsername ? (lastMessageUsername == message.authorDisplayName) : true)
-    ) {
-        messageDiv.classList.add("anothermessage")
-        lastMessage.classList.add("hasothermessages")
-        isAnotherMessage = true
-    }
-
-    if (extradata) messageDiv.appendChild(extradata)
-    if (!isAnotherMessage) {
-        messageContent.appendChild(pfp)
-        usernameandtime.appendChild(username)
-        appendBotBadge(usernameandtime, message.modifiedMember)
-        usernameandtime.appendChild(time)
-        content.appendChild(usernameandtime)
-    }
-    content.appendChild(msg)
-    messageContent.appendChild(content)
-    messageDiv.appendChild(messageContent)
-
-    messageDiv.addEventListener("contextmenu", (e) => openContextMenu(e,
-        {
-            text: "Reply",
-            callback: (e) => {
-                showReplyDiv(message)
-                e.close()
-            }
-        },
-        {
-            text: "Copy Text",
-            callback: (e) => {
-                navigator.clipboard.writeText(message.content)
-                e.close()
-            }
-        },
-        {type: "seperator"},
-        {
-            text: "Copy Message ID",
-            callback: (e) => {
-                navigator.clipboard.writeText(message.id)
-                e.close()
-            }
-        }
-    ))
-
-    return messageDiv
 }
 
 function appendMessage(messageDiv) {
@@ -901,16 +917,14 @@ ipcRenderer.on("messageDelete", (_, message) => {
     messageDiv.classList.add("deleted")
 })
 
-// ipcRenderer.on("messageUpdate", async (_, oldMessage, newMessage) => {
-//     console.log(`received messageUpdate from ${oldMessage.author.username}: ${oldMessage.content} -> ${newMessage.content}`)
-//     const messageDiv = document.querySelector(`#chat #messages #message.message-${oldMessage.id}`)
-//     if (!messageDiv) return;
-//     console.log(messageDiv.outerHTML)
-//     const newdiv = await createMessageDiv(newMessage)
-//     console.log(newdiv.outerHTML)
-//     messageDiv.outerHTML = newdiv.outerHTML
-//     console.log(messageDiv.outerHTML)
-// })
+ipcRenderer.on("messageUpdate", async (_, oldMessage, newMessage) => {
+    console.log(`received messageUpdate from ${oldMessage.author.username}: ${oldMessage.content} -> ${newMessage.content}`)
+    const messageDiv = document.querySelector(`#chat #messages #message.message-${oldMessage.id}`)
+    if (!messageDiv) return;
+    const msg = messageDiv.querySelector("#msg")
+    msg.replaceChildren()
+    await buildMessage(msg, newMessage)
+})
 
 function showReplyDiv(message) {
     if (document.getElementById("reply")) document.getElementById("reply").remove()

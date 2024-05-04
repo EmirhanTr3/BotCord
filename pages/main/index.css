@@ -564,6 +564,13 @@ a:hover {
     width: 100%;
 }
 
+#chat #messages #message #msg #msgcontent #edited {
+    font-size: 10px;
+    color: #9fa0a1;
+    position: relative;
+    left: 3px;
+}
+
 mention {
     background: #5865F24D;
     border-radius: 3px;
