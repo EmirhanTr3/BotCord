@@ -1,9 +1,12 @@
-import { app, BrowserWindow, globalShortcut } from "electron";
+import { app, BrowserWindow, globalShortcut, ipcMain } from "electron";
 import path from "path";
+import { getCurrentToken, setCurrentAccount } from "./accounts";
+import { BotCordClient } from "./bot";
 
 app.setName("BotCord")
 
 let mainWindow: BrowserWindow;
+
 const createWindow = () => {
     mainWindow = new BrowserWindow({
         width: 1000,
@@ -21,7 +24,7 @@ const createWindow = () => {
             preload: path.join(__dirname, '../preload/preload.js')
         },
     })
-
+    
     /** @ts-ignore */
     if (import.meta.env.DEV) {
         mainWindow.loadURL("http://localhost:5173")
@@ -83,10 +86,41 @@ app.on('browser-window-focus', function () {
         })
     })
 })
+
 app.on('browser-window-blur', function () {
     globalShortcuts.forEach(shortcut => {
         shortcut.keys.forEach(key => {
             globalShortcut.unregister(key)
         })
     })
+})
+
+
+let isLoggedIn: boolean = false
+let client: BotCordClient | undefined;
+
+ipcMain.on("login", (_, token) => {
+    login(token)
+})
+
+async function login(token?: string) {
+    token = token ?? getCurrentToken()!
+    mainWindow.webContents.send("navigate", "/")
+
+    client = await new BotCordClient().start(token).catch(e => {
+        mainWindow.webContents.send("error", "An error occured while logging into client.", e.message)
+        return undefined
+    })
+    if (!client) return;
+
+    setCurrentAccount(token)
+    isLoggedIn = true
+    mainWindow.webContents.send("login")
+}
+
+ipcMain.handle("getIsLoggedIn", async () => {
+    if (!isLoggedIn && getCurrentToken()) {
+        await login()
+    }
+    return isLoggedIn
 })
