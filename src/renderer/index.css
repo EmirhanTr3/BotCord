@@ -433,6 +433,7 @@ img {
 
 #chat #messages #message {
     margin-bottom: 10px;
+    display: flex;
 }
 
 #chat #messages #message.hasothermessages {
