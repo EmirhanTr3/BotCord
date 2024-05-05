@@ -1,14 +1,11 @@
 {
-  "productName": "BotCord",
   "name": "botcord",
   "version": "0.1.0-dev",
   "description": "A discord bot client",
-  "main": "src/main.js",
+  "main": "out/main/index.js",
   "scripts": {
-    "start": "electron .",
-    "build-mac": "electron-builder -m",
-    "build-win": "electron-builder -w",
-    "build-linux": "electron-builder -l"
+    "start": "electron-vite preview",
+    "dev": "electron-vite dev --watch"
   },
   "repository": {
     "type": "git",
@@ -28,40 +25,19 @@
     "discord.js": "^14.14.1",
     "dompurify": "^3.0.9",
     "intl-messageformat": "^10.5.11",
-    "moment": "^2.30.1"
+    "moment": "^2.30.1",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
   },
   "devDependencies": {
+    "@electron/rebuild": "^3.6.0",
+    "@types/react": "^18.3.1",
+    "@types/react-dom": "^18.3.0",
+    "@vitejs/plugin-react": "^4.2.1",
     "electron": "^28.1.4",
-    "electron-builder": "^24.13.1"
-  },
-  "build": {
-    "appId": "BotCord",
-    "productName": "BotCord",
-    "artifactName": "${productName}-${version}-${os}-${arch}.${ext}",
-    "copyright": "Copyright © 2024 @emirdev.xyz",
-    "mac": {
-      "category": "public.app-category.social-networking",
-      "target": [
-        "dmg"
-      ],
-      "icon": "./assets/icon.png"
-    },
-    "linux": {
-      "target": [
-        "AppImage"
-      ],
-      "icon": "./assets/icon.png"
-    },
-    "win": {
-      "target": [
-        {
-          "target": "portable",
-          "arch": [
-            "x64"
-          ]
-        }
-      ],
-      "icon": "./assets/icon.ico"
-    }
+    "electron-builder": "^24.13.1",
+    "electron-vite": "^2.2.0",
+    "typescript": "^5.4.5",
+    "vite": "^5.2.11"
   }
 }
