@@ -8,7 +8,7 @@ export const Route = createLazyFileRoute('/')({
 function Index() {
     return (
     <>
-        <Loading />
+        {/* <Loading /> */}
         <Sidebar />
         <Sidebar2 />
         <Chat />

@@ -1,3 +1,5 @@
-export default function PFP({src, height, width}: {src: string, height: number, width: number}) {
-    return <img id="pfp" height={height} width={width} src={src} />
-}
+import { SyntheticEvent, forwardRef } from "react";
+
+export default forwardRef<HTMLImageElement, { height: number, width: number, src: string, onClick?: (event: SyntheticEvent) => void}>((props, ref) => {
+    return <img ref={ref} id="pfp" {...props}/>
+})

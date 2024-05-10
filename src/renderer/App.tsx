@@ -1,8 +1,10 @@
 import { createRoot } from 'react-dom/client';
 import "./index.css"
-import { Navigate, RouterProvider, createRouter, useNavigate } from '@tanstack/react-router';
+import { RouterProvider, createRouter, } from '@tanstack/react-router';
 import { routeTree } from './routeTree.gen'
 import { StrictMode } from 'react';
+import { Member } from 'src/shared/types';
+import { useLocalStorage } from 'usehooks-ts';
 
 declare global {
     interface Window {
@@ -39,8 +41,9 @@ window.api.on("navigate", (_, route) => {
     })
 })
 
-window.api.on("login", () => {
+window.api.on("login", (e, user: Member) => {
     console.log("got login event")
+    window.localStorage.setItem("clientUser", JSON.stringify(user))
 })
 
 window.api.on("error", (_, title, description) => {

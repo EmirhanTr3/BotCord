@@ -2,8 +2,9 @@ import { app, BrowserWindow, globalShortcut, ipcMain } from "electron";
 import path from "path";
 import { getCurrentToken, setCurrentAccount } from "./accounts";
 import { BotCordClient } from "./bot";
-import { Collection, GuildMember, PresenceStatus, User, UserFlags } from "discord.js";
+import { Collection, GuildMember, User } from "discord.js";
 import moment from "moment";
+import { Member, MemberNone, BotCordUserFlags, Guild } from "src/shared/types";
 
 app.setName("BotCord")
 
@@ -99,7 +100,7 @@ app.on('browser-window-blur', function () {
 
 
 let isLoggedIn: boolean = false
-let client: BotCordClient | undefined;
+let client: BotCordClient;
 let currentGuild: string | undefined;
 let currentChannel: string | undefined
 
@@ -109,13 +110,15 @@ ipcMain.on("login", (_, token) => {
 })
 
 async function login(token?: string) {
-    token = token ?? getCurrentToken()!
+    token = token ?? getCurrentToken()
+    if (!token) return;
     
-    client = await new BotCordClient().start(token).catch(e => {
+    const lcclient = await new BotCordClient().start(token).catch(e => {
         mainWindow.webContents.send("error", "An error occured while logging into client.", e.message)
         return undefined
     })
-    if (!client) return;
+    if (!lcclient) return;
+    client = lcclient
     
     setCurrentAccount(token)
     isLoggedIn = true
@@ -131,40 +134,6 @@ ipcMain.handle("getIsLoggedIn", async () => {
     }
     return isLoggedIn
 })
-
-type BotCordUserFlags = keyof typeof UserFlags | "BotCordStaff" | "Nitro"
-
-type Member = {
-    id: string,
-    bot: boolean,
-    webhook?: boolean,
-    username: string,
-    discriminator: string,
-    name: string,
-    displayName: string,
-    displayColor: string,
-    avatar: string,
-    badges: BotCordUserFlags[],
-    status: PresenceStatus,
-    createdAt: string,
-    lastFetched: number,
-
-    highestRole?: {
-        name: string,
-        id: string,
-        hoist: boolean
-    },
-    hoistRole?: {
-        name?: string,
-        id?: string
-    },
-    isOwner?: boolean,
-    joinedAt?: string
-}
-
-type MemberNone = {
-    lastFetched: number
-}
 
 const MemberCache = new Collection<string, Member | MemberNone>()
 
@@ -251,3 +220,14 @@ async function constructMember(input: GuildMember|User|string) : Promise<Member 
     MemberCache.set(cacheId, data)
     return data
 }
+
+ipcMain.handle("getGuilds", async () => {
+    const guilds = await client.guilds.fetch()
+    return guilds.map(guild => 
+        ({
+            id: guild.id,
+            name: guild.name,
+            icon: guild.iconURL({size: 128})
+        }) as Guild
+    )
+})
