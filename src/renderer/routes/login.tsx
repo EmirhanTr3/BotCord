@@ -1,8 +1,8 @@
-import { createLazyFileRoute } from '@tanstack/react-router'
+import { createFileRoute } from '@tanstack/react-router'
 import { SyntheticEvent, useRef } from 'react'
 
-export const Route = createLazyFileRoute('/login')({
-    component: Index
+export const Route = createFileRoute('/login')({
+    component: Login
 })
 
 function LoginForm() {
@@ -21,7 +21,7 @@ function LoginForm() {
     </form>
 }
 
-function Index() {
+function Login() {
     return (
     <>
         <div id="loginpage">

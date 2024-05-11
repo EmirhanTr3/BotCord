@@ -1,6 +1,7 @@
-import { SyntheticEvent, useEffect, useRef, useState } from "react"
+import { SyntheticEvent, useEffect, useState } from "react"
 import { Guild } from "src/shared/types"
 import PFP from "./pfp"
+import { getAsset } from "../../shared/utils"
 
 function GuildC({ guild }: { guild: Guild }) {
 
@@ -25,10 +26,10 @@ export default function Sidebar() {
     }, [])
 
     return <div id="sidebar">
-        <img id="logo" height="48px" width="48px" src="../../assets/icon.png" />
+        <img id="logo" height="48px" width="48px" src={getAsset("icon.png")} />
         <div id="guildSeparator"></div>
         <div id="guildList">
-            {guilds.map(guild => <GuildC guild={guild} />)}
+            {guilds.map(guild => <GuildC key={guild.id} guild={guild} />)}
         </div>
     </div>
 }

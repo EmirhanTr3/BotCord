@@ -1,18 +1,30 @@
-import { Member } from "src/shared/types"
+import { Guild, Member } from "src/shared/types"
 import PFP from "./pfp"
 import { useLocalStorage } from "usehooks-ts"
+import Channel from "./channel"
+import Category from "./category"
 
-export default function Sidebar2() {
+export default function Sidebar2({ guild }: { guild: Guild }) {
     const [clientUser] = useLocalStorage<Member>("clientUser", JSON.parse(localStorage.getItem("clientUser")!))
 
     return <div id="sidebar2">
         <div id="guild">
-            <h1 id="guildname">server name</h1>
+            <h1 id="guildname">{guild.name}</h1>
             <div id="channels">
-            <div id="channel" className="hover"><img id="icon" height="20px" width="20px" src="../../assets/channel/text.png" /><p id="channelname">channel-name</p></div>
+                {guild.channels.filter(c => c.type !== 4 && !c.parent).map(channel => {
+                    return <Channel key={channel.id} channel={channel}/>
+                })}
+
+                {guild.channels.filter(c => c.type == 4).map(channel => {
+                    return <Category key={channel.id} category={channel}>
+                        {guild.channels.filter(c => c.parent?.id == channel.id).map(c => {
+                            return <Channel key={c.id} channel={c}/>
+                        })}
+                    </Category>
+                })}
+            </div>
         </div>
-        </div>
-            <div id="user" className="hover">
+        <div id="user" className="hover">
             <PFP height={24} width={24} src={clientUser.avatar} /><p id="username">{clientUser.name}</p>
             </div>
             <div id="settingsbutton" className="hover">

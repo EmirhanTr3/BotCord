@@ -1,23 +1,16 @@
-import { PFP } from "."
+import { Message } from "src/shared/types"
+import { BotBadge, PFP } from "."
 
-type Message = {
-    username: string,
-    botbadge?: any,
-    pfp: string,
-    time: string,
-    msg: string
-}
-
-export default function Message({username, botbadge, pfp, time, msg}: Message) {
+export default function MessageC({ message }: { message: Message }) {
     return <div id="message" className="hover">
-        <PFP src={pfp} height={42} width={42}/>
+        <PFP src={message.author.avatar} height={42} width={42}/>
         <div id="content">
             <div>
-                <p id="username">{username}</p>
-                {botbadge}
-                <p id="time">{time}</p>
+                <p id="username" style={{color: message.author.displayColor}}>{message.author.displayName}</p>
+                {(message.author.bot || message.author.webhook) && <BotBadge member={message.author} />}
+                <p id="time">{message.createdAt}</p>
             </div>
-            <p id="msg">{msg}</p>
+            <p id="msg">{message.content}</p>
         </div>
     </div>
 }
