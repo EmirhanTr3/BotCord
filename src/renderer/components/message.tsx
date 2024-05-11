@@ -11,9 +11,9 @@ export default function MessageC({ message }: { message: Message }) {
                     {(message.author.bot || message.author.webhook) && <BotBadge member={message.author} />}
                     <p id="time">{message.createdAt}</p>
                 </div>
-                <p id="msg">
+                <div id="msg">
                     <p id="msgcontent">{message.content}</p>
-                </p>
+                </div>
             </div>
         </div>
     </div>
