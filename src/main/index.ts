@@ -11,9 +11,8 @@ import {
     Role as DJSRole,
     User,
     Message as DJSMessage,
-    TextBasedChannel,
-    DMChannel,
-    TextChannel
+    TextChannel,
+    MessageFlags
 } from "discord.js";
 import moment from "moment";
 import { Member, MemberNone, BotCordUserFlags, Guild, Channel, Role, Message } from "src/shared/types";
@@ -330,7 +329,7 @@ async function constructMessage(input: DJSMessage | string, channel: TextChannel
         author: await constructMember(message.member ?? message.author, channel.guild) as Member,
         embeds: message.embeds,
         createdAt: moment(message.createdTimestamp).calendar(),
-        reference: (message.reference) ? await constructMessage(await message.fetchReference(), channel) as Message : undefined,
+        reference: (message.reference && !message.flags.has(MessageFlags.IsCrosspost)) ? await constructMessage(await message.fetchReference(), channel) : undefined,
         attachments: message.attachments
     }
 
