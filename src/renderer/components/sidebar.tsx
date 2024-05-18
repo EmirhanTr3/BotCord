@@ -2,15 +2,10 @@ import { SyntheticEvent, useEffect, useState } from "react"
 import { Guild } from "src/shared/types"
 import PFP from "./pfp"
 import { getAsset } from "../../shared/utils"
+import { Link } from "@tanstack/react-router"
 
 function GuildC({ guild }: { guild: Guild }) {
-
-    function onClick(e: SyntheticEvent) {
-        e.preventDefault()
-        console.log(`clicked on guild ${guild.name} (${guild.id})`)
-    }
-
-    return <PFP height={48} width={48} src={guild.icon} onClick={onClick}/>
+    return <Link to={`/guild/${guild.id}`}><PFP height={48} width={48} src={guild.icon!}/></Link>
 }
 
 export default function Sidebar() {

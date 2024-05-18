@@ -4,7 +4,7 @@ import { Channel } from 'src/shared/types'
 
 export const Route = createFileRoute('/guild/$guildId/channel/$channelId')({
   loader: async ({ params }) => {
-    const channel = await window.api.invoke("getChannel", params.channelId) as Channel | undefined
+    const channel = await window.api.invoke("getChannel", params.channelId, params.guildId) as Channel | undefined
     if (!channel) 
         throw redirect({
             to: "/"

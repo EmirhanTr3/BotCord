@@ -18,7 +18,7 @@ export function ChatData({ channel }: { channel: Channel }) {
         }
 
         getMessages()
-    }, [])
+    }, [channel])
 
     return (
     <>
@@ -26,7 +26,19 @@ export function ChatData({ channel }: { channel: Channel }) {
             <img id="icon" height="20px" width="20px" src={icon} /><p>{channel.name}</p>
         </div>
         <div id="messages">
-            {messages.map(message => <MessageC key={message.id} message={message}/>)}
+            {messages.map((message, index) => {
+                let classList: string[] = [];
+
+                if (index != 0 && messages[index - 1].author.username == message.author.username) {
+                    classList.push("anothermessage")
+                }
+
+                if (index != (messages.length - 1) && messages[index + 1].author.username == message.author.username) {
+                    classList.push("hasothermessages")
+                }
+
+                return <MessageC key={message.id} message={message} extraClass={classList}/>
+            })}
         </div>
         <form>
             <input type="text" id="chatinput" placeholder="Send a message to channel" />

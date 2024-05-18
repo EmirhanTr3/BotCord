@@ -42,7 +42,8 @@ export type Channel = {
     id: string,
     name: string,
     type: number,
-    parent?: Channel
+    parent?: Channel,
+    guildId: string
 }
 
 export type Role = {
@@ -64,40 +65,3 @@ export type Message = {
     reference?: Message,
     attachments?: Collection<string, Attachment>
 }
-
-// export type Embed = {
-//     title?: string,
-//     description?: string,
-//     url?: string,
-//     timestamp?: string,
-//     color?: number,
-//     footer?: {
-//         text: string,
-//         icon_url?: string
-//     },
-//     image?: {
-//         url: string
-//     },
-//     thumbnail?: {
-//         url: string
-//     },
-//     author?: {
-//         name: string,
-//         url?: string,
-//         icon_url?: string
-//     },
-//     fields?: {
-//         name: string,
-//         value: string,
-//         inline?: boolean
-//     }[],
-// }
-
-// export type Attachment = {
-//     id: string,
-//     filename: string,
-//     description?: string,
-//     content_type?: string,
-//     size: number,
-//     url: string
-// }

@@ -11,7 +11,9 @@ import {
     Role as DJSRole,
     User,
     Message as DJSMessage,
-    TextBasedChannel
+    TextBasedChannel,
+    DMChannel,
+    TextChannel
 } from "discord.js";
 import moment from "moment";
 import { Member, MemberNone, BotCordUserFlags, Guild, Channel, Role, Message } from "src/shared/types";
@@ -111,8 +113,8 @@ app.on('browser-window-blur', function () {
 
 let isLoggedIn: boolean = false
 let client: BotCordClient;
-let currentGuild: string | undefined;
-let currentChannel: string | undefined
+// let currentGuild: string | undefined;
+// let currentChannel: string | undefined
 
 ipcMain.on("login", (_, token) => {
     console.log("got login")
@@ -132,8 +134,8 @@ async function login(token?: string) {
     
     setCurrentAccount(token)
     isLoggedIn = true
-    if (!currentGuild) currentGuild = (await client.guilds.fetch()).first()?.id!
-    if (!currentChannel) currentChannel = (await (await client.guilds.fetch(currentGuild)).channels.fetch()).filter(c => c && c.isTextBased()).first()?.id!
+    // if (!currentGuild) currentGuild = (await client.guilds.fetch()).first()?.id!
+    // if (!currentChannel) currentChannel = (await (await client.guilds.fetch(currentGuild)).channels.fetch()).filter(c => c && c.isTextBased()).first()?.id!
     mainWindow.webContents.send("navigate", "/")
     mainWindow.webContents.send("login", (await constructMember(client.user!)))
 }
@@ -147,9 +149,15 @@ ipcMain.handle("getIsLoggedIn", async () => {
 
 const MemberCache = new Collection<string, Member | MemberNone>()
 
-async function constructMember(input: GuildMember | User | string): Promise<Member | MemberNone | undefined> {
+async function constructMember(input: GuildMember | User | string, guildInput?: DJSGuild | string): Promise<Member | MemberNone | undefined> {
     // const startedLoading = new Date()
     const id = typeof input == "string" ? input : input.id
+    const guild = guildInput ? 
+        (
+            guildInput instanceof DJSGuild ? guildInput :
+            await client.guilds.fetch(guildInput!).catch(e => undefined)
+        ) :
+        undefined
 
     // console.log(input)
     if (input && input instanceof User && input.bot && input.discriminator == "0000") {
@@ -170,14 +178,13 @@ async function constructMember(input: GuildMember | User | string): Promise<Memb
         } as Member
     }
 
-    const cacheId = `${currentGuild}.${id}`
+    const cacheId = `${guild}.${id}`
     if (MemberCache.has(cacheId) && (new Date().getTime() - (MemberCache.get(cacheId)?.lastFetched ?? 0)) < 20000) {
         // console.log(`tried to get ${cacheId} but it was already cached`)
         return MemberCache.get(cacheId)
     }
 
-    const guild = await client!.guilds.fetch(currentGuild!)
-    const member = (input instanceof GuildMember) ? input : await guild.members.fetch(id).catch(() => undefined)
+    const member = (input instanceof GuildMember) ? input : await guild?.members.fetch(id).catch(() => undefined)
     const user = member ? member.user :
         (input instanceof User) ? input :
         await client?.users.fetch(id).catch(() => undefined)
@@ -193,7 +200,7 @@ async function constructMember(input: GuildMember | User | string): Promise<Memb
         return none
     }
     // console.log("passed user check")
-    let badges: BotCordUserFlags[] = user.flags!.toArray()
+    let badges: BotCordUserFlags[] = user.flags ? user.flags.toArray() : []
     if (["410781931727486976", "1197624693184802988"].includes(user.id)) badges = ["BotCordStaff"].concat(badges) as BotCordUserFlags[]
     if (!user.bot && user.displayAvatarURL().endsWith(".gif")) badges.push("Nitro")
 
@@ -212,9 +219,9 @@ async function constructMember(input: GuildMember | User | string): Promise<Memb
         lastFetched: new Date().getTime()
     }
 
-    if (member) {
-        data.highestRole = await constructRole(member.roles.highest)
-        if (member.roles.hoist) data.hoistRole = await constructRole(member.roles.hoist)
+    if (member && guild) {
+        data.highestRole = await constructRole(member.roles.highest, guild)
+        if (member.roles.hoist) data.hoistRole = await constructRole(member.roles.hoist, guild)
         data.isOwner = guild.ownerId == user.id,
         data.joinedAt = moment(member.joinedAt).format("D MMM YYYY")
     }
@@ -250,17 +257,17 @@ async function constructGuild(input: DJSGuild | OAuth2Guild | string, force: boo
     const roles: Role[] = []
 
     for (const [_, channel] of (await guild.channels.fetch()).sort((a, b) => a!.rawPosition - b!.rawPosition)) {
-        const cchannel = await constructChannel(channel!)
+        const cchannel = await constructChannel(channel!, guild)
         if (cchannel) channels.push(cchannel)
     }
 
     for (const [_, member] of await guild.members.fetch()) {
-        const mmember = await constructMember(member)
+        const mmember = await constructMember(member, guild)
         if (mmember) members.push(mmember as Member)
     }
 
     for (const [_, role] of (await guild.roles.fetch()).sort((a, b) => b.position - a.position)) {
-        const rrole = await constructRole(role)
+        const rrole = await constructRole(role, guild)
         if (rrole) roles.push(rrole)
     }
 
@@ -271,14 +278,15 @@ async function constructGuild(input: DJSGuild | OAuth2Guild | string, force: boo
         channels: channels,
         members: members,
         roles: roles,
-        everyone: await constructRole(guild.roles.everyone)
+        everyone: await constructRole(guild.roles.everyone, guild)
     }
 
     return data
 }
 
-async function constructChannel(input: NonThreadGuildBasedChannel | string): Promise<Channel | undefined> {
-    const guild = await client.guilds.fetch(currentGuild!)
+async function constructChannel(input: NonThreadGuildBasedChannel | string, guildInput: DJSGuild | string): Promise<Channel | undefined> {
+    const guild = guildInput instanceof DJSGuild ? guildInput : await client.guilds.fetch(guildInput!).catch(e => undefined)
+    if (!guild) return;
     const channel = (!(typeof input == "string")) ? input : await guild.channels.fetch(input).catch(e => undefined)
     if (!channel) return;
 
@@ -286,14 +294,16 @@ async function constructChannel(input: NonThreadGuildBasedChannel | string): Pro
         id: channel.id,
         name: channel.name,
         type: channel.type,
-        parent: channel.parent ? await constructChannel(channel.parent) : undefined
+        parent: channel.parent ? await constructChannel(channel.parent, guild) : undefined,
+        guildId: guild.id
     }
 
     return data
 }
 
-async function constructRole(input: DJSRole | string): Promise<Role | undefined> {
-    const guild = await client.guilds.fetch(currentGuild!)
+async function constructRole(input: DJSRole | string, guildInput: DJSGuild): Promise<Role | undefined> {
+    const guild = guildInput instanceof DJSGuild ? guildInput : await client.guilds.fetch(guildInput!).catch(e => undefined)
+    if (!guild) return;
     const role = (input instanceof DJSRole) ? input : await guild.roles.fetch(input).catch(e => undefined)
     if (!role) return;
 
@@ -310,19 +320,17 @@ async function constructRole(input: DJSRole | string): Promise<Role | undefined>
     return data
 }
 
-async function constructMessage(input: DJSMessage | string, channel?: TextBasedChannel) : Promise<Message | undefined> {
-    const message = (input instanceof DJSMessage) ? input :
-            channel ? await channel.messages.fetch(input).catch(e => undefined) :
-            await (await client.channels.fetch(currentChannel!) as TextBasedChannel).messages.fetch(input).catch(e => undefined)
+async function constructMessage(input: DJSMessage | string, channel: TextChannel) : Promise<Message | undefined> {
+    const message = (input instanceof DJSMessage) ? input : await channel.messages.fetch(input).catch(e => undefined)
     if (!message) return;
 
     const data: Message = {
         id: message.id,
         content: message.content,
-        author: await constructMember(message.member!) as Member,
+        author: await constructMember(message.member ?? message.author, channel.guild) as Member,
         embeds: message.embeds,
         createdAt: moment(message.createdTimestamp).calendar(),
-        reference: (message.reference) ? await constructMessage(await message.fetchReference()) as Message : undefined,
+        reference: (message.reference) ? await constructMessage(await message.fetchReference(), channel) as Message : undefined,
         attachments: message.attachments
     }
 
@@ -344,12 +352,12 @@ ipcMain.handle("getGuild", async (e, id) => {
     return await constructGuild(id, true)
 })
 
-ipcMain.handle("getChannel", async (e, id) => {
-    return await constructChannel(id)
+ipcMain.handle("getChannel", async (e, id, guild) => {
+    return await constructChannel(id, guild)
 })
 
 ipcMain.handle("getLastMessages", async (e, cid, amount) => {
-    const channel = await client.channels.fetch(cid) as TextBasedChannel
+    const channel = await client.channels.fetch(cid) as TextChannel
     const messages = await channel.messages.fetch({limit: amount})
     const list: Message[] = []
 
@@ -358,4 +366,8 @@ ipcMain.handle("getLastMessages", async (e, cid, amount) => {
     }
 
     return list.reverse()
+})
+
+ipcMain.handle("eval", async (e, code) => {
+    return await eval(code)
 })
