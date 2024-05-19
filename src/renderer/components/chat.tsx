@@ -22,28 +22,8 @@ export function ChatData({ channel }: { channel: Channel }) {
     }, [channel])
 
 
-    //emir i dont know how to implement your shit so i jsut give you example
+    window.api.on("messageCreate", (e, message: Message) => setMessages([...messages, message]))
 
-    //in ur backend u do this
-    /**
-     * @example bot events handler
-     * client.on("messageCreate", (message) => socket.emit("messageCreate", message))
-     * 
-     */
-
-    //and then here you do this
-
-    const socket: {
-        on: (
-            event: string,
-            handler: (...args: any) => any
-        ) => any
-    } | any = () => { return  };
-    const [MessageList, setMessageList] = useState<string[]>([])
-
-    socket.on("messageCreate", (message: string) => setMessageList([...MessageList, message]))
-
-    //and then you render MessageList like you did
     return (
     <>
         <div id="channelInfo">
@@ -64,19 +44,9 @@ export function ChatData({ channel }: { channel: Channel }) {
                 return <MessageC key={message.id} message={message} extraClass={classList}/>
             })}
         </div>
-            <input
-                type="text"
-                id="chatinput"
-                placeholder="Send a message to channel"
-                ref={messageRef}
-                onKeyDown={(e) => {
-                    if (e.key === 'Enter') {
-                        e.preventDefault()
-                        console.log(messageRef.current?.value)
-                        window.api.invoke('SendMessage', messageRef.current?.value)
-                    }
-                }}
-            />
+            <form>
+                <input type="text" id="chatinput" placeholder="Send a message to channel" />
+            </form>
     </>
     )
 }

@@ -4,15 +4,10 @@ import { RouterProvider, createRouter, } from '@tanstack/react-router';
 import { routeTree } from './routeTree.gen'
 import { StrictMode } from 'react';
 import { Member } from 'src/shared/types';
-import { useLocalStorage } from 'usehooks-ts';
 
 declare global {
     interface Window {
-        api: {
-            send: (channel: string, ...args: any[]) => void,
-            on: (channel: string, listener: (event: Electron.IpcRendererEvent, ...args: any[]) => void) => Electron.IpcRenderer
-            invoke: (channel: string, ...args: any[]) => Promise<any>
-        }
+        api: Electron.IpcRenderer
     }
 }
 window.api = window.require("electron").ipcRenderer
