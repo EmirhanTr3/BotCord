@@ -19,7 +19,9 @@ export function ChatData({ channel }: { channel: Channel }) {
         async function getMessages() {
             const messages: Message[] = await window.api.invoke("getLastMessages", channel.id, 30)
             setMessages(messages)
-            messagesRef.current!.scrollTop = messagesRef.current!.scrollHeight - messagesRef.current!.clientHeight
+            setTimeout(() => {
+                messagesRef.current!.scrollTop = messagesRef.current!.scrollHeight - messagesRef.current!.clientHeight
+            }, 1)
         }
 
         getMessages()

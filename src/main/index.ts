@@ -38,6 +38,7 @@ const createWindow = () => {
             contextIsolation: false,
             preload: path.join(__dirname, '../preload/preload.js')
         },
+        frame: false
     })
     
     /** @ts-ignore */
@@ -109,6 +110,10 @@ app.on('browser-window-blur', function () {
         })
     })
 })
+
+ipcMain.on("minimize", () => mainWindow.minimize())
+ipcMain.on("maximize", () => mainWindow.isMaximized() ? mainWindow.unmaximize() : mainWindow.maximize())
+ipcMain.on("close", () => mainWindow.close())
 
 
 let isLoggedIn: boolean = false
