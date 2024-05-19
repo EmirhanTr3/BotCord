@@ -1,7 +1,7 @@
 import { Channel, Message } from "src/shared/types"
 import { Message as MessageC } from "."
 import { getChannelIcon } from "../../shared/utils"
-import { useState, useEffect, useRef, createRef } from "react"
+import { useState, useEffect, SyntheticEvent, useRef } from "react"
 
 export function Chat({ children }: { children?: JSX.Element }) {
     return <div id="chat">{children}</div>
@@ -10,26 +10,45 @@ export function Chat({ children }: { children?: JSX.Element }) {
 export function ChatData({ channel }: { channel: Channel }) {
     const icon = getChannelIcon(channel.type)
     const [messages, setMessages] = useState<Message[]>([])
-    const messageRef = createRef<HTMLInputElement>()
+    const messagesRef = useRef<HTMLDivElement>(null)
+    const messageRef = useRef<HTMLInputElement>(null)
 
     useEffect(() => {
+        window.api.removeAllListeners("messageCreate")
+
         async function getMessages() {
-            const messages: Message[] = await window.api.invoke("getLastMessages", channel.id, 20)
+            const messages: Message[] = await window.api.invoke("getLastMessages", channel.id, 30)
             setMessages(messages)
+            messagesRef.current!.scrollTop = messagesRef.current!.scrollHeight - messagesRef.current!.clientHeight
         }
 
         getMessages()
     }, [channel])
 
 
-    window.api.on("messageCreate", (e, message: Message) => setMessages([...messages, message]))
+    window.api.on("messageCreate", (e, message: Message) => {
+        if (message.channelId !== channel.id) return;
+        window.api.removeAllListeners("messageCreate")
+        console.log(`received messageCreate from ${message.author.username}: ${message.content}`)
+        setMessages([...messages, message])
+        setTimeout(() => {
+            messagesRef.current!.scrollTop = messagesRef.current!.scrollHeight - messagesRef.current!.clientHeight
+        }, 1);
+    })
+
+    function sendMessage(e: SyntheticEvent) {
+        e.preventDefault()
+        if (messageRef.current!.value.replaceAll(" ", "").length == 0) return;
+        window.api.send("sendMessage", channel, messageRef.current!.value)
+        messageRef.current!.value = ""
+    }
 
     return (
     <>
         <div id="channelInfo">
             <img id="icon" height="20px" width="20px" src={icon} /><p>{channel.name}</p>
         </div>
-        <div id="messages">
+        <div id="messages" ref={messagesRef}>
             {messages.map((message, index) => {
                 let classList: string[] = [];
 
@@ -44,9 +63,9 @@ export function ChatData({ channel }: { channel: Channel }) {
                 return <MessageC key={message.id} message={message} extraClass={classList}/>
             })}
         </div>
-            <form>
-                <input type="text" id="chatinput" placeholder="Send a message to channel" />
-            </form>
+        <form onSubmit={sendMessage}>
+            <input type="text" id="chatinput" placeholder="Send a message to channel" ref={messageRef}/>
+        </form>
     </>
     )
 }

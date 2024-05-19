@@ -141,7 +141,6 @@ async function login(token?: string) {
 
 export function createBotEvents() {
     client.on(Events.MessageCreate, async (message) => {
-        console.log(`sent message create for ${message.author.username}: ${message.content}`)
         mainWindow.webContents.send("messageCreate", await constructMessage(message, message.channel as TextChannel))
     })
 }
@@ -374,6 +373,13 @@ ipcMain.handle("getLastMessages", async (e, cid, amount) => {
 
     return list.reverse()
 })
+
+ipcMain.on("sendMessage", async (e, channel: Channel, message: string) => {
+    const channeld = await client.channels.fetch(channel.id).catch(e => undefined) as TextChannel | undefined
+    channeld!.send({content: message})
+})
+
+
 
 ipcMain.handle("eval", async (e, code) => {
     return await eval(code)
