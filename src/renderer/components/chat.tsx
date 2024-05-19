@@ -1,7 +1,7 @@
 import { Channel, Message } from "src/shared/types"
 import { Message as MessageC } from "."
 import { getChannelIcon } from "../../shared/utils"
-import { useState, useEffect } from "react"
+import { useState, useEffect, useRef, createRef } from "react"
 
 export function Chat({ children }: { children?: JSX.Element }) {
     return <div id="chat">{children}</div>
@@ -10,6 +10,7 @@ export function Chat({ children }: { children?: JSX.Element }) {
 export function ChatData({ channel }: { channel: Channel }) {
     const icon = getChannelIcon(channel.type)
     const [messages, setMessages] = useState<Message[]>([])
+    const messageRef = createRef<HTMLInputElement>()
 
     useEffect(() => {
         async function getMessages() {
@@ -40,9 +41,19 @@ export function ChatData({ channel }: { channel: Channel }) {
                 return <MessageC key={message.id} message={message} extraClass={classList}/>
             })}
         </div>
-        <form>
-            <input type="text" id="chatinput" placeholder="Send a message to channel" />
-        </form>
+            <input
+                type="text"
+                id="chatinput"
+                placeholder="Send a message to channel"
+                ref={messageRef}
+                onKeyDown={(e) => {
+                    if (e.key === 'Enter') {
+                        e.preventDefault()
+                        console.log(messageRef.current?.value)
+                        window.api.invoke('SendMessage', messageRef.current?.value)
+                    }
+                }}
+            />
     </>
     )
 }
