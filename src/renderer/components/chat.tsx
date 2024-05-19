@@ -21,6 +21,29 @@ export function ChatData({ channel }: { channel: Channel }) {
         getMessages()
     }, [channel])
 
+
+    //emir i dont know how to implement your shit so i jsut give you example
+
+    //in ur backend u do this
+    /**
+     * @example bot events handler
+     * client.on("messageCreate", (message) => socket.emit("messageCreate", message))
+     * 
+     */
+
+    //and then here you do this
+
+    const socket: {
+        on: (
+            event: string,
+            handler: (...args: any) => any
+        ) => any
+    } | any = () => { return  };
+    const [MessageList, setMessageList] = useState<string[]>([])
+
+    socket.on("messageCreate", (message: string) => setMessageList([...MessageList, message]))
+
+    //and then you render MessageList like you did
     return (
     <>
         <div id="channelInfo">
