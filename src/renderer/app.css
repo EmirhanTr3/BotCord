@@ -1,0 +1,61 @@
+#root {
+    flex-direction: column;
+}
+
+#appframe {
+    height: 23px;
+    display: flex;
+    align-items: center;
+    -webkit-app-region: drag;
+    -webkit-user-select: none;
+    user-select: none;
+    background: #292929;
+    justify-content: space-between;
+}
+
+#appframe p {
+    font-size: 12px;
+    margin: 0;
+    color: #dddddd;
+    font-family: system-ui;
+}
+
+#appframe div {
+    display: flex;
+    align-items: center;
+}
+
+#appframe #name {
+    position: relative;
+    left: 3px;
+    gap: 4px;
+}
+
+#appframe #buttons div {
+    height: 23px;
+    width: 23px;
+    display: flex;
+    justify-content: center;
+    -webkit-app-region: none;
+    cursor: pointer;
+    fill: currentColor;
+    padding: 0px 3px;
+}
+
+#appframe div div:hover {
+    background-color: #353535;
+    fill: #ffffff;
+}
+
+#appframe div div#close:hover {
+    background-color: #e74d4d;
+}
+
+
+
+#app {
+    display: flex;
+    flex-direction: row;
+    height: 0;
+    flex: 1;
+}
