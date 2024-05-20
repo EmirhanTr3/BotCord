@@ -5,7 +5,7 @@ import { getAsset } from "../../shared/utils"
 import { Link } from "@tanstack/react-router"
 
 function GuildC({ guild }: { guild: Guild }) {
-    return <Link to={`/guild/${guild.id}`}><PFP height={48} width={48} src={guild.icon!}/></Link>
+    return <Link to={`/guild/${guild.id}`} style={{height: "calc(48px + 0.4rem)"}}><PFP height={48} width={48} src={guild.icon!}/></Link>
 }
 
 export default function Sidebar() {

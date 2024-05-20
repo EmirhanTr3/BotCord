@@ -1,4 +1,4 @@
-import { app, BrowserWindow, globalShortcut, ipcMain } from "electron";
+import { app, BrowserWindow, globalShortcut, ipcMain, ipcRenderer } from "electron";
 import path from "path";
 import { getCurrentToken, setCurrentAccount } from "./accounts";
 import { BotCordClient } from "./bot";
@@ -12,7 +12,8 @@ import {
     User,
     Message as DJSMessage,
     TextChannel,
-    MessageFlags
+    MessageFlags,
+    Events
 } from "discord.js";
 import moment from "moment";
 import { Member, MemberNone, BotCordUserFlags, Guild, Channel, Role, Message } from "src/shared/types";
@@ -37,6 +38,7 @@ const createWindow = () => {
             contextIsolation: false,
             preload: path.join(__dirname, '../preload/preload.js')
         },
+        frame: false
     })
     
     /** @ts-ignore */
@@ -109,11 +111,13 @@ app.on('browser-window-blur', function () {
     })
 })
 
+ipcMain.on("minimize", () => mainWindow.minimize())
+ipcMain.on("maximize", () => mainWindow.isMaximized() ? mainWindow.unmaximize() : mainWindow.maximize())
+ipcMain.on("close", () => mainWindow.close())
+
 
 let isLoggedIn: boolean = false
 let client: BotCordClient;
-// let currentGuild: string | undefined;
-// let currentChannel: string | undefined
 
 ipcMain.on("login", (_, token) => {
     console.log("got login")
@@ -133,10 +137,17 @@ async function login(token?: string) {
     
     setCurrentAccount(token)
     isLoggedIn = true
+    createBotEvents()
     // if (!currentGuild) currentGuild = (await client.guilds.fetch()).first()?.id!
     // if (!currentChannel) currentChannel = (await (await client.guilds.fetch(currentGuild)).channels.fetch()).filter(c => c && c.isTextBased()).first()?.id!
     mainWindow.webContents.send("navigate", "/")
     mainWindow.webContents.send("login", (await constructMember(client.user!)))
+}
+
+export function createBotEvents() {
+    client.on(Events.MessageCreate, async (message) => {
+        mainWindow.webContents.send("messageCreate", await constructMessage(message, message.channel as TextChannel))
+    })
 }
 
 ipcMain.handle("getIsLoggedIn", async () => {
@@ -330,7 +341,8 @@ async function constructMessage(input: DJSMessage | string, channel: TextChannel
         embeds: message.embeds,
         createdAt: moment(message.createdTimestamp).calendar(),
         reference: (message.reference && !message.flags.has(MessageFlags.IsCrosspost)) ? await constructMessage(await message.fetchReference(), channel) : undefined,
-        attachments: message.attachments
+        attachments: message.attachments,
+        channelId: message.channelId
     }
 
     return data
@@ -366,6 +378,13 @@ ipcMain.handle("getLastMessages", async (e, cid, amount) => {
 
     return list.reverse()
 })
+
+ipcMain.on("sendMessage", async (e, channel: Channel, message: string) => {
+    const channeld = await client.channels.fetch(channel.id).catch(e => undefined) as TextChannel | undefined
+    channeld!.send({content: message})
+})
+
+
 
 ipcMain.handle("eval", async (e, code) => {
     return await eval(code)

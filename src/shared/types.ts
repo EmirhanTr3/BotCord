@@ -63,5 +63,6 @@ export type Message = {
     embeds?: Embed[],
     createdAt: string,
     reference?: Message,
-    attachments?: Collection<string, Attachment>
+    attachments?: Collection<string, Attachment>,
+    channelId: string
 }
