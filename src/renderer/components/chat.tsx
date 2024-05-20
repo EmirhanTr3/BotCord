@@ -1,11 +1,7 @@
 import { Channel, Message } from "src/shared/types"
 import { Message as MessageC } from "."
 import { getChannelIcon } from "../../shared/utils"
-<<<<<<< HEAD
-import { useState, useEffect, useRef, createRef } from "react"
-=======
 import { useState, useEffect, SyntheticEvent, useRef } from "react"
->>>>>>> 0a4629bbff4a988ccd9ec1015d484b837108e895
 
 export function Chat({ children }: { children?: JSX.Element }) {
     return <div id="chat">{children}</div>
@@ -14,12 +10,8 @@ export function Chat({ children }: { children?: JSX.Element }) {
 export function ChatData({ channel }: { channel: Channel }) {
     const icon = getChannelIcon(channel.type)
     const [messages, setMessages] = useState<Message[]>([])
-<<<<<<< HEAD
-    const messageRef = createRef<HTMLInputElement>()
-=======
     const messagesRef = useRef<HTMLDivElement>(null)
     const messageRef = useRef<HTMLInputElement>(null)
->>>>>>> 0a4629bbff4a988ccd9ec1015d484b837108e895
 
     useEffect(() => {
         window.api.removeAllListeners("messageCreate")
@@ -36,30 +28,6 @@ export function ChatData({ channel }: { channel: Channel }) {
     }, [channel])
 
 
-<<<<<<< HEAD
-    //emir i dont know how to implement your shit so i jsut give you example
-
-    //in ur backend u do this
-    /**
-     * @example bot events handler
-     * client.on("messageCreate", (message) => socket.emit("messageCreate", message))
-     * 
-     */
-
-    //and then here you do this
-
-    const socket: {
-        on: (
-            event: string,
-            handler: (...args: any) => any
-        ) => any
-    } | any = () => { return  };
-    const [MessageList, setMessageList] = useState<string[]>([])
-
-    socket.on("messageCreate", (message: string) => setMessageList([...MessageList, message]))
-
-    //and then you render MessageList like you did
-=======
     window.api.on("messageCreate", (e, message: Message) => {
         if (message.channelId !== channel.id) return;
         window.api.removeAllListeners("messageCreate")
@@ -77,7 +45,6 @@ export function ChatData({ channel }: { channel: Channel }) {
         messageRef.current!.value = ""
     }
 
->>>>>>> 0a4629bbff4a988ccd9ec1015d484b837108e895
     return (
     <>
         <div id="channelInfo">
@@ -98,25 +65,9 @@ export function ChatData({ channel }: { channel: Channel }) {
                 return <MessageC key={message.id} message={message} extraClass={classList}/>
             })}
         </div>
-<<<<<<< HEAD
-            <input
-                type="text"
-                id="chatinput"
-                placeholder="Send a message to channel"
-                ref={messageRef}
-                onKeyDown={(e) => {
-                    if (e.key === 'Enter') {
-                        e.preventDefault()
-                        console.log(messageRef.current?.value)
-                        window.api.invoke('SendMessage', messageRef.current?.value)
-                    }
-                }}
-            />
-=======
         <form onSubmit={sendMessage}>
             <input type="text" id="chatinput" placeholder="Send a message to channel" ref={messageRef}/>
         </form>
->>>>>>> 0a4629bbff4a988ccd9ec1015d484b837108e895
     </>
     )
 }
