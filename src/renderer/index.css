@@ -1317,3 +1317,15 @@ twemoji img, .emoji {
     background-color: #202020;
     margin: 2px 4px;
 }
+
+.hidden {
+    display: none;
+}
+
+#profile-modal {
+    position: absolute;
+    top: 10%;
+    left: 50%;
+
+    background-color: green;
+}
