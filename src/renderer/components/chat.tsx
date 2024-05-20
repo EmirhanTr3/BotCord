@@ -13,16 +13,18 @@ export function ChatData({ channel }: { channel: Channel }) {
     const messagesRef = useRef<HTMLDivElement>(null)
     const messageRef = useRef<HTMLInputElement>(null)
 
+
+    async function getMessages() {
+        const messages: Message[] = await window.api.invoke("getLastMessages", channel.id, 30)
+        setMessages(messages)
+        setTimeout(() => {
+            messagesRef.current!.scrollTop = messagesRef.current!.scrollHeight - messagesRef.current!.clientHeight
+        }, 1)
+        return messages
+    }
+
     useEffect(() => {
         window.api.removeAllListeners("messageCreate")
-
-        async function getMessages() {
-            const messages: Message[] = await window.api.invoke("getLastMessages", channel.id, 30)
-            setMessages(messages)
-            setTimeout(() => {
-                messagesRef.current!.scrollTop = messagesRef.current!.scrollHeight - messagesRef.current!.clientHeight
-            }, 1)
-        }
 
         getMessages()
     }, [channel])
