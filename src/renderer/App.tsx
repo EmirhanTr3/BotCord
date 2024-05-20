@@ -38,7 +38,6 @@ window.api.on("navigate", (_, route) => {
 })
 
 window.api.on("login", (e, user: Member) => {
-    console.log("got login event")
     window.localStorage.setItem("clientUser", JSON.stringify(user))
 })
 
