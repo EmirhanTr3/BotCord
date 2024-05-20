@@ -161,6 +161,7 @@ const MemberCache = new Collection<string, Member | MemberNone>()
 
 async function constructMember(input: GuildMember | User | string, guildInput?: DJSGuild | string): Promise<Member | MemberNone | undefined> {
     // const startedLoading = new Date()
+    // console.log(input)
     const id = typeof input == "string" ? input : input.id
     const guild = guildInput ? 
         (
@@ -334,13 +335,21 @@ async function constructMessage(input: DJSMessage | string, channel: TextChannel
     const message = (input instanceof DJSMessage) ? input : await channel.messages.fetch(input).catch(e => undefined)
     if (!message) return;
 
+    let referenceMessage: Message | undefined;
+    if (message.reference && message.reference.messageId) {
+        const refMessage = await message.fetchReference().catch(e => undefined)
+        if (refMessage) {
+            referenceMessage = await constructMessage(refMessage, channel)
+        }
+    }
+
     const data: Message = {
         id: message.id,
         content: message.content,
         author: await constructMember(message.member ?? message.author, channel.guild) as Member,
         embeds: message.embeds,
         createdAt: moment(message.createdTimestamp).calendar(),
-        reference: (message.reference && !message.flags.has(MessageFlags.IsCrosspost)) ? await constructMessage(await message.fetchReference(), channel) : undefined,
+        reference: referenceMessage,
         attachments: message.attachments,
         channelId: message.channelId
     }
