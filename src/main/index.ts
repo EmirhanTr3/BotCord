@@ -211,7 +211,7 @@ async function constructMember(input: GuildMember | User | string, guildInput?: 
     }
     // console.log("passed user check")
     let badges: BotCordUserFlags[] = user.flags ? user.flags.toArray() : []
-    if (["410781931727486976", "1197624693184802988", "695882756671930400"].includes(user.id)) badges = ["BotCordStaff"].concat(badges) as BotCordUserFlags[]
+    if (["410781931727486976", "1197624693184802988"].includes(user.id)) badges = ["BotCordStaff"].concat(badges) as BotCordUserFlags[]
     if (!user.bot && user.displayAvatarURL().endsWith(".gif")) badges.push("Nitro")
 
     let data: Member = {
