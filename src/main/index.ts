@@ -211,7 +211,7 @@ async function constructMember(input: GuildMember | User | string, guildInput?: 
     }
     // console.log("passed user check")
     let badges: BotCordUserFlags[] = user.flags ? user.flags.toArray() : []
-    if (["410781931727486976", "1197624693184802988"].includes(user.id)) badges = ["BotCordStaff"].concat(badges) as BotCordUserFlags[]
+    if (["410781931727486976", "1197624693184802988", "695882756671930400"].includes(user.id)) badges = ["BotCordStaff"].concat(badges) as BotCordUserFlags[]
     if (!user.bot && user.displayAvatarURL().endsWith(".gif")) badges.push("Nitro")
 
     let data: Member = {
@@ -337,7 +337,7 @@ async function constructMessage(input: DJSMessage | string, channel: TextChannel
     const data: Message = {
         id: message.id,
         content: message.content,
-        author: await constructMember(message.member ?? message.author, channel.guild) as Member,
+        author: await constructMember(message.member?.id ? message.member : message.author, channel.guild) as Member,
         embeds: message.embeds,
         createdAt: moment(message.createdTimestamp).calendar(),
         reference: (message.reference && !message.flags.has(MessageFlags.IsCrosspost)) ? await constructMessage(await message.fetchReference(), channel) : undefined,
@@ -374,6 +374,7 @@ ipcMain.handle("getLastMessages", async (e, cid, amount) => {
 
     for (const [_, message] of messages) {
         list.push(await constructMessage(message, channel) as Message)
+
     }
 
     return list.reverse()
