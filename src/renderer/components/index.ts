@@ -12,6 +12,8 @@ import Channel from "./channel";
 import Category from "./category";
 import Role from "./role";
 import UserStatus from "./userstatus";
+import AppFrame from "./appframe";
+import UserModal from "./usermodal";
 
 export {
     Loading,
@@ -27,5 +29,7 @@ export {
     Channel,
     Category,
     Role,
-    UserStatus
+    UserStatus,
+    AppFrame,
+    UserModal
 }

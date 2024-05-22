@@ -6,6 +6,6 @@ export default function MemberC({ member }: { member: Member }) {
         <PFP src={member.avatar} height={32} width={32} />
         <UserStatus height={10} width={10} status={member.status}/>
         <p id="username" style={{color: member.displayColor}}>{member.displayName}</p>
-        {(member.bot || member.webhook) && <BotBadge member={member} />}
+        <BotBadge member={member} />
     </div>
 }

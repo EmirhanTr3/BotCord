@@ -1,6 +1,8 @@
 import { Member } from "src/shared/types";
 
 export default function BotBadge({ member }: { member: Member }) {
+    if (!member.bot && !member.webhook) return <></>
+    
     let name = member.webhook ? "WEBHOOK" : "APP"
     let style: React.CSSProperties = {}
     let verified = false

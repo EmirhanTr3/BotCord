@@ -16,7 +16,7 @@ import {
     Events
 } from "discord.js";
 import moment from "moment";
-import { Member, MemberNone, BotCordUserFlags, Guild, Channel, Role, Message } from "src/shared/types";
+import { Member, MemberNone, BotCordUserFlags, Guild, Channel, Role, Message, BasicGuild } from "src/shared/types";
 
 app.setName("BotCord")
 
@@ -235,10 +235,24 @@ async function constructMember(input: GuildMember | User | string, guildInput?: 
         if (member.roles.hoist) data.hoistRole = await constructRole(member.roles.hoist, guild)
         data.isOwner = guild.ownerId == user.id,
         data.joinedAt = moment(member.joinedAt).format("D MMM YYYY")
+        data.guild = await constructBasicGuild(guild)
     }
 
     // console.log(`constructed member ${user.username} in ${new Date() - startedLoading}ms`)
     MemberCache.set(cacheId, data)
+    return data
+}
+
+async function constructBasicGuild(input: DJSGuild | string, force: boolean = false): Promise<BasicGuild | undefined> {
+    const guild = (input instanceof DJSGuild) ? input : await client.guilds.fetch(input).catch(e => undefined)
+    if (!guild) return;
+
+    const data: BasicGuild = {
+        id: guild.id,
+        name: guild.name,
+        icon: guild.iconURL({size: 128})
+    }
+
     return data
 }
 

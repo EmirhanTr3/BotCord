@@ -21,17 +21,24 @@ export type Member = {
     highestRole?: Role,
     hoistRole?: Role,
     isOwner?: boolean,
-    joinedAt?: string
+    joinedAt?: string,
+    guild?: BasicGuild
 }
 
 export type MemberNone = {
     lastFetched: number
 }
 
+export type BasicGuild = {
+    id: string,
+    name: string,
+    icon: string | null
+}
+
 export type Guild = {
     id: string,
     name: string,
-    icon: string | undefined | null,
+    icon: string | null,
     channels: Channel[],
     members: Member[],
     roles: Role[],
