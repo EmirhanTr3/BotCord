@@ -1,34 +1,12 @@
 import { Message } from "src/shared/types"
 import { BotBadge, PFP } from "."
-import { SyntheticEvent, useRef, useState } from "react"
-import { Portal } from "react-portal"
-import { UserModal } from "."
+import { useUserModal } from "../hooks"
 
 export default function MessageC({ message, extraClass }: { message: Message, extraClass?: string[] }) {
-    const [isUserModalOpen, setIsUserModalOpen] = useState(false)
-    const [mouseLocation, setMouseLocation] = useState<{x: number, y: number}>({x: 0, y: 0})
-    const userModalRef = useRef<HTMLDivElement>(null)
-
-    function toggleUserModal(e: SyntheticEvent<HTMLElement, MouseEvent>) {
-        const userModalWidth = 340
-        const userModalHeight = 500
-
-        // if (document.getElementById("usermodal") && document.getElementById("usermodal") !== userModalRef.current) document.getElementById("usermodal")?.parentElement?.remove()
-
-        setMouseLocation({
-            x: ((e.nativeEvent.clientX + userModalWidth > document.body.clientWidth) ?
-                document.body.clientWidth - (userModalWidth + 10) :
-                e.nativeEvent.clientX),
-                
-            y: ((e.nativeEvent.clientY + userModalHeight > document.body.clientHeight) ?
-                document.body.clientHeight - (userModalHeight + 10) :
-                e.nativeEvent.clientY)
-        })
-        setIsUserModalOpen(!isUserModalOpen)
-    }
+    const [UserModal, isUserModalOpen, toggleUserModal] = useUserModal(message.author)
 
     return <>
-        {isUserModalOpen && <Portal><UserModal ref={userModalRef} user={message.author} location={mouseLocation} /></Portal>}
+        {isUserModalOpen && UserModal}
         
         <div id="message" className={"hover" + (extraClass ? " " + extraClass.join(" ") : "")}>
             <div id="messagecontent">
