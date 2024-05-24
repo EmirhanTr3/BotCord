@@ -158,6 +158,8 @@ ipcMain.handle("getIsLoggedIn", async () => {
 })
 
 const MemberCache = new Collection<string, Member | MemberNone>()
+const MemberAboutMeCache = new Collection<string, string | undefined>()
+const MemberBannerCache = new Collection<string, string | null | undefined>()
 
 async function constructMember(input: GuildMember | User | string, guildInput?: DJSGuild | string): Promise<Member | MemberNone | undefined> {
     // const startedLoading = new Date()
@@ -407,6 +409,20 @@ ipcMain.on("sendMessage", async (e, channel: Channel, message: string) => {
     channeld!.send({content: message})
 })
 
+ipcMain.handle("getAboutMe", async (_, user: Member) => {
+    if (!user.bot) return
+    if (MemberAboutMeCache.has(user.id)) return MemberAboutMeCache.get(user.id)
+    const applicationRPC = await client.rest.get(`/applications/${user.id}/rpc`).catch(e => undefined) as {description: string} | undefined
+    MemberAboutMeCache.set(user.id, applicationRPC?.description)
+    return applicationRPC?.description
+})
+
+ipcMain.handle("getBannerURL", async (_, user: Member) => {
+    if (MemberBannerCache.has(user.id)) return MemberBannerCache.get(user.id)
+    const bannerURL = (await client.users.fetch(user.id, {force: true}).catch(e => undefined))?.bannerURL({size: 512})
+    MemberBannerCache.set(user.id, bannerURL)
+    return bannerURL
+})
 
 
 ipcMain.handle("eval", async (e, code) => {
