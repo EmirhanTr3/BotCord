@@ -121,7 +121,7 @@ export default function MessageC({ message, extraClass }: { message: Message, ex
       *footer:
         *footericon
         *footertext
-attachments:
+*attachments:
   !link to attachment converter wont be made for now
   *img/video/attachment
   *if attachment:
