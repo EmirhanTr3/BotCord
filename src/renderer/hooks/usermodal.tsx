@@ -1,4 +1,4 @@
-import { SyntheticEvent, useState } from "react"
+import { SyntheticEvent, useRef, useState } from "react"
 import { Portal } from "react-portal"
 import { UserModal } from "../components"
 import { Member } from "src/shared/types"
@@ -11,6 +11,7 @@ export default function useUserModal(user: Member): [
 ] {
     const [mouseLocation, setMouseLocation] = useState<{x: number, y: number}>({x: 0, y: 0})
     const [isUserModalOpen, setIsUserModalOpen] = useState<boolean>(false)
+    const userModalRef = useRef<HTMLDivElement>(null)
 
     function toggleUserModal(e: SyntheticEvent<HTMLElement, MouseEvent>) {
         const userModalWidth = 340
@@ -30,8 +31,19 @@ export default function useUserModal(user: Member): [
         setIsUserModalOpen(!isUserModalOpen)
     }
     
+    function clickEvent(e: MouseEvent) {
+        const target = e.target as HTMLElement
+        if (userModalRef.current?.contains(target) || !isUserModalOpen) return;
+        setIsUserModalOpen(false)
+        document.removeEventListener("click", clickEvent)
+    }
+
+    setTimeout(() => {
+        document.addEventListener("click", clickEvent)
+    }, 100);
+    
     return [
-        <Portal><UserModal user={user} location={mouseLocation} /></Portal>,
+        <Portal><UserModal ref={userModalRef} user={user} location={mouseLocation} /></Portal>,
         isUserModalOpen,
         toggleUserModal,
         mouseLocation
