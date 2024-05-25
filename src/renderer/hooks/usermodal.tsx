@@ -16,9 +16,7 @@ export default function useUserModal(user: Member): [
     function toggleUserModal(e: SyntheticEvent<HTMLElement, MouseEvent>) {
         const userModalWidth = 340
         const userModalHeight = 500
-
-        // if (document.getElementById("usermodal") && document.getElementById("usermodal") !== userModalRef.current) document.getElementById("usermodal")?.parentElement?.remove()
-
+        
         setMouseLocation({
             x: ((e.nativeEvent.clientX + userModalWidth > document.body.clientWidth) ?
                 document.body.clientWidth - (userModalWidth + 10) :
