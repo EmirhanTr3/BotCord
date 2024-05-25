@@ -1,4 +1,4 @@
-import { Attachment, Collection, Embed, PresenceStatus, UserFlags } from "discord.js"
+import { APIEmbed, Attachment, Collection, Embed, PresenceStatus, UserFlags } from "discord.js"
 
 export type BotCordUserFlags = keyof typeof UserFlags | "BotCordStaff" | "Nitro"
 
@@ -67,9 +67,10 @@ export type Message = {
     id: string,
     content: string,
     author: Member,
-    embeds?: Embed[],
+    embeds?: {data: Readonly<APIEmbed>}[],
     createdAt: string,
     reference?: Message,
-    attachments?: Collection<string, Attachment>,
-    channelId: string
+    attachments?: Attachment[],
+    channelId: string,
+    editedTimestamp: number | null
 }

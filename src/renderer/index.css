@@ -26,6 +26,10 @@ body {
     height: 100%;
 }
 
+#root * {
+    white-space: pre-wrap;
+}
+
 /*! login */
 
 #loginpage {
@@ -559,8 +563,7 @@ img {
 }
 
 #chat #messages #message.anothermessage #content {
-    position: relative;
-    left: 42px;
+    padding-left: 42px
 }
 
 #chat #messages #message #username {
@@ -677,7 +680,6 @@ twemoji img, .emoji {
 #chat #messages #message #msg #attachments #file {
     background: #1b1b1b;
     border: 1.5px solid #151515;
-    width: 250px;
     height: 45px;
     padding: 10px;
     border-radius: 10px;
@@ -773,7 +775,6 @@ twemoji img, .emoji {
 }
 
 #chat #messages #message #msg #embed #author {
-    height: 30px;
     display: flex;
     align-items: center;
 }
@@ -788,6 +789,7 @@ twemoji img, .emoji {
     font-size: 14px;
     color: #ffffff;
     position: relative;
+    width: max-content;
 }
 
 #chat #messages #message #msg #embed #fields {

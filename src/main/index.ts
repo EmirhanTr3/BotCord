@@ -1,4 +1,4 @@
-import { app, BrowserWindow, globalShortcut, ipcMain, ipcRenderer } from "electron";
+import { app, BrowserWindow, globalShortcut, ipcMain, ipcRenderer, shell } from "electron";
 import path from "path";
 import { getCurrentToken, setCurrentAccount } from "./accounts";
 import { BotCordClient } from "./bot";
@@ -366,8 +366,9 @@ async function constructMessage(input: DJSMessage | string, channel: TextChannel
         embeds: message.embeds,
         createdAt: moment(message.createdTimestamp).calendar(),
         reference: referenceMessage,
-        attachments: message.attachments,
-        channelId: message.channelId
+        attachments: message.attachments.map(a => a),
+        channelId: message.channelId,
+        editedTimestamp: message.editedTimestamp
     }
 
     return data
@@ -422,6 +423,10 @@ ipcMain.handle("getBannerURL", async (_, user: Member) => {
     const bannerURL = (await client.users.fetch(user.id, {force: true}).catch(e => undefined))?.bannerURL({size: 512})
     MemberBannerCache.set(user.id, bannerURL)
     return bannerURL
+})
+
+ipcMain.on("openURL", (e, url: string) => {
+    shell.openExternal(url)
 })
 
 
