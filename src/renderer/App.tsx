@@ -45,3 +45,11 @@ window.api.on("login", (e, user: Member) => {
 window.api.on("error", (_, title, description) => {
     console.log(title, description)
 })
+
+document.addEventListener("click", (e) => {
+    const target = e.target as HTMLAnchorElement
+    if (target.tagName == "A" && target.href) {
+        e.preventDefault()
+        window.api.send("openURL", (target.href))
+    }
+})

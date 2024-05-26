@@ -1,7 +1,8 @@
-import { forwardRef, useEffect, useState } from "react";
+import { forwardRef, useEffect, useRef, useState } from "react";
 import { Member } from "src/shared/types";
 import { getAsset, getBadge } from "../../shared/utils";
 import { BotBadge, PFP, UserStatus } from ".";
+import { useHoverText } from "../hooks";
 
 export default forwardRef<HTMLDivElement, {user: Member, location: {x: number, y: number}}>((props, ref) => {
     const { user, location } = props
@@ -32,7 +33,7 @@ export default forwardRef<HTMLDivElement, {user: Member, location: {x: number, y
                 {user.badges.map(badge => {
                     const badgeInfo = getBadge(badge)
                     if (badgeInfo) {
-                        return <img key={badgeInfo.name} id="badge" width={22} height={22} src={badgeInfo.icon} />
+                        return <Badge key={badgeInfo.name} badge={badgeInfo} />
                     }
                 })}
             </div>
@@ -67,3 +68,13 @@ export default forwardRef<HTMLDivElement, {user: Member, location: {x: number, y
         </div>
     </div>
 })
+
+function Badge({ badge }: { badge: {name: string, icon: string} }) {
+    const badgeRef = useRef<HTMLImageElement>(null)
+    const [HoverText, isOpen] = useHoverText(badgeRef, badge.name)
+
+    return <>
+        {isOpen && HoverText}
+        <img ref={badgeRef} id="badge" width={22} height={22} src={badge.icon} />
+    </>
+}

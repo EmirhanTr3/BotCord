@@ -1194,6 +1194,7 @@ twemoji img, .emoji {
     max-width: 180px;
     word-wrap: normal;
     z-index: 5;
+    transform: translate(-50%, -100%);
 }
 
 #hovertext p {
