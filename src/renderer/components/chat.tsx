@@ -38,11 +38,29 @@ export function ChatData({ channel }: { channel: Channel }) {
         }, 1);
     })
 
+    let lastTypingSentAt: Date | undefined;
     function sendMessage(e: SyntheticEvent) {
         e.preventDefault()
         if (messageRef.current!.value.replaceAll(" ", "").length == 0) return;
         window.api.send("sendMessage", channel, messageRef.current!.value)
         messageRef.current!.value = ""
+        lastTypingSentAt = undefined
+    }
+
+    function inputChange(e: SyntheticEvent) {
+        const message = messageRef.current!.value
+
+        if (
+            (
+                !lastTypingSentAt ||
+                new Date().getTime() - lastTypingSentAt.getTime() > 10_000
+            ) &&
+            message.replaceAll(" ", "") !== ""
+        ) {
+            lastTypingSentAt = new Date()
+            window.api.send("sendTyping", channel)
+            // if (document.getElementById("autocomplete")) document.getElementById("autocomplete").remove()
+        }
     }
 
     return (
@@ -65,7 +83,7 @@ export function ChatData({ channel }: { channel: Channel }) {
                 return <MessageC key={message.id} message={message} extraClass={classList}/>
             })}
         </div>
-        <form onSubmit={sendMessage}>
+        <form onSubmit={sendMessage} onInput={inputChange}>
             <input type="text" id="chatinput" placeholder="Send a message to channel" ref={messageRef}/>
         </form>
     </>

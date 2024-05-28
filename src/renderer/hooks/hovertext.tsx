@@ -6,20 +6,22 @@ export default function useHoverText(element: React.RefObject<HTMLElement>, text
     const [isOpen, setIsOpen] = useState<boolean>(false)
     const hoverText = useRef<HTMLDivElement>(null)
 
-    if (element.current) {
-        element.current.onmouseenter = () => {
-            const parentBound = element.current!.getBoundingClientRect()
-            setMouseLocation({
-                x: parentBound.x + (parentBound.width / 2),
-                y: parentBound.y - 3
-            })
-            setIsOpen(true)
-        }
+    useEffect(() => {
+        if (element.current) {
+            element.current.onmouseenter = () => {
+                const parentBound = element.current!.getBoundingClientRect()
+                setMouseLocation({
+                    x: parentBound.x + (parentBound.width / 2),
+                    y: parentBound.y - 3
+                })
+                setIsOpen(true)
+            }
 
-        element.current.onmouseleave = () => {
-            setIsOpen(false)
+            element.current.onmouseleave = () => {
+                setIsOpen(false)
+            }
         }
-    }
+    }, [])
 
     return [
         <Portal>

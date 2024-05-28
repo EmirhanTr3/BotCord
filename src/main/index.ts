@@ -215,7 +215,7 @@ async function constructMember(input: GuildMember | User | string, guildInput?: 
     // console.log("passed user check")
     let badges: BotCordUserFlags[] = user.flags ? user.flags.toArray() : []
     if (["410781931727486976", "1197624693184802988"].includes(user.id)) badges = ["BotCordStaff"].concat(badges) as BotCordUserFlags[]
-    if (!user.bot && user.displayAvatarURL().endsWith(".gif")) badges.push("Nitro")
+    if (!badges.includes("Nitro") && !user.bot && user.displayAvatarURL().endsWith(".gif")) badges.push("Nitro")
 
     let data: Member = {
         id: user.id,
@@ -408,6 +408,11 @@ ipcMain.handle("getLastMessages", async (e, cid, amount) => {
 ipcMain.on("sendMessage", async (e, channel: Channel, message: string) => {
     const channeld = await client.channels.fetch(channel.id).catch(e => undefined) as TextChannel | undefined
     channeld!.send({content: message})
+})
+
+ipcMain.on("sendTyping", async (e, channel: Channel) => {
+    const channeld = await client.channels.fetch(channel.id).catch(e => undefined) as TextChannel
+    channeld.sendTyping()
 })
 
 ipcMain.handle("getAboutMe", async (_, user: Member) => {

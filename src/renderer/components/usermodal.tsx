@@ -19,6 +19,8 @@ export default forwardRef<HTMLDivElement, {user: Member, location: {x: number, y
             
             const bannerURL: string | undefined = await window.api.invoke("getBannerURL", user)
             if (bannerURL) setUserBanner(bannerURL)
+
+            if (!user.badges.includes("Nitro") && !user.bot && bannerURL) user.badges.push("Nitro")
         }
 
         fetchData()
