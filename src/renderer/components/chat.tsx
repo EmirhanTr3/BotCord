@@ -1,5 +1,5 @@
-import { Channel, Message } from "src/shared/types"
-import { Message as MessageC } from "."
+import { Channel, Guild, Member, Message } from "src/shared/types"
+import { Message as MessageC, PFP, UserStatus } from "."
 import { getChannelIcon } from "../../shared/utils"
 import { useState, useEffect, SyntheticEvent, useRef } from "react"
 
@@ -10,21 +10,31 @@ export function Chat({ children }: { children?: JSX.Element }) {
 export function ChatData({ channel }: { channel: Channel }) {
     const icon = getChannelIcon(channel.type)
     const [messages, setMessages] = useState<Message[]>([])
+    const [isAutoCompleteOpen, setAutoCompleteOpen] = useState<boolean>(false)
+    const [autoCompleteMemberList, setAutoCompleteMemberList] = useState<Member[]>([])
+    const [autoCompleteChannelList, setAutoCompleteChannelList] = useState<Channel[]>([])
+    const [members, setMembers] = useState<Member[]>([])
+    const [channels, setChannels] = useState<Channel[]>([])
+    const [autoCompleteType, setAutoCompleteType] = useState<"member" | "channel">()
     const messagesRef = useRef<HTMLDivElement>(null)
     const messageRef = useRef<HTMLInputElement>(null)
 
     useEffect(() => {
         window.api.removeAllListeners("messageCreate")
 
-        async function getMessages() {
+        async function fetchData() {
             const messages: Message[] = await window.api.invoke("getLastMessages", channel.id, 30)
             setMessages(messages)
             setTimeout(() => {
                 messagesRef.current!.scrollTop = messagesRef.current!.scrollHeight - messagesRef.current!.clientHeight
-            }, 1)
+            }, 10)
+
+            const guild: Guild = await window.api.invoke("getGuild", channel.guildId)
+            setMembers(guild.members)
+            setChannels(guild.channels)
         }
 
-        getMessages()
+        fetchData()
     }, [channel])
 
 
@@ -39,6 +49,7 @@ export function ChatData({ channel }: { channel: Channel }) {
     })
 
     let lastTypingSentAt: Date | undefined;
+
     function sendMessage(e: SyntheticEvent) {
         e.preventDefault()
         if (messageRef.current!.value.replaceAll(" ", "").length == 0) return;
@@ -49,6 +60,10 @@ export function ChatData({ channel }: { channel: Channel }) {
 
     function inputChange(e: SyntheticEvent) {
         const message = messageRef.current!.value
+
+        if (/@(?:[^ ]+)?$/g.test(message)) checkMemberAutoComplete(message)
+        else if (/#(?:[^ ]+)?$/g.test(message)) checkChannelAutoComplete(message)
+        else if (isAutoCompleteOpen) setAutoCompleteOpen(false)
 
         if (
             (
@@ -61,6 +76,59 @@ export function ChatData({ channel }: { channel: Channel }) {
             window.api.send("sendTyping", channel)
             // if (document.getElementById("autocomplete")) document.getElementById("autocomplete").remove()
         }
+        
+    }
+
+    function checkMemberAutoComplete(message: string) {
+        const filter = message.replace(/.*@(.*)/g, "$1")
+
+        const memberList = members.filter(m => m.displayName.toLowerCase().includes(filter.toLowerCase()) || m.username.toLowerCase().includes(filter.toLowerCase()))
+        if (memberList.length < 1) {
+            if (isAutoCompleteOpen) setAutoCompleteOpen(false)
+            return;
+        }
+
+        setAutoCompleteMemberList(memberList)
+        setAutoCompleteOpen(true)
+        setAutoCompleteType("member")
+    }
+
+    function autoCompleteMemberClick(member: Member) {
+        setAutoCompleteOpen(false)
+        const message = messageRef.current!.value
+        const filter = message.replace(/.*@(.*)/g, "$1")
+
+        const split = message.split("@" + filter)
+        const last = split[split.length - 1]
+        split.pop()
+        messageRef.current!.value = split.join("@" + filter) + `<@${member.id}>` + last + " "
+        messageRef.current!.focus()
+    }
+
+    function checkChannelAutoComplete(message: string) {
+        const filter = message.replace(/.*#(.*)/g, "$1")
+
+        const channelList = channels.filter(m => m.name.toLowerCase().includes(filter.toLowerCase()))
+        if (channelList.length < 1) {
+            if (isAutoCompleteOpen) setAutoCompleteOpen(false)
+            return;
+        }
+
+        setAutoCompleteChannelList(channelList)
+        setAutoCompleteOpen(true)
+        setAutoCompleteType("channel")
+    }
+
+    function autoCompleteChannelClick(channel: Channel) {
+        setAutoCompleteOpen(false)
+        const message = messageRef.current!.value
+        const filter = message.replace(/.*#(.*)/g, "$1")
+
+        const split = message.split("#" + filter)
+        const last = split[split.length - 1]
+        split.pop()
+        messageRef.current!.value = split.join("#" + filter) + `<#${channel.id}>` + last + " "
+        messageRef.current!.focus()
     }
 
     return (
@@ -86,6 +154,40 @@ export function ChatData({ channel }: { channel: Channel }) {
         <form onSubmit={sendMessage} onInput={inputChange}>
             <input type="text" id="chatinput" placeholder="Send a message to channel" ref={messageRef}/>
         </form>
+
+        {isAutoCompleteOpen &&
+            <div id="autocomplete">
+                <div id="content">
+                    {autoCompleteType == "member" ?
+                    <>
+                        <p id="title">MEMBERS</p>
+                        <div id="list">
+                            {autoCompleteMemberList.map(member => 
+                                <div key={member.id} id="member" className="hover" onClick={() => autoCompleteMemberClick(member)}>
+                                    <PFP height={24} width={24} src={member.avatar} />
+                                    <UserStatus height={8} width={9} status={member.status} />
+                                    <p id="displayname">{member.displayName}</p>
+                                    <p id="username">{member.username}</p>
+                                </div>
+                            )}
+                        </div>
+                    </> :
+                    <>
+                        <p id="title">TEXT CHANNELS</p>
+                        <div id="list" className="channels">
+                            {autoCompleteChannelList.map(channel => 
+                                <div key={channel.id} id="member" className="hover" onClick={() => autoCompleteChannelClick(channel)}>
+                                    <PFP height={20} width={20} src={getChannelIcon(channel.type)} />
+                                    <p id="displayname">{channel.name}</p>
+                                    {channel.parent && <p id="username">{channel.parent.name}</p>}
+                                </div>
+                            )}
+                        </div>
+                    </>
+                    }
+                </div>
+            </div>
+        }
     </>
     )
 }
