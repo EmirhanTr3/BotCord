@@ -1,9 +1,33 @@
 import { Message } from "src/shared/types"
 import { BotBadge, PFP } from "."
-import { useUserModal } from "../hooks"
+import { useContextMenu, useUserModal } from "../hooks"
 
 export default function MessageC({ message, extraClass }: { message: Message, extraClass?: string[] }) {
     const [UserModal, isUserModalOpen, toggleUserModal] = useUserModal(message.author)
+    const [ContextMenu, isContextMenuOpen, toggleContextMenu] = useContextMenu({
+        autoClose: true,
+        items: [
+            {
+                text: "Reply",
+                callback(event, item) {
+                    console.log(item.text)
+                },
+            },
+            {
+                text: "Copy Text",
+                callback(event, item) {
+                    navigator.clipboard.writeText(message.content)
+                }
+            },
+            { type: "seperator" },
+            {
+                text: "Copy Message ID",
+                callback(event, item) {
+                    navigator.clipboard.writeText(message.id)
+                },
+            }
+        ]
+    })
 
     function downloadAttachment(url: string) {
         window.api.send("openURL", url)
@@ -11,8 +35,9 @@ export default function MessageC({ message, extraClass }: { message: Message, ex
 
     return <>
         {isUserModalOpen && UserModal}
+        {isContextMenuOpen && ContextMenu}
         
-        <div id="message" className={"hover" + (extraClass ? " " + extraClass.join(" ") : "")}>
+        <div id="message" className={"hover" + (extraClass ? " " + extraClass.join(" ") : "")} onContextMenu={toggleContextMenu}>
             <div id="messagecontent">
                 {!extraClass?.includes("anothermessage") && <PFP src={message.author.avatar} height={42} width={42} onClick={toggleUserModal}/>}
                 <div id="content">
@@ -95,40 +120,3 @@ export default function MessageC({ message, extraClass }: { message: Message, ex
         </div>
     </>
 }
-
-
-/*
-*msgcontent:
-  *content
-  *editedtimestamp
-*embeds:
-  *embed:
-    *color
-    *embedcontent:
-      *embedcontentdata:
-        *embedcontentdatacontent:
-          *author:
-            *authoricon
-            *authorname
-          *title
-          *description
-          *fields:
-            *field:
-              *fieldname
-              *fieldvalue
-        *thumbnail
-      *image
-      *footer:
-        *footericon
-        *footertext
-*attachments:
-  !link to attachment converter wont be made for now
-  *img/video/attachment
-  *if attachment:
-    *file
-    *fileIcon
-    *info
-    *name
-    *size
-    *download
-*/

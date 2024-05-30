@@ -1285,37 +1285,37 @@ twemoji img, .emoji {
     z-index: 3;
 }
 
-#contextmenu #buttons {
+#contextmenu #items {
     display: flex;
     flex-direction: column;
     margin: 7px;
 }
 
-#contextmenu #buttons #button {
+#contextmenu #items #button {
     padding: 7px;
     border-radius: 4px;
     cursor: pointer;
 }
 
-#contextmenu #buttons #button:hover {
+#contextmenu #items #button:hover {
     background: #212121;
 }
 
-#contextmenu #buttons #button p {
+#contextmenu #items #button p {
     margin: 0;
     font-size: 14px;
     user-select: none;
 }
 
-#contextmenu #buttons #button.normal p {
+#contextmenu #items #button.normal p {
     color: #b9b9b9;
 }
 
-#contextmenu #buttons #button.danger p {
+#contextmenu #items #button.danger p {
     color: #ff5b5b;
 }
 
-#contextmenu #buttons #seperator {
+#contextmenu #items #seperator {
     height: 1px;
     background-color: #202020;
     margin: 2px 4px;

@@ -45,7 +45,7 @@ export function ChatData({ channel }: { channel: Channel }) {
         setMessages([...messages, message])
         setTimeout(() => {
             messagesRef.current!.scrollTop = messagesRef.current!.scrollHeight - messagesRef.current!.clientHeight
-        }, 1);
+        }, 10);
     })
 
     let lastTypingSentAt: Date | undefined;
