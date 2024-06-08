@@ -63,7 +63,7 @@ export default function MessageC({ message, setReply, extraClass }: { message: M
         {isUserModalOpen && UserModal}
         {isContextMenuOpen && ContextMenu}
         
-        <div ref={messageRef} id="message" className={"hover" + (extraClass ? " " + extraClass.join(" ") : "")} onContextMenu={toggleContextMenu}>
+        <div ref={messageRef} id="message" className={"hover" + (extraClass ? " " + extraClass.join(" ") : "")} onContextMenu={(e) => !messageRef.current!.classList.contains("deleted") && toggleContextMenu(e)}>
             <div id="messagecontent">
                 {!extraClass?.includes("anothermessage") && <PFP src={msg.author.avatar} height={42} width={42} onClick={toggleUserModal}/>}
                 <div id="content">
