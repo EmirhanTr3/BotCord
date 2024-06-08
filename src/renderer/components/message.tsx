@@ -1,11 +1,11 @@
 import { Message } from "src/shared/types"
 import { BotBadge, PFP } from "."
 import { useContextMenu, useUserModal } from "../hooks"
-import { useLocalStorage } from "usehooks-ts"
+import { useEffect, useRef } from "react"
 
-export default function MessageC({ message, extraClass }: { message: Message, extraClass?: string[] }) {
+export default function MessageC({ message, setReply, extraClass }: { message: Message, setReply: (reply: Message | undefined) => void, extraClass?: string[] }) {
     const [UserModal, isUserModalOpen, toggleUserModal] = useUserModal(message.author)
-    const [reply, setReply] = useLocalStorage<Message | undefined>("reply", undefined)
+    const messageRef = useRef<HTMLDivElement>(null)
     const [ContextMenu, isContextMenuOpen, toggleContextMenu] = useContextMenu({
         autoClose: true,
         items: [
@@ -35,11 +35,23 @@ export default function MessageC({ message, extraClass }: { message: Message, ex
         window.api.send("openURL", url)
     }
 
+    useEffect(() => {
+        function messageDelete(e: any, dmessage: Message) {
+            if (dmessage.id == message.id) {
+                window.api.removeListener("messageDelete", messageDelete)
+                messageRef.current!.classList.add("deleted")
+                console.log(`received messageDelete from ${message.author.username}: ${message.content}`)
+            }
+        }
+        window.api.removeListener("messageDelete", messageDelete)
+        window.api.addListener("messageDelete", messageDelete)
+    })
+
     return <>
         {isUserModalOpen && UserModal}
         {isContextMenuOpen && ContextMenu}
         
-        <div id="message" className={"hover" + (extraClass ? " " + extraClass.join(" ") : "")} onContextMenu={toggleContextMenu}>
+        <div ref={messageRef} id="message" className={"hover" + (extraClass ? " " + extraClass.join(" ") : "")} onContextMenu={toggleContextMenu}>
             <div id="messagecontent">
                 {!extraClass?.includes("anothermessage") && <PFP src={message.author.avatar} height={42} width={42} onClick={toggleUserModal}/>}
                 <div id="content">

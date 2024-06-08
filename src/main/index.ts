@@ -148,6 +148,11 @@ export function createBotEvents() {
     client.on(Events.MessageCreate, async (message) => {
         mainWindow.webContents.send("messageCreate", await constructMessage(message, message.channel as TextChannel))
     })
+
+    client.on(Events.MessageDelete, async (message) => {
+        if (message.partial) return;
+        mainWindow.webContents.send("messageDelete", await constructMessage(message, message.channel as TextChannel))
+    })
 }
 
 ipcMain.handle("getIsLoggedIn", async () => {

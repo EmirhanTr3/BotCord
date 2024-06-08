@@ -2,7 +2,6 @@ import { Channel, Guild, Member, Message } from "src/shared/types"
 import { Message as MessageC, PFP, UserStatus } from "."
 import { getChannelIcon } from "../../shared/utils"
 import { useState, useEffect, SyntheticEvent, useRef } from "react"
-import { useLocalStorage } from "usehooks-ts"
 
 export function Chat({ children }: { children?: JSX.Element }) {
     return <div id="chat">{children}</div>
@@ -19,7 +18,7 @@ export function ChatData({ channel }: { channel: Channel }) {
     const [autoCompleteType, setAutoCompleteType] = useState<"member" | "channel">()
     const messagesRef = useRef<HTMLDivElement>(null)
     const messageRef = useRef<HTMLInputElement>(null)
-    const [reply, setReply] = useLocalStorage<Message | undefined>("reply", undefined)
+    const [reply, setReply] = useState<Message>()
 
     useEffect(() => {
         window.api.removeAllListeners("messageCreate")
@@ -151,7 +150,7 @@ export function ChatData({ channel }: { channel: Channel }) {
                     classList.push("hasothermessages")
                 }
 
-                return <MessageC key={message.id} message={message} extraClass={classList}/>
+                return <MessageC key={message.id} message={message} setReply={setReply} extraClass={classList}/>
             })}
         </div>
         <form onSubmit={sendMessage} onInput={inputChange}>
