@@ -1,4 +1,4 @@
-import { Message } from "src/shared/types"
+import { Member, Message } from "src/shared/types"
 import { BotBadge, PFP } from "."
 import { useContextMenu, useUserModal } from "../hooks"
 import { useEffect, useRef, useState } from "react"
@@ -32,6 +32,9 @@ export default function MessageC({ message, setReply, extraClass }: { message: M
         ]
     })
 
+    const extraDataUser = message.interaction?.member || message.reference?.author
+    const [ExtraUserModal, isExtraUserModalOpen, toggleExtraUserModal] = extraDataUser ? useUserModal(extraDataUser) : [undefined, undefined, () => {}]
+
     function downloadAttachment(url: string) {
         window.api.send("openURL", url)
     }
@@ -57,13 +60,28 @@ export default function MessageC({ message, setReply, extraClass }: { message: M
         window.api.addListener("messageDelete", messageDelete)
         window.api.removeListener("messageUpdate", messageUpdate)
         window.api.addListener("messageUpdate", messageUpdate)
-    })
+    }, [])
 
     return <>
         {isUserModalOpen && UserModal}
+        {isExtraUserModalOpen && ExtraUserModal}
         {isContextMenuOpen && ContextMenu}
         
         <div ref={messageRef} id="message" className={"hover" + (extraClass ? " " + extraClass.join(" ") : "")} onContextMenu={(e) => !messageRef.current!.classList.contains("deleted") && toggleContextMenu(e)}>
+            {(message.interaction || message.reference) && extraDataUser &&
+                <div id="extradata">
+                    <div id="line" />
+                    <PFP height={16} width={16} src={extraDataUser.avatar} onClick={toggleExtraUserModal}/>
+                    <p id="username" style={{color: extraDataUser.displayColor}} onClick={toggleExtraUserModal}>{extraDataUser.displayName}</p>
+                    {message.interaction &&
+                        <>
+                            <p>used</p>
+                            <p id="command">/{message.interaction.commandName}</p>
+                        </>
+                    }
+                    {message.reference && <p id="referencecontent">{message.reference.content}</p>}
+                </div>
+            }
             <div id="messagecontent">
                 {!extraClass?.includes("anothermessage") && <PFP src={msg.author.avatar} height={42} width={42} onClick={toggleUserModal}/>}
                 <div id="content">

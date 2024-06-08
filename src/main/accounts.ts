@@ -20,6 +20,10 @@ export function getTokenFile(): TokenFile {
         JSON.parse(fs.readFileSync(filePath, {encoding: "utf8"})) : {}
 }
 
+export function deleteTokenFile() {
+    fs.rmSync(filePath)
+}
+
 function stringify(value: any) {
     return JSON.stringify(value, null, 2)
 }

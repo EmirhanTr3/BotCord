@@ -486,6 +486,7 @@ img {
 #chat #messages #message {
     margin-bottom: 10px;
     display: flex;
+    flex-direction: column;
 }
 
 #chat #messages #message.hasothermessages {

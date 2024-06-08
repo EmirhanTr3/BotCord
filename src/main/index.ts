@@ -16,7 +16,7 @@ import {
     Events
 } from "discord.js";
 import moment from "moment";
-import { Member, MemberNone, BotCordUserFlags, Guild, Channel, Role, Message, BasicGuild } from "src/shared/types";
+import { Member, MemberNone, BotCordUserFlags, Guild, Channel, Role, Message, BasicGuild, MessageInteraction } from "src/shared/types";
 
 app.setName("BotCord")
 
@@ -369,6 +369,17 @@ async function constructMessage(input: DJSMessage | string, channel: TextChannel
         }
     }
 
+    let interaction: MessageInteraction | undefined;
+    if (message.interaction) {
+        const member = await constructMember(message.interaction.user, channel.guild) as Member
+        interaction = {
+            type: message.interaction.type,
+            id: message.interaction.id,
+            commandName: message.interaction.commandName,
+            member: member
+        }
+    }
+
     const data: Message = {
         id: message.id,
         content: message.content,
@@ -378,7 +389,8 @@ async function constructMessage(input: DJSMessage | string, channel: TextChannel
         reference: referenceMessage,
         attachments: message.attachments.map(a => a),
         channelId: message.channelId,
-        editedTimestamp: message.editedTimestamp
+        editedTimestamp: message.editedTimestamp,
+        interaction: interaction
     }
 
     return data

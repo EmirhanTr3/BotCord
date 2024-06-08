@@ -142,11 +142,19 @@ export function ChatData({ channel }: { channel: Channel }) {
             {messages.map((message, index) => {
                 let classList: string[] = [];
 
-                if (index != 0 && messages[index - 1].author.username == message.author.username) {
+                if (
+                    !(message.interaction || message.reference) &&
+                    index != 0 &&
+                    messages[index - 1].author.username == message.author.username
+                ) {
                     classList.push("anothermessage")
                 }
 
-                if (index != (messages.length - 1) && messages[index + 1].author.username == message.author.username) {
+                if (
+                    index != (messages.length - 1) &&
+                    !(messages[index + 1].interaction || messages[index + 1].reference) &&
+                    messages[index + 1].author.username == message.author.username
+                ) {
                     classList.push("hasothermessages")
                 }
 

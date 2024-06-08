@@ -72,5 +72,13 @@ export type Message = {
     reference?: Message,
     attachments?: Attachment[],
     channelId: string,
-    editedTimestamp: number | null
+    editedTimestamp: number | null,
+    interaction?: MessageInteraction
+}
+
+export type MessageInteraction = {
+    type: number,
+    id: string,
+    commandName: string,
+    member: Member
 }
