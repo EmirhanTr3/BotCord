@@ -405,9 +405,10 @@ ipcMain.handle("getLastMessages", async (e, cid, amount) => {
     return list.reverse()
 })
 
-ipcMain.on("sendMessage", async (e, channel: Channel, message: string) => {
+ipcMain.on("sendMessage", async (e, channel: Channel, message: string, reply: Message | undefined) => {
     const channeld = await client.channels.fetch(channel.id).catch(e => undefined) as TextChannel | undefined
-    channeld!.send({content: message})
+    if (reply) channeld!.send({content: message, reply: {messageReference: reply.id}})
+    else channeld!.send({content: message})
 })
 
 ipcMain.on("sendTyping", async (e, channel: Channel) => {

@@ -2,6 +2,7 @@ import { Channel, Guild, Member, Message } from "src/shared/types"
 import { Message as MessageC, PFP, UserStatus } from "."
 import { getChannelIcon } from "../../shared/utils"
 import { useState, useEffect, SyntheticEvent, useRef } from "react"
+import { useLocalStorage } from "usehooks-ts"
 
 export function Chat({ children }: { children?: JSX.Element }) {
     return <div id="chat">{children}</div>
@@ -18,6 +19,7 @@ export function ChatData({ channel }: { channel: Channel }) {
     const [autoCompleteType, setAutoCompleteType] = useState<"member" | "channel">()
     const messagesRef = useRef<HTMLDivElement>(null)
     const messageRef = useRef<HTMLInputElement>(null)
+    const [reply, setReply] = useLocalStorage<Message | undefined>("reply", undefined)
 
     useEffect(() => {
         window.api.removeAllListeners("messageCreate")
@@ -53,7 +55,8 @@ export function ChatData({ channel }: { channel: Channel }) {
     function sendMessage(e: SyntheticEvent) {
         e.preventDefault()
         if (messageRef.current!.value.replaceAll(" ", "").length == 0) return;
-        window.api.send("sendMessage", channel, messageRef.current!.value)
+        window.api.send("sendMessage", channel, messageRef.current!.value, reply)
+        if (reply) setReply(undefined)
         messageRef.current!.value = ""
         lastTypingSentAt = undefined
     }
@@ -186,6 +189,15 @@ export function ChatData({ channel }: { channel: Channel }) {
                     </>
                     }
                 </div>
+            </div>
+        }
+        {reply &&
+            <div id="reply">
+                <div id="textdiv">
+                    <p id="text">Replying to</p>
+                    <p id="username" style={{color: reply.author.displayColor}}>{reply.author.displayName}</p>
+                </div>
+                <div id="close" onClick={() => setReply(undefined)}><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="#c3c3c3" viewBox="0 0 256 256"><path d="M128,24A104,104,0,1,0,232,128,104.11,104.11,0,0,0,128,24Zm37.66,130.34a8,8,0,0,1-11.32,11.32L128,139.31l-26.34,26.35a8,8,0,0,1-11.32-11.32L116.69,128,90.34,101.66a8,8,0,0,1,11.32-11.32L128,116.69l26.34-26.35a8,8,0,0,1,11.32,11.32L139.31,128Z"></path></svg></div>
             </div>
         }
     </>

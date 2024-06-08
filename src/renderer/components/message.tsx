@@ -1,16 +1,18 @@
 import { Message } from "src/shared/types"
 import { BotBadge, PFP } from "."
 import { useContextMenu, useUserModal } from "../hooks"
+import { useLocalStorage } from "usehooks-ts"
 
 export default function MessageC({ message, extraClass }: { message: Message, extraClass?: string[] }) {
     const [UserModal, isUserModalOpen, toggleUserModal] = useUserModal(message.author)
+    const [reply, setReply] = useLocalStorage<Message | undefined>("reply", undefined)
     const [ContextMenu, isContextMenuOpen, toggleContextMenu] = useContextMenu({
         autoClose: true,
         items: [
             {
                 text: "Reply",
                 callback(event, item) {
-                    console.log(item.text)
+                    setReply(message)
                 },
             },
             {
