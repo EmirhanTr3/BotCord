@@ -2,7 +2,7 @@ import { createRoot } from 'react-dom/client';
 import "./styles/index.css"
 import "./styles/app.css"
 import "./styles/settings.css"
-import { RouterProvider, createRouter } from '@tanstack/react-router';
+import { RouterProvider, createHashHistory, createRouter } from '@tanstack/react-router';
 import { routeTree } from './routeTree.gen'
 import { StrictMode } from 'react';
 import { Member } from 'src/shared/types';
@@ -14,7 +14,9 @@ declare global {
 }
 window.api = window.require("electron").ipcRenderer
 
-const router = createRouter({ routeTree })
+const hashHistory = createHashHistory()
+
+const router = createRouter({ routeTree, history: hashHistory })
 
 declare module '@tanstack/react-router' {
     interface Register {

@@ -1,4 +1,4 @@
-import { Outlet, createRootRoute } from '@tanstack/react-router'
+import { Outlet, createRootRoute, redirect } from '@tanstack/react-router'
 import { TanStackRouterDevtools } from '@tanstack/router-devtools'
 import { AppFrame } from '../components'
 
@@ -14,12 +14,12 @@ export const Route = createRootRoute({
         <TanStackRouterDevtools position='bottom-right'/>
     </>
     ),
-    beforeLoad: async (options) => {
+    loader: async (options) => {
         const isLoggedIn = await window.api.invoke("getIsLoggedIn")
-        if (!isLoggedIn) options.navigate({
+        if (!isLoggedIn) throw redirect({
             to: "/login"
         })
-        else if (options.location.href == "/login") options.navigate({
+        else if (options.location.href == "/login") throw redirect({
             to: "/"
         })
     }
