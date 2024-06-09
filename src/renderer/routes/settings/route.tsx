@@ -1,4 +1,10 @@
 import { Link, Outlet, createFileRoute, redirect } from '@tanstack/react-router'
+import { useConfirmationBox } from '../../hooks'
+import { SyntheticEvent, useEffect, useRef, useState } from 'react'
+import { Account, Member } from 'src/shared/types'
+import { PFP } from '../../components'
+import { useLocalStorage } from 'usehooks-ts'
+import { Portal } from 'react-portal'
 
 export const Route = createFileRoute('/settings')({
     validateSearch: (search: Record<string, unknown>): {redirect: string} => {
@@ -29,8 +35,8 @@ function Settings() {
                 <h1>APP SETTINGS</h1>
                 <Link to="/settings/appearance" search={{redirect}}><p id="appearance" className="hover">Appearance</p></Link>
                 <div id="seperator"></div>
-                <p id="switchaccount" className="hover">Switch Account</p>
-                <p id="logout" className="hover">Logout</p>
+                <SwitchAccount />
+                <Logout />
             </div>
         </div>
         <div id="maincontent">
@@ -39,4 +45,133 @@ function Settings() {
             </div>
         </div>
     </div>
+}
+
+function Logout() {
+    const [ConfirmationBox, isConfirmationBoxOpen, openConfirmationBox] = useConfirmationBox({
+        title: "Are you sure about this action?",
+        description: "Are you sure you want to log out of your current bot account?",
+        confirm: {
+            callback: () => window.api.send("logout")
+        }
+    })
+
+    return <>
+        {isConfirmationBoxOpen && ConfirmationBox}
+        <p id="logout" className="hover" onClick={openConfirmationBox}>Logout</p>
+    </>
+}
+
+function SwitchAccount() {
+    const [isOpen, setOpen] = useState<boolean>(false)
+    const [accounts, setAccounts] = useState<Account[]>([])
+    const switchAccountDivRef = useRef<HTMLDivElement>(null)
+    const [isLoginOpen, setLoginOpen] = useState<boolean>(false)
+    const loginDivRef = useRef<HTMLDivElement>(null)
+    const loginInputRef = useRef<HTMLInputElement>(null)
+
+    useEffect(() => {
+        async function getAccounts() {
+            const accounts: Account[] = await window.api.invoke("getAccounts")
+            setAccounts(accounts)
+        }
+
+        getAccounts()
+    }, [])
+
+    function removeAccount(account: Account) {
+        setAccounts(accounts.filter(a => a.token !== account.token))
+    }
+
+    async function addAccount() {
+        const response = await window.api.invoke("addAccount", loginInputRef.current!.value)
+        if (response == true) {
+            const accounts: Account[] = await window.api.invoke("getAccounts")
+            setAccounts(accounts)
+            setLoginOpen(false)
+        }
+    }
+
+    return <>
+        {isOpen && <Portal>
+            <div ref={switchAccountDivRef} id="switchaccountdiv" onClick={(e) => { e.target == switchAccountDivRef.current && setOpen(false) }}>
+                <div id="switchaccount">
+                    <h1>Manage Accounts</h1>
+                    <div id="accounts">
+                        {accounts.map((account, index) =>
+                            <AccountC
+                                key={account.id}
+                                accounts={accounts}
+                                account={account}
+                                index={index}
+                                removeAccount={removeAccount}
+                            />
+                        )}
+                    </div>
+                    <div id="addaccount">
+                        <p onClick={() => setLoginOpen(true)}>Add Account</p>
+                    </div>
+                </div>
+            </div>
+        </Portal>
+        }
+        
+        {isLoginOpen && <Portal>
+            <div ref={loginDivRef} id="logindiv" onClick={(e) => { e.target == loginDivRef.current && setLoginOpen(false) }}>
+                <div id="login">
+                    <h1>Add Account</h1>
+                    <p>BOT TOKEN</p>
+                    <input ref={loginInputRef}/>
+                    <button onClick={() => addAccount()}>Add account</button>
+                </div>
+            </div>
+        </Portal>
+        }
+
+        <p id="switchaccount" className="hover" onClick={() => setOpen(true)}>Switch Account</p>
+    </>
+}
+
+function AccountC(
+    { accounts, account, index, removeAccount }:
+    { accounts: Account[], account: Account, index: number, removeAccount: (account: Account) => void }
+) {
+    const [clientUser] = useLocalStorage<Member>("clientUser", JSON.parse(localStorage.getItem("clientUser")!))
+    const [SwitchConfirmationBox, isSwitchConfirmationBoxOpen, openSwitchConfirmationBox] = useConfirmationBox({
+        title: "Switch Account",
+        description: `Are you sure you want to switch to '${account.username}#${account.discriminator}' account?`,
+        confirm: {
+            callback: () => window.api.send("switchAccount", account.token)
+        }
+    })
+    const [LogoutConfirmationBox, isLogoutConfirmationBoxOpen, openLogoutConfirmationBox] = useConfirmationBox({
+        title: "Logout",
+        description:  `Are you sure you want to logout of '${account.username}#${account.discriminator}' account?`,
+        confirm: {
+            callback: () => {
+                window.api.send("removeAccount", account.token)
+                removeAccount(account)
+            }
+        }
+    })
+
+    return <>
+        {isLogoutConfirmationBoxOpen && LogoutConfirmationBox}
+        {isSwitchConfirmationBoxOpen && SwitchConfirmationBox}
+
+        <div id="account">
+            <PFP height={40} width={40} src={`https://cdn.discordapp.com/avatars/${account.id}/${account.avatar}.webp?size=128`} />
+            <div id="texts">
+                <p id="username">{`${account.username}#${account.discriminator}`}</p>
+                {clientUser.id == account.id && <p id="loggedin">Active Account</p>}
+            </div>
+            {clientUser.id !== account.id &&
+                <>
+                    <button onClick={openSwitchConfirmationBox}>Switch</button>
+                    <svg onClick={openLogoutConfirmationBox} xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="#e14545" viewBox="0 0 256 256"><path d="M205.66,194.34a8,8,0,0,1-11.32,11.32L128,139.31,61.66,205.66a8,8,0,0,1-11.32-11.32L116.69,128,50.34,61.66A8,8,0,0,1,61.66,50.34L128,116.69l66.34-66.35a8,8,0,0,1,11.32,11.32L139.31,128Z"></path></svg>
+                </>
+            }
+        </div>
+        {index !== (accounts.length - 1) && <div id="seperator" />}
+    </>
 }

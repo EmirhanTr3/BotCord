@@ -14,6 +14,7 @@ import Role from "./role";
 import UserStatus from "./userstatus";
 import AppFrame from "./appframe";
 import UserModal from "./usermodal";
+import Badge from "./badge";
 
 export {
     Loading,
@@ -31,5 +32,6 @@ export {
     Role,
     UserStatus,
     AppFrame,
-    UserModal
+    UserModal,
+    Badge
 }

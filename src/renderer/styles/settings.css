@@ -203,6 +203,7 @@
     height: 100%;
     background: #00000091;
     z-index: 2;
+    top: 0;
 }
 
 #switchaccountdiv #switchaccount {
@@ -317,6 +318,7 @@
     height: 100%;
     background: #00000091;
     z-index: 2;
+    top: 0;
 }
 
 #logindiv #login {

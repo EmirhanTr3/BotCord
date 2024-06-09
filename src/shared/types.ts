@@ -82,3 +82,11 @@ export type MessageInteraction = {
     commandName: string,
     member: Member
 }
+
+export type Account = {
+    token: string,
+    id: string,
+    username: string,
+    avatar: string,
+    discriminator: string
+}

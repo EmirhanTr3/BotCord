@@ -1,27 +1,19 @@
 import { app, ipcMain } from "electron";
 import path from "path";
 import fs from "fs";
+import { Account } from "src/shared/types";
 const filePath = path.join(app.getPath("userData"), "token.file")
 
 type TokenFile = {
     current?: string,
-    accounts?: {
-        [id: string]: {
-            id: string,
-            username: string,
-            avatar: string,
-            discriminator: string
-        }
+    accounts: {
+        [id: string]: Account
     }
 }
 
 export function getTokenFile(): TokenFile {
     return fs.existsSync(filePath) ? 
         JSON.parse(fs.readFileSync(filePath, {encoding: "utf8"})) : {}
-}
-
-export function deleteTokenFile() {
-    fs.rmSync(filePath)
 }
 
 function stringify(value: any) {
@@ -60,14 +52,13 @@ export async function addAccount(token: string) {
 
     if (!user.id) return "invalid"
 
-    const account = {
+    const account: Account = {
+        token: token,
         id: user.id,
         username: user.username,
         avatar: user.avatar,
         discriminator: user.discriminator
     }
-
-    if (!file.accounts) file.accounts = {}
 
     file.accounts[token] = account
     fs.writeFileSync(filePath, stringify(file))
@@ -77,7 +68,7 @@ export async function addAccount(token: string) {
 export function removeAccount(token: string) {
     const file = getTokenFile()
 
-    delete file.accounts![token]
+    delete file.accounts[token]
 
     fs.writeFileSync(filePath, stringify(file))
 }
@@ -88,7 +79,7 @@ export function deleteAccountsFile() {
 
 ipcMain.handle("getAccounts", () => {
     const file = getTokenFile()
-    return file.accounts
+    return Object.values(file.accounts)
 })
 
 ipcMain.handle("addAccount", async (e, token) => {

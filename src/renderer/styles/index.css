@@ -206,6 +206,7 @@ img {
     width: 100%;
     height: 100%;
     background: #00000091;
+    top: 0;
 }
 
 #messagebox {
@@ -721,6 +722,7 @@ twemoji img, .emoji {
     min-height: 40px;
     display: flex;
     flex-direction: row;
+    padding-top: 4px;
 }
 
 #chat #messages #message #msg #embed #color {

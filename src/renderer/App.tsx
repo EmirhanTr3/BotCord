@@ -32,19 +32,20 @@ if (!rootElement.innerHTML) {
   )
 }
 
-window.api.on("navigate", (_, route) => {
-    router.navigate({
-        to: route
-    })
-})
-
-window.api.on("login", (e, user: Member) => {
+window.api.on("login", (_, user: Member) => {
     console.log("got login event")
     window.localStorage.setItem("clientUser", JSON.stringify(user))
+    router.navigate({ to: "/" })
+})
+
+window.api.on("logout", () => {
+    console.log("got logout event")
+    window.localStorage.removeItem("clientUser")
+    router.navigate({ to: "/login" })
 })
 
 window.api.on("error", (_, title, description) => {
-    console.log(title, description)
+    console.error(title, description)
 })
 
 document.addEventListener("click", (e) => {

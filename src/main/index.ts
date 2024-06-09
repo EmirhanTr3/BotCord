@@ -1,6 +1,6 @@
-import { app, BrowserWindow, globalShortcut, ipcMain, ipcRenderer, shell } from "electron";
+import { app, BrowserWindow, globalShortcut, ipcMain, shell } from "electron";
 import path from "path";
-import { getCurrentToken, setCurrentAccount } from "./accounts";
+import { deleteAccountsFile, getCurrentToken, setCurrentAccount } from "./accounts";
 import { BotCordClient } from "./bot";
 import {
     Collection,
@@ -124,6 +124,20 @@ ipcMain.on("login", (_, token) => {
     login(token)
 })
 
+ipcMain.on("logout", () => {
+    console.log("got logout")
+    client.destroy()
+    deleteAccountsFile()
+    isLoggedIn = false
+    mainWindow.webContents.send("logout")
+})
+
+ipcMain.on("switchAccount", (_, token) => {
+    console.log("got switch account")
+    client.destroy()
+    login(token)
+})
+
 async function login(token?: string) {
     token = token ?? getCurrentToken()
     if (!token) return;
@@ -138,9 +152,6 @@ async function login(token?: string) {
     setCurrentAccount(token)
     isLoggedIn = true
     createBotEvents()
-    // if (!currentGuild) currentGuild = (await client.guilds.fetch()).first()?.id!
-    // if (!currentChannel) currentChannel = (await (await client.guilds.fetch(currentGuild)).channels.fetch()).filter(c => c && c.isTextBased()).first()?.id!
-    mainWindow.webContents.send("navigate", "/")
     mainWindow.webContents.send("login", (await constructMember(client.user!)))
 }
 
