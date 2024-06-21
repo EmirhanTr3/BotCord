@@ -16,10 +16,10 @@ export const Route = createRootRoute({
     ),
     loader: async (options) => {
         const isLoggedIn = await window.api.invoke("getIsLoggedIn")
-        if (!isLoggedIn) throw redirect({
+        if (!isLoggedIn && options.location.href !== "/login") throw redirect({
             to: "/login"
         })
-        else if (options.location.href == "/login") throw redirect({
+        else if (isLoggedIn && options.location.href == "/login") throw redirect({
             to: "/"
         })
     }

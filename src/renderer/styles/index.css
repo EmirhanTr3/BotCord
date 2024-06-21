@@ -102,7 +102,6 @@ img {
     display: inline-block;
     margin: 0%;
     position: relative;
-    bottom: 9px;
     left: 17px;
     padding: 1px 4px;
     background: #5865f2;
@@ -985,11 +984,13 @@ twemoji img, .emoji {
 }
 
 #members #member {
-    padding-bottom: 5px;
+    padding: 2.5px 0;
     cursor: pointer;
     position: relative;
     left: -3px;
     height: 38px;
+    display: flex;
+    align-items: center;
 }
 
 #members #member.offline {
@@ -999,7 +1000,6 @@ twemoji img, .emoji {
 #members #member #pfp {
     position: relative;
     left: 3px;
-    bottom: -3px;
 }
 
 #members #member #username {
@@ -1007,19 +1007,22 @@ twemoji img, .emoji {
     display: inline-block;
     margin: 0%;
     position: relative;
-    bottom: 8px;
     left: 13px;
     color: #ffffff;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
 }
 
 #members #role #name {
     font-size: 13px;
+    margin-bottom: 5px;
 }
 
 #members #member #userstatus {
     border-radius: 50%;
     position: absolute;
-    bottom: 7px;
+    bottom: 4px;
     left: 26px;
 }
 

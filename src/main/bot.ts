@@ -1,6 +1,9 @@
 import { Client, Events, GatewayIntentBits, Partials } from "discord.js"
+import * as DiscordRPC from "discord-rpc"
 
 export class BotCordClient extends Client {
+    rpc!: DiscordRPC.Client;
+
     constructor() {
         super({
             intents: [
@@ -19,6 +22,7 @@ export class BotCordClient extends Client {
             ]
         })
     }
+
     async start(token: string) {
         await this.login(token)
         
@@ -27,5 +31,49 @@ export class BotCordClient extends Client {
         })
 
         return this
+    }
+
+    startRPC() {
+        if (!this.user) throw Error("Client user does not exist.")
+        const clientId = "1197624693184802988"
+        const username = this.user.tag
+        const avatar = this.user.displayAvatarURL()
+
+        DiscordRPC.register(clientId)
+
+        const rpc = new DiscordRPC.Client({ transport: 'ipc' })
+        const startTimestamp = new Date()
+        this.rpc = rpc
+
+        async function setActivity() {
+            rpc.setActivity({
+                buttons: [
+                    {
+                        label: "Download BotCord",
+                        url: "https://github.com/EmirhanTr3/BotCord/releases"
+                    }
+                ],
+                details: username,
+                startTimestamp,
+                largeImageKey: avatar,
+                largeImageText: username,
+                instance: false,
+            });
+        }
+
+        rpc.on('ready', () => {
+            console.log("Connected to RPC")
+            setActivity()
+
+            setInterval(() => {
+                setActivity()
+            }, 15000)
+        })
+
+        rpc.login({ clientId }).catch(console.error)
+    }
+    stopRPC() {
+        this.rpc.clearActivity()
+        this.rpc.destroy()
     }
 }

@@ -6,7 +6,7 @@ const filePath = path.join(app.getPath("userData"), "token.file")
 
 type TokenFile = {
     current?: string,
-    accounts: {
+    accounts?: {
         [id: string]: Account
     }
 }
@@ -60,7 +60,9 @@ export async function addAccount(token: string) {
         discriminator: user.discriminator
     }
 
+    if (!file.accounts) file.accounts = {}
     file.accounts[token] = account
+
     fs.writeFileSync(filePath, stringify(file))
     return true
 }
@@ -68,7 +70,7 @@ export async function addAccount(token: string) {
 export function removeAccount(token: string) {
     const file = getTokenFile()
 
-    delete file.accounts[token]
+    delete file.accounts![token]
 
     fs.writeFileSync(filePath, stringify(file))
 }
@@ -79,7 +81,7 @@ export function deleteAccountsFile() {
 
 ipcMain.handle("getAccounts", () => {
     const file = getTokenFile()
-    return Object.values(file.accounts)
+    return Object.values(file.accounts!)
 })
 
 ipcMain.handle("addAccount", async (e, token) => {

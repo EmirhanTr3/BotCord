@@ -52,7 +52,10 @@ window.api.on("error", (_, title, description) => {
 
 document.addEventListener("click", (e) => {
     const target = e.target as HTMLAnchorElement
-    if (target.tagName == "A" && target.href) {
+    if (
+        target.tagName == "A" && target.href &&
+        !target.href.startsWith("file:///") && !target.href.startsWith("http://localhost:5173")
+    ) {
         e.preventDefault()
         window.api.send("openURL", (target.href))
     }

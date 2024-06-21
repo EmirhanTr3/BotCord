@@ -49,7 +49,8 @@ const createWindow = () => {
     }
 
     mainWindow.removeMenu()
-    mainWindow.webContents.openDevTools()
+    /** @ts-ignore */
+    if (import.meta.env.DEV) mainWindow.webContents.openDevTools()
 }
 
 app.disableHardwareAcceleration()
@@ -127,6 +128,7 @@ ipcMain.on("login", (_, token) => {
 ipcMain.on("logout", () => {
     console.log("got logout")
     client.destroy()
+    client.stopRPC()
     deleteAccountsFile()
     isLoggedIn = false
     mainWindow.webContents.send("logout")
@@ -135,6 +137,7 @@ ipcMain.on("logout", () => {
 ipcMain.on("switchAccount", (_, token) => {
     console.log("got switch account")
     client.destroy()
+    client.stopRPC()
     login(token)
 })
 
@@ -148,6 +151,7 @@ async function login(token?: string) {
     })
     if (!lcclient) return;
     client = lcclient
+    client.startRPC()
     
     setCurrentAccount(token)
     isLoggedIn = true
