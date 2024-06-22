@@ -43,6 +43,7 @@ export type Guild = {
     members: Member[],
     roles: Role[],
     everyone?: Role
+    lastFetched: number,
 }
 
 export type Channel = {
@@ -72,6 +73,7 @@ export type Message = {
     reference?: Message,
     attachments?: Attachment[],
     channelId: string,
+    guildId: string,
     editedTimestamp: number | null,
     interaction?: MessageInteraction
 }

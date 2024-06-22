@@ -1,7 +1,9 @@
-import { Member, Message } from "src/shared/types"
+import { Guild, Message } from "src/shared/types"
 import { BotBadge, PFP } from "."
 import { useContextMenu, useUserModal } from "../hooks"
 import { useEffect, useRef, useState } from "react"
+import { parseContent } from "../utils"
+import React from "react"
 
 export default function MessageC({ message, setReply, extraClass }: { message: Message, setReply: (reply: Message | undefined) => void, extraClass?: string[] }) {
     const [UserModal, isUserModalOpen, toggleUserModal] = useUserModal(message.author)
@@ -38,6 +40,17 @@ export default function MessageC({ message, setReply, extraClass }: { message: M
     function downloadAttachment(url: string) {
         window.api.send("openURL", url)
     }
+
+    const [guild, setGuild] = useState<Guild>()
+
+    useEffect(() => {
+        async function loadData() {
+            const guild: Guild = await window.api.invoke("getGuild", message.guildId)
+            setGuild(guild)
+        }
+
+        loadData()
+    }, [])
 
     useEffect(() => {
         function messageDelete(e: any, dmessage: Message) {
@@ -94,7 +107,7 @@ export default function MessageC({ message, setReply, extraClass }: { message: M
                     }
                     <div id="msg">
                         <div id="msgcontent">
-                            {msg.content}
+                            <div dangerouslySetInnerHTML={{ __html: parseContent(msg.content, guild) }}></div>
                             {msg.editedTimestamp && <p id="edited">(edited)</p>}
                         </div>
                         {msg.embeds?.map((embed, index) => {
@@ -118,13 +131,13 @@ export default function MessageC({ message, setReply, extraClass }: { message: M
                                                     <a id="title" href={data.url}>{data.title}</a> :
                                                     <p id="title">{data.title}</p>
                                                 )}
-                                            {data.description && <p id="description">{data.description}</p>}
+                                            {data.description && <p id="description" dangerouslySetInnerHTML={{ __html: parseContent(data.description, guild) }}></p>}
                                             {data.fields &&
                                                 <div id="fields">
                                                     {data.fields.map((field, index) =>
                                                         <div key={index} id="field">
                                                             <p id="fieldname">{field.name}</p>
-                                                            <p id="fieldvalue">{field.value}</p>
+                                                            <p id="fieldvalue" dangerouslySetInnerHTML={{ __html: parseContent(field.value, guild) }}></p>
                                                         </div>
                                                     )}
                                                 </div>

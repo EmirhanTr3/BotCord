@@ -185,6 +185,7 @@ ipcMain.handle("getIsLoggedIn", async () => {
 const MemberCache = new Collection<string, Member | MemberNone>()
 const MemberAboutMeCache = new Collection<string, string | undefined>()
 const MemberBannerCache = new Collection<string, string | null | undefined>()
+const GuildCache = new Collection<string, Guild>()
 
 async function constructMember(input: GuildMember | User | string, guildInput?: DJSGuild | string): Promise<Member | MemberNone | undefined> {
     // const startedLoading = new Date()
@@ -299,9 +300,14 @@ async function constructGuild(input: DJSGuild | OAuth2Guild | string, force: boo
             icon: guild.iconURL({size: 128}),
             channels: [],
             members: [],
-            roles: []
+            roles: [],
+            lastFetched: new Date().getTime()
         }
         return data
+    }
+
+    if (GuildCache.has(guild.id) && (new Date().getTime() - (GuildCache.get(guild.id)?.lastFetched ?? 0)) < 60000) {
+        return GuildCache.get(guild.id)
     }
 
     const channels: Channel[] = []
@@ -330,8 +336,11 @@ async function constructGuild(input: DJSGuild | OAuth2Guild | string, force: boo
         channels: channels,
         members: members,
         roles: roles,
-        everyone: await constructRole(guild.roles.everyone, guild)
+        everyone: await constructRole(guild.roles.everyone, guild),
+        lastFetched: new Date().getTime()
     }
+
+    GuildCache.set(guild.id, data)
 
     return data
 }
@@ -404,6 +413,7 @@ async function constructMessage(input: DJSMessage | string, channel: TextChannel
         reference: referenceMessage,
         attachments: message.attachments.map(a => a),
         channelId: message.channelId,
+        guildId: channel.guildId,
         editedTimestamp: message.editedTimestamp,
         interaction: interaction
     }
@@ -423,7 +433,8 @@ ipcMain.handle("getGuilds", async () => {
 })
 
 ipcMain.handle("getGuild", async (e, id) => {
-    return await constructGuild(id, true)
+    const guild = await constructGuild(id)
+    return guild
 })
 
 ipcMain.handle("getChannel", async (e, id, guild) => {

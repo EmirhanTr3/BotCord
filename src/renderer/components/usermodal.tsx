@@ -2,6 +2,7 @@ import { forwardRef, useEffect, useState } from "react";
 import { Member } from "src/shared/types";
 import { getAsset, getBadge } from "../../shared/utils";
 import { Badge, BotBadge, PFP, UserStatus } from ".";
+import { parseContent } from "../utils";
 
 export default forwardRef<HTMLDivElement, {user: Member, location: {x: number, y: number}}>((props, ref) => {
     const { user, location } = props
@@ -48,7 +49,7 @@ export default forwardRef<HTMLDivElement, {user: Member, location: {x: number, y
                 {UserAboutMe &&
                     <div id="aboutme">
                         <h1 id="title">ABOUT ME</h1>
-                        <p>{UserAboutMe}</p>
+                        <p dangerouslySetInnerHTML={{ __html: parseContent(UserAboutMe) }}></p>
                     </div>
                 }
                 <div id="membersince">
