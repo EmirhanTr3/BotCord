@@ -121,7 +121,7 @@ export default function MessageC({ message, setReply, extraClass }: { message: M
                                         <div id="embedcontentdatacontent">
                                             {data.author && 
                                                 <div id="author">
-                                                    {data.author.icon_url && <img id="authoricon" src={data.author.icon_url} />}
+                                                    {data.author.icon_url && <img id="authoricon" src={data.author.proxy_icon_url} />}
                                                     {data.author.url ?
                                                         <a id="authorname" href={data.author.url}>{data.author.name}</a> :
                                                         <p id="authorname">{data.author.name}</p>
@@ -145,12 +145,12 @@ export default function MessageC({ message, setReply, extraClass }: { message: M
                                                 </div>
                                             }
                                         </div>
-                                        {data.thumbnail && <img id="thumbnail" src={data.thumbnail.url}/>}
+                                        {data.thumbnail && <img id="thumbnail" src={data.thumbnail.proxy_url}/>}
                                     </div>
-                                    {data.image && <img id="image" src={data.image.url}/>}
+                                    {data.image && <img id="image" src={data.image.proxy_url}/>}
                                     {data.footer &&
                                         <div id="footer">
-                                            {data.footer.icon_url && <img id="footericon" src={data.footer.icon_url} />}
+                                            {data.footer.icon_url && <img id="footericon" src={data.footer.proxy_icon_url} />}
                                             <p id="footertext">{data.footer.text}</p>
                                         </div>
                                     }
@@ -161,8 +161,8 @@ export default function MessageC({ message, setReply, extraClass }: { message: M
                             <div id="attachments">
                                 {msg.attachments?.map((attachment, index) => <>
                                     {
-                                        attachment.contentType?.startsWith("image") ? <img src={attachment.url}/> :
-                                        attachment.contentType?.startsWith("video") ? <video src={attachment.url} controls/> :
+                                        attachment.contentType?.startsWith("image") ? <img src={attachment.proxyURL}/> :
+                                        attachment.contentType?.startsWith("video") ? <video src={attachment.proxyURL} controls/> :
                                         <div key={index} id="file">
                                             <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" fill="#ebebeb" viewBox="0 0 256 256"><path d="M213.66,82.34l-56-56A8,8,0,0,0,152,24H56A16,16,0,0,0,40,40V216a16,16,0,0,0,16,16H200a16,16,0,0,0,16-16V88A8,8,0,0,0,213.66,82.34ZM152,88V44l44,44Z"></path></svg>
                                             <div id="info">
