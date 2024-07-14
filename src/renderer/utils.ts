@@ -58,14 +58,14 @@ export function parseContent(content: string, guild?: Guild) {
                 /** @ts-ignore */
                 data = c.id
                 /** @ts-ignore */
-                c.content = "@" + user.name
+                c.content = "@" + (user?.name ?? "unknown-user")
                 break
 
             case "channel":
                 /** @ts-ignore */
                 const channel = guild ? guild.channels.find(ch => ch.id == c.id) : { name: c.id }
                 /** @ts-ignore */
-                c.content = "# " + channel.name
+                c.content = "# " + (channel?.name ?? "unknown-channel")
                 break
 
             case "role":
