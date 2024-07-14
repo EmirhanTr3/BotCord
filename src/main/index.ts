@@ -12,11 +12,12 @@ import {
     User,
     Message as DJSMessage,
     TextChannel,
-    MessageFlags,
-    Events
+    Events,
+    ComponentType,
+    StringSelectMenuComponent
 } from "discord.js";
 import moment from "moment";
-import { Member, MemberNone, BotCordUserFlags, Guild, Channel, Role, Message, BasicGuild, MessageInteraction } from "src/shared/types";
+import { Member, MemberNone, BotCordUserFlags, Guild, Channel, Role, Message, BasicGuild, MessageInteraction, ActionRowComponent } from "src/shared/types";
 
 app.setName("BotCord")
 
@@ -404,6 +405,46 @@ async function constructMessage(input: DJSMessage | string, channel: TextChannel
         }
     }
 
+    let components: ActionRowComponent[] = [];
+    
+    const SelectMenuTypes = [
+        ComponentType.ChannelSelect,
+        ComponentType.MentionableSelect,
+        ComponentType.RoleSelect,
+        ComponentType.StringSelect,
+        ComponentType.UserSelect
+    ]
+    
+    message.components.forEach(r => {
+        if (r.components[0].type == ComponentType.Button) {
+            components.push({
+                type: "actionrow",
+                components: r.components.filter(r => r.type == ComponentType.Button).map(b => ({
+                    type: "button",
+                    customId: b.customId,
+                    label: b.label,
+                    disabled: b.disabled,
+                    style: 
+                        b.style == 1 ? "primary" :
+                        b.style == 2 ? "secondary" :
+                        b.style == 3 ? "success" :
+                        b.style == 4 ? "danger" :
+                        b.style == 5 ? "link" :
+                        "primary"
+                }))
+            })
+        } else if (SelectMenuTypes.includes(r.components[0].type)) {
+            components.push({
+                type: "actionrow",
+                components: r.components.filter(r => SelectMenuTypes.includes(r.type)).map((s: any) => ({
+                    type: "selectmenu",
+                    customId: s.customId,
+                    placeholder: s.placeholder
+                }))
+            })
+        }
+    })
+
     const data: Message = {
         id: message.id,
         content: message.content,
@@ -415,7 +456,8 @@ async function constructMessage(input: DJSMessage | string, channel: TextChannel
         channelId: message.channelId,
         guildId: channel.guildId,
         editedTimestamp: message.editedTimestamp,
-        interaction: interaction
+        interaction: interaction,
+        components: components
     }
 
     return data

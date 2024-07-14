@@ -1,4 +1,4 @@
-import { APIEmbed, Attachment, Collection, Embed, PresenceStatus, UserFlags } from "discord.js"
+import { APIEmbed, Attachment, PresenceStatus, UserFlags } from "discord.js"
 
 export type BotCordUserFlags = keyof typeof UserFlags | "BotCordStaff" | "Nitro"
 
@@ -71,11 +71,12 @@ export type Message = {
     embeds?: {data: Readonly<APIEmbed>}[],
     createdAt: string,
     reference?: Message,
-    attachments?: Attachment[],
+    attachments: Attachment[],
     channelId: string,
     guildId: string,
     editedTimestamp: number | null,
-    interaction?: MessageInteraction
+    interaction?: MessageInteraction,
+    components: ActionRowComponent[]
 }
 
 export type MessageInteraction = {
@@ -83,6 +84,31 @@ export type MessageInteraction = {
     id: string,
     commandName: string,
     member: Member
+}
+
+export interface ActionRowComponent extends BaseComponent {
+    type: "actionrow",
+    components: ButtonComponent[] | SelectMenuComponent[]
+}
+
+export type BaseComponent = {
+    type: "actionrow" | "button" | "selectmenu"
+}
+
+export interface ButtonComponent extends BaseComponent {
+    type: "button",
+    customId: string | null,
+    label: string | null,
+    disabled: boolean,
+    style: ButtonStyle
+}
+
+export type ButtonStyle = "primary" | "secondary" | "success" | "danger" | "link" | "primary"
+
+export interface SelectMenuComponent extends BaseComponent {
+    type: "selectmenu"
+    customId: string | null,
+    placeholder?: string
 }
 
 export type Account = {

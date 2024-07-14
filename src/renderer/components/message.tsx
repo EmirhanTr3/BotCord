@@ -3,7 +3,6 @@ import { BotBadge, PFP } from "."
 import { useContextMenu, useUserModal } from "../hooks"
 import { useEffect, useRef, useState } from "react"
 import { parseContent } from "../utils"
-import React from "react"
 
 export default function MessageC({ message, setReply, extraClass }: { message: Message, setReply: (reply: Message | undefined) => void, extraClass?: string[] }) {
     const [UserModal, isUserModalOpen, toggleUserModal] = useUserModal(message.author)
@@ -107,8 +106,11 @@ export default function MessageC({ message, setReply, extraClass }: { message: M
                     }
                     <div id="msg">
                         <div id="msgcontent">
-                            <div dangerouslySetInnerHTML={{ __html: parseContent(msg.content, guild) }}></div>
-                            {msg.editedTimestamp && <p id="edited">(edited)</p>}
+                            <div dangerouslySetInnerHTML={{
+                                __html:
+                                    parseContent(msg.content, guild) +
+                                    (msg.editedTimestamp ? '<p id="edited">(edited)</p>' : "")
+                            }} />
                         </div>
                         {msg.embeds?.map((embed, index) => {
                             const data = embed.data
@@ -155,22 +157,44 @@ export default function MessageC({ message, setReply, extraClass }: { message: M
                                 </div>
                             </div>
                         })}
-                        {msg.attachments?.map((attachment, index) => 
-                            <div key={index} id="attachments">
-                                {
-                                    attachment.contentType?.startsWith("image") ? <img src={attachment.url}/> :
-                                    attachment.contentType?.startsWith("video") ? <video src={attachment.url} controls/> :
-                                    <div id="file">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" fill="#ebebeb" viewBox="0 0 256 256"><path d="M213.66,82.34l-56-56A8,8,0,0,0,152,24H56A16,16,0,0,0,40,40V216a16,16,0,0,0,16,16H200a16,16,0,0,0,16-16V88A8,8,0,0,0,213.66,82.34ZM152,88V44l44,44Z"></path></svg>
-                                        <div id="info">
-                                            <p id="name">{attachment.name}</p>
-                                            <p id="size">{attachment.size} bytes</p>
+                        {msg.attachments.length > 0 &&
+                            <div id="attachments">
+                                {msg.attachments?.map((attachment, index) => <>
+                                    {
+                                        attachment.contentType?.startsWith("image") ? <img src={attachment.url}/> :
+                                        attachment.contentType?.startsWith("video") ? <video src={attachment.url} controls/> :
+                                        <div key={index} id="file">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" fill="#ebebeb" viewBox="0 0 256 256"><path d="M213.66,82.34l-56-56A8,8,0,0,0,152,24H56A16,16,0,0,0,40,40V216a16,16,0,0,0,16,16H200a16,16,0,0,0,16-16V88A8,8,0,0,0,213.66,82.34ZM152,88V44l44,44Z"></path></svg>
+                                            <div id="info">
+                                                <p id="name">{attachment.name}</p>
+                                                <p id="size">{attachment.size} bytes</p>
+                                            </div>
+                                            <svg id="download" className="hover" onClick={() => downloadAttachment(attachment.url)} xmlns="http://www.w3.org/2000/svg" width="36" height="36" fill="#ebebeb" viewBox="0 0 256 256"><path d="M224,144v64a8,8,0,0,1-8,8H40a8,8,0,0,1-8-8V144a8,8,0,0,1,16,0v56H208V144a8,8,0,0,1,16,0Zm-101.66,5.66a8,8,0,0,0,11.32,0l40-40A8,8,0,0,0,168,96H136V32a8,8,0,0,0-16,0V96H88a8,8,0,0,0-5.66,13.66Z"></path></svg>
                                         </div>
-                                        <svg id="download" className="hover" onClick={() => downloadAttachment(attachment.url)} xmlns="http://www.w3.org/2000/svg" width="36" height="36" fill="#ebebeb" viewBox="0 0 256 256"><path d="M224,144v64a8,8,0,0,1-8,8H40a8,8,0,0,1-8-8V144a8,8,0,0,1,16,0v56H208V144a8,8,0,0,1,16,0Zm-101.66,5.66a8,8,0,0,0,11.32,0l40-40A8,8,0,0,0,168,96H136V32a8,8,0,0,0-16,0V96H88a8,8,0,0,0-5.66,13.66Z"></path></svg>
-                                    </div>
-                                }
+                                    }
+                                </>)}
+                                
                             </div>
-                        )}
+                        }
+                        {msg.components.length > 0 &&
+                            <div id="components">
+                                {msg.components.map((row, index) => 
+                                    <div key={index} id="row">
+                                        {row.components.map((component, index) =>
+                                            (component.type == "button") ?
+                                                <div key={component.customId} id="button" className={component.style}>
+                                                    <p>{component.label}</p>
+                                                </div> :
+                                            (component.type == "selectmenu") ?
+                                                <div key={component.customId} id="selectmenu">
+                                                    <p>{component.placeholder ?? "Choose an option"}</p>
+                                                </div>
+                                            : <></>
+                                        )}
+                                    </div>
+                                )}
+                            </div>
+                        }
                     </div>
                 </div>
             </div>

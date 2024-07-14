@@ -850,6 +850,61 @@ timestamp {
     margin-right: 5px
 }
 
+#chat #messages #message #msg #components {
+    display: flex;
+    gap: 5px;
+    padding-top: 5px;
+    padding-bottom: 2px;
+    flex-direction: column;
+}
+
+#chat #messages #message #msg #components #row {
+    display: flex;
+    gap: 5px;
+}
+
+#chat #messages #message #msg #components #row #button {
+    background-color: #0954a9;
+    border-radius: 4px;
+    cursor: not-allowed;
+}
+
+#chat #messages #message #msg #components #row #button.link,
+#chat #messages #message #msg #components #row #button.secondary {
+    background: #3b3b3b;
+}
+
+#chat #messages #message #msg #components #row #button.success {
+    background: #166b2c;
+}
+
+#chat #messages #message #msg #components #row #button.danger {
+    background: #ad2222;
+}
+
+#chat #messages #message #msg #components #row #button p {
+    padding: 6px 11px;
+    font-size: 14px;
+    color: #ffffff;
+}
+
+#chat #messages #msg #components #row #selectmenu {
+    background-color: #151515;
+    border-radius: 5px;
+    cursor: not-allowed;
+    height: 35px;
+    width: 100%;
+    max-width: 350px;
+    display: flex;
+    align-items: center;
+}
+
+#chat #messages #msg #components #row #selectmenu p {
+    position: relative;
+    left: 10px;
+    color: #b5b5b5;
+}
+
 #chat #autocomplete {
     left: 10px;
     width: calc(100% - 20px);
