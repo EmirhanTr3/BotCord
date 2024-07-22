@@ -31,7 +31,8 @@ export default function useUserModal(user: Member): [
     
     function clickEvent(e: MouseEvent) {
         const target = e.target as HTMLElement
-        if (userModalRef.current?.contains(target) || !isUserModalOpen) return;
+        if (userModalRef.current?.contains(target)) return;
+        if (!isUserModalOpen) return document.removeEventListener("click", clickEvent);
         setIsUserModalOpen(false)
         document.removeEventListener("click", clickEvent)
     }
