@@ -161,8 +161,8 @@ export default function MessageC({ message, setReply, extraClass }: { message: M
                             <div id="attachments">
                                 {msg.attachments?.map((attachment, index) => <>
                                     {
-                                        attachment.contentType?.startsWith("image") ? <img src={attachment.proxyURL}/> :
-                                        attachment.contentType?.startsWith("video") ? <video src={attachment.proxyURL} controls/> :
+                                        attachment.contentType?.startsWith("image") ? <img key={index} src={attachment.proxyURL}/> :
+                                        attachment.contentType?.startsWith("video") ? <video key={index} src={attachment.proxyURL} controls/> :
                                         <div key={index} id="file">
                                             <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" fill="#ebebeb" viewBox="0 0 256 256"><path d="M213.66,82.34l-56-56A8,8,0,0,0,152,24H56A16,16,0,0,0,40,40V216a16,16,0,0,0,16,16H200a16,16,0,0,0,16-16V88A8,8,0,0,0,213.66,82.34ZM152,88V44l44,44Z"></path></svg>
                                             <div id="info">

@@ -1258,6 +1258,32 @@ timestamp {
     border-radius: 50%;
 }
 
+#usermodal #roles #list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+}
+
+#usermodal #roles #list #role {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    padding: 1px 5px;
+    border: #333333 solid 1px;
+    border-radius: 3px;
+    gap: 4px;
+}
+
+#usermodal #roles #list #role #color {
+    width: 11px;
+    height: 11px;
+    border-radius: 50%;
+}
+
+#usermodal #roles #list #role p {
+    font-size: 13px;
+}
+
 /*! hover text */
 
 #hovertext {

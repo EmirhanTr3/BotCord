@@ -66,6 +66,20 @@ export default forwardRef<HTMLDivElement, {user: Member, location: {x: number, y
                         </div></>
                     }
                 </div>
+                {user.roles && user.roles.filter(r => !r.isEveryone).length > 0 &&
+                    <div id="roles">
+                        <h1 id="title">{user.roles.length > 2 ? "ROLES": "ROLE"}</h1>
+                        <div id="list">
+                            {user.roles.filter(r => !r.isEveryone).map((role, index) =>
+                                <div key={index} id="role">
+                                    <div id="color" style={{backgroundColor: role.color}} />
+                                    {role.icon && <img width={16} height={16} src={role.icon}/>}
+                                    <p>{role.name}</p>
+                                </div>
+                            )}
+                        </div>
+                    </div>
+                }
             </div>
         </div>
     </div>

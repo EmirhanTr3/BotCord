@@ -260,11 +260,15 @@ async function constructMember(input: GuildMember | User | string, guildInput?: 
     }
 
     if (member && guild) {
+        let roles: Role[] = []
+        member.roles.cache.sort((a, b) => b.position - a.position).forEach(async r => roles.push(await constructRole(r, guild!) as Role))
+
         data.highestRole = await constructRole(member.roles.highest, guild)
         if (member.roles.hoist) data.hoistRole = await constructRole(member.roles.hoist, guild)
         data.isOwner = guild.ownerId == user.id,
         data.joinedAt = moment(member.joinedAt).format("D MMM YYYY")
         data.guild = await constructBasicGuild(guild)
+        data.roles = roles
     }
 
     // console.log(`constructed member ${user.username} in ${new Date() - startedLoading}ms`)
@@ -376,7 +380,8 @@ async function constructRole(input: DJSRole | string, guildInput: DJSGuild): Pro
         position: role.position,
         hoist: role.hoist,
         isEveryone: role.id == guild.roles.everyone.id,
-        memberCount: role.members.filter(m => m.roles.hoist?.id == role.id).size
+        memberCount: role.members.filter(m => m.roles.hoist?.id == role.id).size,
+        icon: role.iconURL({size: 128})
     }
 
     return data

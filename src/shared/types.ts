@@ -22,7 +22,8 @@ export type Member = {
     hoistRole?: Role,
     isOwner?: boolean,
     joinedAt?: string,
-    guild?: BasicGuild
+    guild?: BasicGuild,
+    roles?: Role[]
 }
 
 export type MemberNone = {
@@ -61,7 +62,8 @@ export type Role = {
     position: number,
     hoist: boolean,
     isEveryone: boolean,
-    memberCount: number
+    memberCount: number,
+    icon: string | null
 }
 
 export type Message = {
