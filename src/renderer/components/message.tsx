@@ -195,6 +195,19 @@ export default function MessageC({ message, setReply, extraClass }: { message: M
                                 )}
                             </div>
                         }
+                        {msg.reactions.length > 0 &&
+                            <div id="reactions">
+                                {msg.reactions.map((reaction, index) =>
+                                    <div key={index} id="reaction">
+                                        {reaction.emoji.image ?
+                                            <img width={16} src={reaction.emoji.image} /> :
+                                            <p id="emoji">{reaction.emoji.name}</p>
+                                        }
+                                        <p>{reaction.count}</p>
+                                    </div>
+                                )}
+                            </div>
+                        }
                     </div>
                 </div>
             </div>

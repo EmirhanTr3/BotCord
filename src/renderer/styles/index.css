@@ -905,6 +905,32 @@ timestamp {
     color: #b5b5b5;
 }
 
+#reactions {
+    display: flex;
+    flex-direction: row;
+    gap: 3px;
+    padding-top: 5px;
+}
+
+#reaction {
+    display: flex;
+    align-items: center;
+    border: #8b8bc980 solid 1px;
+    background-color: #3c3c9b60;
+    padding: 2px 8px;
+    border-radius: 8px;
+    gap: 3px;
+    cursor: not-allowed;
+}
+
+#reaction p {
+    font-size: 14px;
+}
+
+#reaction #emoji {
+    font-size: 14px;
+}
+
 #chat #autocomplete {
     left: 10px;
     width: calc(100% - 20px);

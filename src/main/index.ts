@@ -14,10 +14,12 @@ import {
     TextChannel,
     Events,
     ComponentType,
-    StringSelectMenuComponent
+    StringSelectMenuComponent,
+    GuildEmoji,
+    ReactionEmoji
 } from "discord.js";
 import moment from "moment";
-import { Member, MemberNone, BotCordUserFlags, Guild, Channel, Role, Message, BasicGuild, MessageInteraction, ActionRowComponent } from "src/shared/types";
+import { Member, MemberNone, BotCordUserFlags, Guild, Channel, Role, Message, BasicGuild, MessageInteraction, ActionRowComponent, Emoji } from "src/shared/types";
 
 app.setName("BotCord")
 
@@ -462,10 +464,22 @@ async function constructMessage(input: DJSMessage | string, channel: TextChannel
         guildId: channel.guildId,
         editedTimestamp: message.editedTimestamp,
         interaction: interaction,
-        components: components
+        components: components,
+        reactions: message.reactions.cache.map(r => ({
+            count: r.count,
+            emoji: constructEmoji(r.emoji)
+        }))
     }
 
     return data
+}
+
+function constructEmoji(emoji: GuildEmoji | ReactionEmoji): Emoji {
+    return {
+        name: emoji.name,
+        id: emoji.id,
+        image: emoji.imageURL({size: 128})
+    }
 }
 
 ipcMain.handle("getGuilds", async () => {

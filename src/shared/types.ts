@@ -78,7 +78,8 @@ export type Message = {
     guildId: string,
     editedTimestamp: number | null,
     interaction?: MessageInteraction,
-    components: ActionRowComponent[]
+    components: ActionRowComponent[],
+    reactions: Reaction[]
 }
 
 export type MessageInteraction = {
@@ -111,6 +112,17 @@ export interface SelectMenuComponent extends BaseComponent {
     type: "selectmenu"
     customId: string | null,
     placeholder?: string
+}
+
+export type Reaction = {
+    count: number,
+    emoji: Emoji
+}
+
+export type Emoji = {
+    name: string | null,
+    id: string | null,
+    image: string | null
 }
 
 export type Account = {
