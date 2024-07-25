@@ -980,7 +980,7 @@ timestamp {
     font-weight: 600;
 }
 
-#chat #messages #msg #poll #answers #answer #totalvote {
+#chat #messages #msg #poll #totalvote {
     padding-top: 5px;
     font-size: 13px;
 }
