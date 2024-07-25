@@ -14,9 +14,9 @@ import {
     TextChannel,
     Events,
     ComponentType,
-    StringSelectMenuComponent,
     GuildEmoji,
-    ReactionEmoji
+    ReactionEmoji,
+    Emoji as DJSEmoji
 } from "discord.js";
 import moment from "moment";
 import { Member, MemberNone, BotCordUserFlags, Guild, Channel, Role, Message, BasicGuild, MessageInteraction, ActionRowComponent, Emoji } from "src/shared/types";
@@ -468,13 +468,23 @@ async function constructMessage(input: DJSMessage | string, channel: TextChannel
         reactions: message.reactions.cache.map(r => ({
             count: r.count,
             emoji: constructEmoji(r.emoji)
-        }))
+        })),
+        poll: message.poll ? {
+            question: message.poll.question.text,
+            answers: message.poll.answers.map(a => ({
+                id: a.id,
+                text: a.text,
+                emoji: a.emoji ? constructEmoji(a.emoji) : null,
+                voteCount: a.voteCount
+            })),
+            totalVoteCount: message.poll.answers.reduce((n, v) => n + v.voteCount, 0)
+        } : null
     }
 
     return data
 }
 
-function constructEmoji(emoji: GuildEmoji | ReactionEmoji): Emoji {
+function constructEmoji(emoji: GuildEmoji | ReactionEmoji | DJSEmoji): Emoji {
     return {
         name: emoji.name,
         id: emoji.id,

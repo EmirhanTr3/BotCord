@@ -208,6 +208,25 @@ export default function MessageC({ message, setReply, extraClass }: { message: M
                                 )}
                             </div>
                         }
+                        {msg.poll &&
+                            <div id="poll">
+                                <p id="question">{msg.poll.question}</p>
+                                <div id="answers">
+                                    {msg.poll.answers.map((answer, index) =>
+                                        <div key={answer.id} id="answer">
+                                            {answer.emoji && (answer.emoji.image ?
+                                                <img width={30} src={answer.emoji.image} /> :
+                                                <p id="emoji">{answer.emoji.name}</p>
+                                            )}
+                                            {answer.text && <p id="text">{answer.text}</p>}
+                                            <p id="votecount">{answer.voteCount} {answer.voteCount > 1 ? "votes" : "vote"}</p>
+                                            <p id="percentage">{msg.poll!.totalVoteCount ? Math.round(answer.voteCount / msg.poll!.totalVoteCount * 100) : 0}%</p>
+                                        </div>
+                                    )}
+                                </div>
+                                <p id="totalvote">{msg.poll.totalVoteCount} {msg.poll.totalVoteCount > 1 ? "votes" : "vote"}</p>
+                            </div>
+                        }
                     </div>
                 </div>
             </div>

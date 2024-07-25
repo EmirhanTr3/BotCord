@@ -79,7 +79,8 @@ export type Message = {
     editedTimestamp: number | null,
     interaction?: MessageInteraction,
     components: ActionRowComponent[],
-    reactions: Reaction[]
+    reactions: Reaction[],
+    poll: Poll | null,
 }
 
 export type MessageInteraction = {
@@ -123,6 +124,17 @@ export type Emoji = {
     name: string | null,
     id: string | null,
     image: string | null
+}
+
+export type Poll = {
+    question: string,
+    answers: {
+        id: number,
+        text: string | null,
+        emoji: Emoji | null,
+        voteCount: number
+    }[],
+    totalVoteCount: number
 }
 
 export type Account = {

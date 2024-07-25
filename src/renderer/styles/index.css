@@ -905,14 +905,14 @@ timestamp {
     color: #b5b5b5;
 }
 
-#reactions {
+#chat #messages #msg #reactions {
     display: flex;
     flex-direction: row;
     gap: 3px;
     padding-top: 5px;
 }
 
-#reaction {
+#chat #messages #msg #reactions #reaction {
     display: flex;
     align-items: center;
     border: #8b8bc980 solid 1px;
@@ -923,12 +923,66 @@ timestamp {
     cursor: not-allowed;
 }
 
-#reaction p {
+#chat #messages #msg #reactions #reaction p {
     font-size: 14px;
 }
 
-#reaction #emoji {
+#chat #messages #msg #reactions #reaction #emoji {
     font-size: 14px;
+}
+
+#chat #messages #msg #poll {
+    background-color: #151515;
+    border-radius: 10px;
+    padding: 15px;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    max-width: 450px;
+}
+
+#chat #messages #msg #poll #question {
+    font-size: 16px;
+    color: #f5f5f5;
+}
+
+#chat #messages #msg #poll #answers {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+#chat #messages #msg #poll #answers #answer {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background-color: #1c1c1c;
+    border-radius: 10px;
+    padding: 10px;
+    min-height: 30px;
+}
+
+#chat #messages #msg #poll #answers #answer #emoji {
+    font-size: 22px;
+}
+
+#chat #messages #msg #poll #answers #answer #text {
+    flex: 1;
+}
+
+#chat #messages #msg #poll #answers #answer #votecount {
+    font-size: 11px;
+    font-weight: 500;
+    color: #f5f5f5;
+}
+
+#chat #messages #msg #poll #answers #answer #percentage {
+    font-weight: 600;
+}
+
+#chat #messages #msg #poll #answers #answer #totalvote {
+    padding-top: 5px;
+    font-size: 13px;
 }
 
 #chat #autocomplete {
