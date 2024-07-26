@@ -43,7 +43,7 @@ export type Guild = {
     channels: Channel[],
     members: Member[],
     roles: Role[],
-    everyone?: Role
+    everyone?: Role,
     lastFetched: number,
 }
 

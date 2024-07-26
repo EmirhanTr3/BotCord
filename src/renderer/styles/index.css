@@ -102,7 +102,6 @@ img {
     display: inline-block;
     margin: 0%;
     position: relative;
-    left: 17px;
     padding: 1px 4px;
     background: #5865f2;
     border-radius: 3px;
@@ -124,77 +123,6 @@ img {
 
 #botbadge p.verified {
     padding-left: 12px;
-}
-
-/*! loading screen */
-
-#loadingscreen {
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    background: var(--main-color);
-    z-index: 10;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
-.loading {
-    display : flex;
-}
-.loading .dot {
-    position: relative;
-    width: 1em;
-    height: 1em;
-    margin: 0.3em;
-    border-radius: 50%;
-}
-.loading .dot::before {
-    position: absolute;
-    content: "";
-    width: 100%;
-    height: 100%;
-    background: inherit;
-    border-radius: inherit;
-    animation: wave 2s ease-out infinite;
-}
-.loading .dot:nth-child(1) {
-    background: #7ef9ff;
-}
-.loading .dot:nth-child(1)::before {
-    animation-delay: 0.2s;
-}
-.loading .dot:nth-child(2) {
-    background: #89cff0;
-}
-.loading .dot:nth-child(2)::before {
-    animation-delay: 0.4s;
-}
-.loading .dot:nth-child(3) {
-    background: #4682b4;
-}
-.loading .dot:nth-child(3)::before {
-    animation-delay: 0.6s;
-}
-.loading .dot:nth-child(4) {
-    background: #0f52ba;
-}
-.loading .dot:nth-child(4)::before {
-    animation-delay: 0.8s;
-}
-.loading .dot:nth-child(5) {
-    background: #000080;
-}
-.loading .dot:nth-child(5)::before {
-    animation-delay: 1s;
-}
-@keyframes wave {
-    50%, 75% {
-        transform: scale(2.5);
-    }
-    80%, 100% {
-        opacity: 0;
-    }
 }
 
 /*! message box */
@@ -276,12 +204,12 @@ img {
 /*! sidebar 1 - contains guild list */
 
 #sidebar {
-    padding: 0.7rem;
-    top: 0;
-    left: 0;
-    margin: 0;
+    padding: 11px;
     overflow: auto;
-    height: calc(100% - 22px);
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    align-items: center;
 }
 
 #sidebar::-webkit-scrollbar {
@@ -289,13 +217,11 @@ img {
 }
 
 #guildList {
-    padding-top: 0.6rem;
     flex-direction: column;
     display: flex;
 }
 
 #guildList #pfp {
-    margin-bottom: 0.4rem;
     transition: border-radius .4s;
     -webkit-transition: border-radius .4s;
     cursor: pointer;
@@ -308,30 +234,23 @@ img {
 }
 
 #guildSeparator {
-    height: 2px;
     width: 32px;
-    margin-left: 0.5rem;
-    margin-top: 0.3rem;
     border-radius: 1px;
     background-color: #161616;
+    flex: 0 0 2px;
 }
 
 /*! sidebar 2 - contains channels and user */
 
 #sidebar2 {
-    padding-left: 0.5rem;
-    padding-right: 0.5rem;
+    padding: 0px 8px;
     border: 2px solid var(--secondary-color);
-    height: calc(100% - 4px);
     width: 178px;
-    position: relative;
+    display: flex;
+    flex-direction: column;
 }
 
-#guild {
-    height: calc(100% - 57px);
-}
-
-#guild #guildname {
+#sidebar2 #guildname {
     color: #eeeeee;
     margin: 16px 8px;
     font-size: 16px;
@@ -339,49 +258,50 @@ img {
     white-space: nowrap;
     overflow: hidden;
     max-width: 100%;
+    flex: 0 0 19px;
 }
 
-#guild #channels {
+#sidebar2 #channels {
     overflow: auto;
-    height: calc(100% - 35px);
+    flex: 1;
 }
 
-#guild #channels::-webkit-scrollbar {
+#sidebar2 #channels::-webkit-scrollbar {
     display: none;
 }
 
-#guild #channel {
+#sidebar2 #channel {
     padding-top: 0.15rem;
     padding-bottom: 0.15rem;
     cursor: pointer;
 }
 
-#guild #channel.current {
+#sidebar2 #channel.current {
     background: #404040;
     border-radius: 5px;
 }
 
-#guild #channel.current #channelname {
+#sidebar2 #channel.current #channelname {
     color: #e3e3e3;
 }
 
-#guild #icon.category {
+#sidebar2 #icon.category {
     position: relative;
     bottom: 1px;
 }
-#guild #category {
+#sidebar2 #category {
     padding-bottom: 9px;
 }
 
-#guild #category #categoryname {
+#sidebar2 #category #categoryname {
     font-size: 12px;
 }
 
-#guild #category #channel {
+#sidebar2 #category #channel {
     padding-left: 3px;
 }
 
-#guild #channels p {
+#sidebar2 #channels p {
     font-size: 15px;
     display: inline-block;
     margin: 0%;
@@ -394,43 +314,36 @@ img {
     max-width: 86%;
 }
 
-#user {
-    position: absolute;
-    bottom: 4px;
-    width: 9.55rem;
+#sidebar2 #user {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    flex: 0 0 40px;
+}
+
+#sidebar2 #user #profile {
     cursor: pointer;
-    height: 2rem;
-    left: 3px;
+    height: 32px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    flex: 1;
+    gap: 5px;
+    padding: 0px 0px 0px 4px;
 }
 
-#user #pfp {
-    position: relative;
-    bottom: -3px;
-    left: 5px;
-}
-
-#user #username {
+#sidebar2 #user #profile #username {
     font-size: 15px;
-    display: inline-block;
     margin: 0%;
-    position: relative;
-    bottom: 3px;
-    left: 12px;
 }
 
-#settingsbutton {
-    position: absolute;
-    right: 3px;
-    bottom: 6px;
+#sidebar2 #user #settingsbutton {
     cursor: pointer;
     width: 28px;
     height: 28px;
-}
-
-#settingsbutton svg {
-    position: absolute;
-    bottom: 3px;
-    right: 3px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 /*! chat */
@@ -1119,52 +1032,36 @@ timestamp {
 /*! member list */
 
 #members {
-    padding: 15px;
-    padding-top: 0;
+    padding: 0 10px 0 15px;
     border: 2px solid var(--secondary-color);
-    height: calc(100% - 19px);
     overflow: auto;
-    flex: 0 0 13rem;
+    flex: 0 0 213px;
+    display: flex;
+    flex-direction: column;
 }
 
 #members::-webkit-scrollbar {
     display: none;
 }
 
+#members #role #name {
+    font-size: 13px;
+    margin-bottom: 5px;
+}
+
 #members #member {
-    padding: 2.5px 0;
+    padding: 2.5px 3px;
     cursor: pointer;
     position: relative;
     left: -3px;
     height: 38px;
     display: flex;
     align-items: center;
+    gap: 8px;
 }
 
 #members #member.offline {
     opacity: 0.5;
-}
-
-#members #member #pfp {
-    position: relative;
-    left: 3px;
-}
-
-#members #member #username {
-    font-size: 15px;
-    display: inline-block;
-    margin: 0%;
-    position: relative;
-    left: 13px;
-    color: #ffffff;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    overflow: hidden;
-}
-
-#members #role #name {
-    font-size: 13px;
-    margin-bottom: 5px;
 }
 
 #members #member #userstatus {
@@ -1174,13 +1071,19 @@ timestamp {
     left: 26px;
 }
 
-#members #member #ownercrown {
-    display: inline-block;
+#members #member #username {
+    font-size: 15px;
     margin: 0;
-    position: relative;
-    left: 16px;
-    bottom: 6px;
+    color: #ffffff;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+}
+
+#members #member #ownercrown {
+    margin: 0;
     font-size: 14px;
+    flex: 0 0 15px;
 }
 
 /*! user modal */

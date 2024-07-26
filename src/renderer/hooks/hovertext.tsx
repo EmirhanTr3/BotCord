@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from "react"
 import { Portal } from "react-portal"
 
-export default function useHoverText(element: React.RefObject<HTMLElement>, text: string): [JSX.Element, boolean] {
+export default function useHoverText(element: React.RefObject<HTMLElement | SVGSVGElement>, text: string): [JSX.Element, boolean] {
     const [mouseLocation, setMouseLocation] = useState<{x: number, y: number}>({x: 0, y: 0})
     const [isOpen, setIsOpen] = useState<boolean>(false)
     const hoverText = useRef<HTMLDivElement>(null)
