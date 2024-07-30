@@ -1,4 +1,4 @@
-import { Channel, Guild, Member, Message } from "src/shared/types"
+import { Channel, DMChannel, Guild, Member, Message } from "src/shared/types"
 import { Message as MessageC, PFP, UserStatus } from "."
 import { getChannelIcon } from "../../shared/utils"
 import { useState, useEffect, SyntheticEvent, useRef } from "react"
@@ -7,8 +7,8 @@ export function Chat({ children }: { children?: JSX.Element }) {
     return <div id="chat">{children}</div>
 }
 
-export function ChatData({ channel }: { channel: Channel }) {
-    const icon = getChannelIcon(channel.type)
+export function ChatData({ channel, isDM }: { channel: Channel | DMChannel, isDM?: boolean }) {
+    const icon = getChannelIcon(channel.type as number)
     const [messages, setMessages] = useState<Message[]>([])
     const [isAutoCompleteOpen, setAutoCompleteOpen] = useState<boolean>(false)
     const [autoCompleteMemberList, setAutoCompleteMemberList] = useState<Member[]>([])
@@ -30,9 +30,11 @@ export function ChatData({ channel }: { channel: Channel }) {
                 messagesRef.current!.scrollTop = messagesRef.current!.scrollHeight - messagesRef.current!.clientHeight
             }, 10)
 
-            const guild: Guild = await window.api.invoke("getGuild", channel.guildId)
-            setMembers(guild.members)
-            setChannels(guild.channels)
+            if (!isDM) {
+                const guild: Guild = await window.api.invoke("getGuild", channel.guildId)
+                setMembers(guild.members)
+                setChannels(guild.channels)
+            }
         }
 
         fetchData()
@@ -136,7 +138,15 @@ export function ChatData({ channel }: { channel: Channel }) {
     return (
     <>
         <div id="channelInfo">
-            <img id="icon" height="20px" width="20px" src={icon} /><p>{channel.name}</p>
+            {isDM ?
+                <>
+                    <PFP height={24} width={24} src={channel.member!.avatar}/>
+                    <p>{channel.member?.displayName}</p>
+                </> : <>
+                    <img id="icon" height="20px" width="20px" src={icon} />
+                    <p>{channel.name}</p>
+                </>
+            }
         </div>
         <div id="messages" ref={messagesRef}>
             {messages.map((message, index) => {
@@ -158,7 +168,7 @@ export function ChatData({ channel }: { channel: Channel }) {
                     classList.push("hasothermessages")
                 }
 
-                return <MessageC key={message.id} message={message} setReply={setReply} extraClass={classList}/>
+                return <MessageC key={message.id} message={message} setReply={setReply} extraClass={classList} isDM={isDM}/>
             })}
         </div>
         <form onSubmit={sendMessage} onInput={inputChange}>

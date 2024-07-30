@@ -16,10 +16,13 @@ import {
     ComponentType,
     GuildEmoji,
     ReactionEmoji,
-    Emoji as DJSEmoji
+    Emoji as DJSEmoji,
+    DMChannel as DJSDMChannel,
+    ChannelType
 } from "discord.js";
 import moment from "moment";
-import { Member, MemberNone, BotCordUserFlags, Guild, Channel, Role, Message, BasicGuild, MessageInteraction, ActionRowComponent, Emoji } from "src/shared/types";
+import { Member, MemberNone, BotCordUserFlags, Guild, Channel, Role, Message, BasicGuild, MessageInteraction, ActionRowComponent, Emoji, DMChannel } from "src/shared/types";
+import { addDM, getDMList, removeDM } from "./dms";
 
 app.setName("BotCord")
 
@@ -164,6 +167,13 @@ async function login(token?: string) {
 
 export function createBotEvents() {
     client.on(Events.MessageCreate, async (message) => {
+        if (message.channel.isDMBased() && !message.channel.partial) {
+            const list = getDMList()
+            if (list && !list.some(c => c.id == message.channel.id)) {
+                const dmChannel = await constructDMChannel(message.channel)
+                addDM(dmChannel!)
+            }
+        }
         mainWindow.webContents.send("messageCreate", await constructMessage(message, message.channel as TextChannel))
     })
 
@@ -369,6 +379,18 @@ async function constructChannel(input: NonThreadGuildBasedChannel | string, guil
     return data
 }
 
+async function constructDMChannel(input: DJSDMChannel | string): Promise<DMChannel | undefined> {
+    const channel = (!(typeof input == "string")) ? input : await client.channels.fetch(input).catch(e => undefined)
+    if (!channel || !channel.isDMBased() || channel.partial || channel.type !== ChannelType.DM) return;
+
+    const data: DMChannel = {
+        id: channel.id,
+        member: await constructMember(channel.recipient || channel.recipientId) as Member
+    }
+
+    return data
+}
+
 async function constructRole(input: DJSRole | string, guildInput: DJSGuild): Promise<Role | undefined> {
     const guild = guildInput instanceof DJSGuild ? guildInput : await client.guilds.fetch(guildInput!).catch(e => undefined)
     if (!guild) return;
@@ -389,7 +411,7 @@ async function constructRole(input: DJSRole | string, guildInput: DJSGuild): Pro
     return data
 }
 
-async function constructMessage(input: DJSMessage | string, channel: TextChannel) : Promise<Message | undefined> {
+async function constructMessage(input: DJSMessage | string, channel: TextChannel): Promise<Message | undefined> {
     const message = (input instanceof DJSMessage) ? input : await channel.messages.fetch(input).catch(e => undefined)
     if (!message) return;
 
@@ -510,6 +532,30 @@ ipcMain.handle("getGuild", async (e, id) => {
 
 ipcMain.handle("getChannel", async (e, id, guild) => {
     return await constructChannel(id, guild)
+})
+
+ipcMain.handle("getDMChannel", async (e, id) => {
+    return await constructDMChannel(id)
+})
+
+ipcMain.handle("addDM", async (e, memberId: string | null) => {
+    const dmList = getDMList()
+    if (dmList.some(c => c.member.id == memberId)) return {status: true, channel: dmList.find(c => c.member.id == memberId)};
+    if (!memberId) return {status: false};
+    const user = await client.users.fetch(memberId).catch(e => undefined)
+    if (!user) return {status: false};
+    const channel = await user.createDM().catch(e => undefined)
+    if (!channel) return {status: false};
+    const dmChannel = await constructDMChannel(channel)
+    if (!dmChannel) return {status: false};
+    addDM(dmChannel)
+    return {status: true, channel: dmChannel}
+})
+
+ipcMain.on("removeDM", async (e, memberId: string | null) => {
+    const dmChannel = getDMList().find(c => c.member.id == memberId)
+    if (!dmChannel) return;
+    removeDM(dmChannel)
 })
 
 ipcMain.handle("getLastMessages", async (e, cid, amount) => {

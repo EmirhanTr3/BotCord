@@ -15,6 +15,7 @@ import UserStatus from "./userstatus";
 import AppFrame from "./appframe";
 import UserModal from "./usermodal";
 import Badge from "./badge";
+import HoverText from "./hovertext";
 
 export {
     Loading,
@@ -33,5 +34,6 @@ export {
     UserStatus,
     AppFrame,
     UserModal,
-    Badge
+    Badge,
+    HoverText
 }

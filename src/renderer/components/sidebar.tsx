@@ -30,7 +30,9 @@ export default function Sidebar() {
     }, [])
 
     return <div id="sidebar">
-        <img id="logo" height="48px" width="48px" src={getAsset("icon.png")} />
+        <Link to="/dm">
+            <img id="logo" height="48px" width="48px" src={getAsset("icon.png")} />
+        </Link>
         <div id="guildSeparator"></div>
         <div id="guildList">
             {guilds.map(guild => <GuildC key={guild.id} guild={guild} />)}

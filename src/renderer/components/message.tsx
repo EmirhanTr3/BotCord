@@ -4,7 +4,7 @@ import { useContextMenu, useUserModal } from "../hooks"
 import { useEffect, useRef, useState } from "react"
 import { parseContent } from "../utils"
 
-export default function MessageC({ message, setReply, extraClass }: { message: Message, setReply: (reply: Message | undefined) => void, extraClass?: string[] }) {
+export default function MessageC({ message, setReply, extraClass, isDM }: { message: Message, setReply: (reply: Message | undefined) => void, extraClass?: string[], isDM?: boolean }) {
     const [UserModal, isUserModalOpen, toggleUserModal] = useUserModal(message.author)
     const messageRef = useRef<HTMLDivElement>(null)
     const [msg, setMessage] = useState<Message>(message)
@@ -44,8 +44,11 @@ export default function MessageC({ message, setReply, extraClass }: { message: M
 
     useEffect(() => {
         async function loadData() {
-            const guild: Guild = await window.api.invoke("getGuild", message.guildId)
-            setGuild(guild)
+            if (!isDM) {
+                console.log(isDM)
+                const guild: Guild = await window.api.invoke("getGuild", message.guildId)
+                setGuild(guild)
+            }
         }
 
         loadData()

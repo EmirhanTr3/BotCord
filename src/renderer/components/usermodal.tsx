@@ -1,14 +1,16 @@
 import { forwardRef, useEffect, useState } from "react";
 import { Member } from "src/shared/types";
 import { getAsset, getBadge } from "../../shared/utils";
-import { Badge, BotBadge, PFP, UserStatus } from ".";
+import { Badge, BotBadge, PFP, UserStatus, HoverText } from ".";
 import { parseContent } from "../utils";
+import { useNavigate } from "@tanstack/react-router";
 
 export default forwardRef<HTMLDivElement, {user: Member, location: {x: number, y: number}}>((props, ref) => {
     const { user, location } = props
 
     const [UserAboutMe, setUserAboutMe] = useState<string>()
     const [UserBanner, setUserBanner] = useState<string>()
+    const navigate = useNavigate()
 
     useEffect(() => {
         async function fetchData() {
@@ -26,8 +28,26 @@ export default forwardRef<HTMLDivElement, {user: Member, location: {x: number, y
         fetchData()
     }, [])
 
+    async function openDM() {
+        const response = await window.api.invoke("addDM", user.id)
+        if (response.status == true) {
+            navigate({
+                to: `/dm/${response.channel.id}`
+            })
+        }
+    }
+
     return <div ref={ref} id="usermodal" style={{top: location.y, left: location.x}}>
         <img id="banner" src={UserBanner ?? getAsset("bannerdefault.png")} />
+        {!user.bot &&
+            <div id="buttons">
+                <HoverText text="Send a message">
+                    <div id="dm" onClick={openDM}>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="#d9d9d9" viewBox="0 0 256 256"><path d="M140,128a12,12,0,1,1-12-12A12,12,0,0,1,140,128ZM84,116a12,12,0,1,0,12,12A12,12,0,0,0,84,116Zm88,0a12,12,0,1,0,12,12A12,12,0,0,0,172,116Zm60,12A104,104,0,0,1,79.12,219.82L45.07,231.17a16,16,0,0,1-20.24-20.24l11.35-34.05A104,104,0,1,1,232,128Zm-16,0A88,88,0,1,0,51.81,172.06a8,8,0,0,1,.66,6.54L40,216,77.4,203.53a7.85,7.85,0,0,1,2.53-.42,8,8,0,0,1,4,1.08A88,88,0,0,0,216,128Z"></path></svg>
+                    </div>
+                </HoverText>
+            </div>
+        }
         <PFP width={80} height={80} src={user.avatar}/>
         <UserStatus height={20} width={20} status={user.status} />
         {user.badges.length > 0 &&

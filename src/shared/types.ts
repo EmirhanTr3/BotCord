@@ -53,6 +53,21 @@ export type Channel = {
     type: number,
     parent?: Channel,
     guildId: string
+    /** FOR COMPATIBILITY WITH DM CHANNELS */
+    member?: null,
+}
+
+export type DMChannel = {
+    id: string,
+    member: Member,
+    /** FOR COMPATIBILITY WITH NORMAL CHANNELS */
+    name?: null,
+    /** FOR COMPATIBILITY WITH NORMAL CHANNELS */
+    type?: null,
+    /** FOR COMPATIBILITY WITH NORMAL CHANNELS */
+    parent?: null,
+    /** FOR COMPATIBILITY WITH NORMAL CHANNELS */
+    guildId?: null
 }
 
 export type Role = {

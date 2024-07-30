@@ -1,12 +1,12 @@
-import { Guild, Member } from "src/shared/types"
+import { DMChannel, Guild, Member } from "src/shared/types"
 import PFP from "./pfp"
 import { useLocalStorage } from "usehooks-ts"
 import Channel from "./channel"
 import Category from "./category"
-import { useUserModal } from "../hooks"
-import { Link } from "@tanstack/react-router"
+import { useContextMenu, useUserModal } from "../hooks"
+import { Link, Navigate, useNavigate } from "@tanstack/react-router"
 
-export default function Sidebar2({ guild }: { guild: Guild }) {
+export default function Sidebar2({ guild, dms }: { guild?: Guild, dms?: DMChannel[] }) {
     const [clientUser] = useLocalStorage<Member>("clientUser", JSON.parse(localStorage.getItem("clientUser")!))
     const [UserModal, isUserModalOpen, toggleUserModal] = useUserModal(clientUser)
     
@@ -14,20 +14,9 @@ export default function Sidebar2({ guild }: { guild: Guild }) {
         {isUserModalOpen && UserModal}
 
         <div id="sidebar2">
-            <h1 id="guildname">{guild.name}</h1>
-            <div id="channels">
-                {guild.channels.filter(c => c.type !== 4 && !c.parent).map(channel => {
-                    return <Channel key={channel.id} channel={channel}/>
-                })}
+            {guild && <GuildSidebar guild={guild}/>}
+            {dms && <DMSidebar channels={dms}/>}
 
-                {guild.channels.filter(c => c.type == 4).map(channel => {
-                    return <Category key={channel.id} category={channel}>
-                        {guild.channels.filter(c => c.parent?.id == channel.id).map(c => {
-                            return <Channel key={c.id} channel={c}/>
-                        })}
-                    </Category>
-                })}
-            </div>
             <div id="user" onClick={toggleUserModal}>
                 <div id="profile" className="hover">
                     <PFP height={24} width={24} src={clientUser.avatar}/>
@@ -39,6 +28,59 @@ export default function Sidebar2({ guild }: { guild: Guild }) {
                     </div>
                 </Link>
             </div>
+        </div>
+    </>
+}
+
+function GuildSidebar({ guild }: { guild: Guild }) {
+    return <>
+        <h1 id="guildname">{guild.name}</h1>
+        <div id="channels">
+            {guild.channels.filter(c => c.type !== 4 && !c.parent).map(channel => {
+                return <Channel key={channel.id} channel={channel}/>
+            })}
+
+            {guild.channels.filter(c => c.type == 4).map(channel => {
+                return <Category key={channel.id} category={channel}>
+                    {guild.channels.filter(c => c.parent?.id == channel.id).map(c => {
+                        return <Channel key={c.id} channel={c}/>
+                    })}
+                </Category>
+            })}
+        </div>
+    </>
+}
+
+function DMSidebar({ channels }: { channels: DMChannel[] }) {
+    return <div id="channels">
+        <p id="dmtitle">DIRECT MESSAGES</p>
+        {channels.map((channel, index) =>
+            <Link key={index} to={`/dm/${channel.id}`}>
+                <DMMember member={channel.member} />
+            </Link>
+        )}
+    </div>
+}
+
+function DMMember({ member }: { member: Member }) {
+    const [ContextMenu, isContextMenuOpen, toggleContextMenu] = useContextMenu({
+        autoClose: true,
+        items: [
+            {
+                type: "danger",
+                text: "Delete DM",
+                callback(event, item) {
+                    window.api.send("removeDM", member.id)
+                },
+            }
+        ]
+    })
+
+    return <>
+        {isContextMenuOpen && ContextMenu}
+        <div id="dm" className="hover" onContextMenu={toggleContextMenu}>
+            <PFP height={32} width={32} src={member.avatar} />
+            <p id="name">{member.displayName}</p>
         </div>
     </>
 }

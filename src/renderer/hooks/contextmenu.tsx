@@ -50,10 +50,20 @@ export default function useContextMenu(options: ContextMenuOptions): [
         if (contextMenuRef.current?.contains(target) || !isContextMenuOpen) return;
         setIsContextMenuOpen(false)
         document.removeEventListener("click", clickEvent)
+        document.removeEventListener("contextmenu", contextEvent)
+    }
+
+    function contextEvent(e: Event) {
+        const target = e.target as HTMLElement
+        if (contextMenuRef.current?.contains(target) || !isContextMenuOpen) return;
+        setIsContextMenuOpen(false)
+        document.removeEventListener("click", clickEvent)
+        document.removeEventListener("contextmenu", contextEvent)
     }
 
     setTimeout(() => {
         document.addEventListener("click", clickEvent)
+        document.addEventListener("contextmenu", contextEvent)
     }, 100);
     
     return [
