@@ -58,7 +58,8 @@
     "artifactName": "${productName}-${version}-${os}-${arch}.${ext}",
     "copyright": "Copyright © 2024 @emirdev.xyz",
     "files": [
-      "out"
+      "out",
+      "lang"
     ],
     "mac": {
       "category": "public.app-category.social-networking",
