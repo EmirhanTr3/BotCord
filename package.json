@@ -58,7 +58,9 @@
     "artifactName": "${productName}-${version}-${os}-${arch}.${ext}",
     "copyright": "Copyright © 2024 @emirdev.xyz",
     "files": [
-      "out",
+      "out"
+    ],
+    "extraFiles": [
       "lang"
     ],
     "mac": {

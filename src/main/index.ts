@@ -23,8 +23,6 @@ import {
 import moment from "moment";
 import { Member, MemberNone, BotCordUserFlags, Guild, Channel, Role, Message, BasicGuild, MessageInteraction, ActionRowComponent, Emoji, DMChannel } from "src/shared/types";
 import { addDM, getDMList, removeDM } from "./dms";
-import fs from "fs";
-console.log(fs.readdirSync("."))
 import "./i18n";
 
 app.setName("BotCord")
@@ -165,7 +163,6 @@ async function login(token?: string) {
     setCurrentAccount(token)
     isLoggedIn = true
     createBotEvents()
-    mainWindow.webContents.send("error", "im fucked", fs.readdirSync("."))
     mainWindow.webContents.send("login", (await constructMember(client.user!)))
 }
 
