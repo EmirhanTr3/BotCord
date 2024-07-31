@@ -1,8 +1,10 @@
 import { Guild, Message } from "src/shared/types"
-import { BotBadge, PFP } from "."
+import { BotBadge, HoverText, PFP } from "."
 import { useContextMenu, useUserModal } from "../hooks"
 import { useEffect, useRef, useState } from "react"
 import { parseContent } from "../utils"
+import { t } from "i18next"
+import { Trans } from "react-i18next"
 
 export default function MessageC({ message, setReply, extraClass, isDM }: { message: Message, setReply: (reply: Message | undefined) => void, extraClass?: string[], isDM?: boolean }) {
     const [UserModal, isUserModalOpen, toggleUserModal] = useUserModal(message.author)
@@ -12,20 +14,20 @@ export default function MessageC({ message, setReply, extraClass, isDM }: { mess
         autoClose: true,
         items: [
             {
-                text: "Reply",
+                text: t("chat.contextmenu.reply"),
                 callback(event, item) {
                     setReply(message)
                 },
             },
             {
-                text: "Copy Text",
+                text: t("chat.contextmenu.copytext"),
                 callback(event, item) {
                     navigator.clipboard.writeText(message.content)
                 }
             },
             { type: "seperator" },
             {
-                text: "Copy Message ID",
+                text: t("chat.contextmenu.copymessageid"),
                 callback(event, item) {
                     navigator.clipboard.writeText(message.id)
                 },
@@ -45,7 +47,6 @@ export default function MessageC({ message, setReply, extraClass, isDM }: { mess
     useEffect(() => {
         async function loadData() {
             if (!isDM) {
-                console.log(isDM)
                 const guild: Guild = await window.api.invoke("getGuild", message.guildId)
                 setGuild(guild)
             }
@@ -89,10 +90,10 @@ export default function MessageC({ message, setReply, extraClass, isDM }: { mess
                     <PFP height={16} width={16} src={extraDataUser.avatar} onClick={toggleExtraUserModal}/>
                     <p id="username" style={{color: extraDataUser.displayColor}} onClick={toggleExtraUserModal}>{extraDataUser.displayName}</p>
                     {message.interaction &&
-                        <>
+                        <Trans i18nKey="chat.usedcommand" values={{command: message.interaction.commandName}}>
                             <p>used</p>
-                            <p id="command">/{message.interaction.commandName}</p>
-                        </>
+                            <p id="command"></p>
+                        </Trans>
                     }
                     {message.reference && <p id="referencecontent">{message.reference.content}</p>}
                 </div>
@@ -112,7 +113,7 @@ export default function MessageC({ message, setReply, extraClass, isDM }: { mess
                             <div dangerouslySetInnerHTML={{
                                 __html:
                                     parseContent(msg.content, guild) +
-                                    (msg.editedTimestamp ? '<p id="edited">(edited)</p>' : "")
+                                    (msg.editedTimestamp ? `<p id="edited">(${t("chat.edited")})</p>` : "")
                             }} />
                         </div>
                         {msg.embeds?.map((embed, index) => {
@@ -172,7 +173,9 @@ export default function MessageC({ message, setReply, extraClass, isDM }: { mess
                                                 <p id="name">{attachment.name}</p>
                                                 <p id="size">{attachment.size} bytes</p>
                                             </div>
-                                            <svg id="download" className="hover" onClick={() => downloadAttachment(attachment.url)} xmlns="http://www.w3.org/2000/svg" width="36" height="36" fill="#ebebeb" viewBox="0 0 256 256"><path d="M224,144v64a8,8,0,0,1-8,8H40a8,8,0,0,1-8-8V144a8,8,0,0,1,16,0v56H208V144a8,8,0,0,1,16,0Zm-101.66,5.66a8,8,0,0,0,11.32,0l40-40A8,8,0,0,0,168,96H136V32a8,8,0,0,0-16,0V96H88a8,8,0,0,0-5.66,13.66Z"></path></svg>
+                                            <HoverText text={t("download")}>
+                                                <svg id="download" className="hover" onClick={() => downloadAttachment(attachment.url)} xmlns="http://www.w3.org/2000/svg" width="36" height="36" fill="#ebebeb" viewBox="0 0 256 256"><path d="M224,144v64a8,8,0,0,1-8,8H40a8,8,0,0,1-8-8V144a8,8,0,0,1,16,0v56H208V144a8,8,0,0,1,16,0Zm-101.66,5.66a8,8,0,0,0,11.32,0l40-40A8,8,0,0,0,168,96H136V32a8,8,0,0,0-16,0V96H88a8,8,0,0,0-5.66,13.66Z"></path></svg>
+                                            </HoverText>
                                         </div>
                                     }
                                 </>)}
@@ -190,7 +193,7 @@ export default function MessageC({ message, setReply, extraClass, isDM }: { mess
                                                 </div> :
                                             (component.type == "selectmenu") ?
                                                 <div key={component.customId} id="selectmenu">
-                                                    <p>{component.placeholder ?? "Choose an option"}</p>
+                                                    <p>{component.placeholder ?? t("chat.selectmenu.placeholder")}</p>
                                                 </div>
                                             : <></>
                                         )}
@@ -222,12 +225,12 @@ export default function MessageC({ message, setReply, extraClass, isDM }: { mess
                                                 <p id="emoji">{answer.emoji.name}</p>
                                             )}
                                             {answer.text && <p id="text">{answer.text}</p>}
-                                            <p id="votecount">{answer.voteCount} {answer.voteCount > 1 ? "votes" : "vote"}</p>
+                                            <p id="votecount">{t("chat.poll.vote", {count: answer.voteCount})}</p>
                                             <p id="percentage">{msg.poll!.totalVoteCount ? Math.round(answer.voteCount / msg.poll!.totalVoteCount * 100) : 0}%</p>
                                         </div>
                                     )}
                                 </div>
-                                <p id="totalvote">{msg.poll.totalVoteCount} {msg.poll.totalVoteCount > 1 ? "votes" : "vote"}</p>
+                                <p id="totalvote">{t("chat.poll.vote", {count: msg.poll.totalVoteCount})}</p>
                             </div>
                         }
                     </div>

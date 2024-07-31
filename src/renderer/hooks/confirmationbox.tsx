@@ -1,3 +1,4 @@
+import { t } from "i18next"
 import { useState, MouseEvent, SyntheticEvent } from "react"
 import { Portal } from "react-portal"
 
@@ -41,8 +42,8 @@ export default function useConfirmationBox(options: ConfirmationBoxOptions): [
                 <div id="messagebox">
                     <p id="title">{options.title}</p>
                     <p id="description">{options.description}</p>
-                    <button id="confirm" type="button" onClick={clickConfirm}>{options.confirm.text ?? "Confirm"}</button>
-                    <button id="cancel" type="button" onClick={clickCancel}>{options.cancel?.text ?? "Cancel"}</button>
+                    <button id="confirm" type="button" onClick={clickConfirm}>{options.confirm.text ?? t("messagebox.confirm")}</button>
+                    <button id="cancel" type="button" onClick={clickCancel}>{options.cancel?.text ?? t("messagebox.cancel")}</button>
                 </div>
             </div>
         </Portal>,

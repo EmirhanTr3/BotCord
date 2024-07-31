@@ -1,7 +1,9 @@
 import { Channel, DMChannel, Guild, Member, Message } from "src/shared/types"
-import { Message as MessageC, PFP, UserStatus } from "."
+import { Message as MessageC, PFP, T, UserStatus } from "."
 import { getChannelIcon } from "../../shared/utils"
 import { useState, useEffect, SyntheticEvent, useRef } from "react"
+import { t } from "i18next"
+import { Trans } from "react-i18next"
 
 export function Chat({ children }: { children?: JSX.Element }) {
     return <div id="chat">{children}</div>
@@ -172,7 +174,7 @@ export function ChatData({ channel, isDM }: { channel: Channel | DMChannel, isDM
             })}
         </div>
         <form onSubmit={sendMessage} onInput={inputChange}>
-            <input type="text" id="chatinput" placeholder="Send a message to channel" ref={messageRef}/>
+            <input type="text" id="chatinput" placeholder={t("chat.input")} ref={messageRef}/>
         </form>
 
         {isAutoCompleteOpen &&
@@ -180,7 +182,7 @@ export function ChatData({ channel, isDM }: { channel: Channel | DMChannel, isDM
                 <div id="content">
                     {autoCompleteType == "member" ?
                     <>
-                        <p id="title">MEMBERS</p>
+                        <p id="title"><T k="chat.autocomplete.members" /></p>
                         <div id="list">
                             {autoCompleteMemberList.map(member => 
                                 <div key={member.id} id="member" className="hover" onClick={() => autoCompleteMemberClick(member)}>
@@ -193,7 +195,7 @@ export function ChatData({ channel, isDM }: { channel: Channel | DMChannel, isDM
                         </div>
                     </> :
                     <>
-                        <p id="title">TEXT CHANNELS</p>
+                        <p id="title"><T k="chat.autocomplete.textchannels" /></p>
                         <div id="list" className="channels">
                             {autoCompleteChannelList.map(channel => 
                                 <div key={channel.id} id="member" className="hover" onClick={() => autoCompleteChannelClick(channel)}>
@@ -211,8 +213,10 @@ export function ChatData({ channel, isDM }: { channel: Channel | DMChannel, isDM
         {reply &&
             <div id="reply">
                 <div id="textdiv">
-                    <p id="text">Replying to</p>
-                    <p id="username" style={{color: reply.author.displayColor}}>{reply.author.displayName}</p>
+                    <Trans i18nKey={"chat.replyingto"} values={{name: reply.author.displayName}}>
+                        <p id="text"></p>
+                        <p id="username" style={{color: reply.author.displayColor}}></p>
+                    </Trans>
                 </div>
                 <div id="close" onClick={() => setReply(undefined)}><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="#c3c3c3" viewBox="0 0 256 256"><path d="M128,24A104,104,0,1,0,232,128,104.11,104.11,0,0,0,128,24Zm37.66,130.34a8,8,0,0,1-11.32,11.32L128,139.31l-26.34,26.35a8,8,0,0,1-11.32-11.32L116.69,128,90.34,101.66a8,8,0,0,1,11.32-11.32L128,116.69l26.34-26.35a8,8,0,0,1,11.32,11.32L139.31,128Z"></path></svg></div>
             </div>

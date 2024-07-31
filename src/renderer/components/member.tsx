@@ -2,11 +2,12 @@ import { Member } from "src/shared/types";
 import { BotBadge, PFP, UserStatus } from ".";
 import { useHoverText, useUserModal } from "../hooks";
 import { useRef } from "react";
+import { t } from "i18next";
 
 export default function MemberC({ member }: { member: Member }) {
     const [UserModal, isUserModalOpen, toggleUserModal] = useUserModal(member)
     const crownRef = useRef<SVGSVGElement>(null)
-    const [CrownHoverText, isCrownHoverTextOpen] = useHoverText(crownRef, "Server Owner")
+    const [CrownHoverText, isCrownHoverTextOpen] = useHoverText(crownRef, t("badges.serverowner"))
 
     return <>
         {isUserModalOpen && UserModal}

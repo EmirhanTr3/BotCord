@@ -1,4 +1,3 @@
-import Loading from "./loading";
 import Sidebar from "./sidebar";
 import Sidebar2 from "./sidebar2";
 import { Chat } from "./chat";
@@ -16,9 +15,9 @@ import AppFrame from "./appframe";
 import UserModal from "./usermodal";
 import Badge from "./badge";
 import HoverText from "./hovertext";
+import T from "./translate";
 
 export {
-    Loading,
     Sidebar,
     Sidebar2,
     Chat,
@@ -35,5 +34,6 @@ export {
     AppFrame,
     UserModal,
     Badge,
-    HoverText
+    HoverText,
+    T
 }

@@ -1,0 +1,97 @@
+{
+    "usermodal": {
+        "sendmessage": "Send a message",
+        "aboutme": "ABOUT ME",
+        "membersince": "MEMBER SINCE",
+        "roles": "{count, plural, =1 {ROLE} =2 {ROLE} other {ROLES}}"
+    },
+    "status": {
+        "online": "Online",
+        "idle": "Idle",
+        "dnd": "Do Not Disturb",
+        "offline": "Offline"
+    },
+    "badges": {
+        "bot": "App",
+        "verified": "Verified {name}",
+        "ai": "AI",
+        "webhook": "Webhook",
+        "serverowner": "Server Owner"
+    },
+    "chat": {
+        "input": "Send a message to channel",
+        "replyingto": "<0>Replying to</0> <1>{name}</1>",
+        "edited": "edited",
+        "download": "Click to download",
+        "usedcommand": "<0>used</0> <1>/{command}</1>",
+        "autocomplete": {
+            "members": "MEMBERS",
+            "textchannels": "TEXT CHANNELS"
+        },
+        "contextmenu": {
+            "reply": "Reply",
+            "copytext": "Copy Text",
+            "copymessageid": "Copy Message ID"
+        },
+        "selectmenu": {
+            "placeholder": "Choose an option"
+        },
+        "poll": {
+            "vote": "{count, plural, =1 {# vote} other {# votes}}"
+        }
+    },
+    "sidebar2": {
+        "settings": "User Settings",
+        "directmessages": "DIRECT MESSAGES",
+        "deletedm": "Delete DM"
+    },
+    "messagebox": {
+        "confirm": "Confirm",
+        "cancel": "Cancel"
+    },
+    "settings": {
+        "user": {
+            "title": "USER SETTINGS",
+            "account": {
+                "button": "Account",
+                "label": "ACCOUNT",
+                "username": "USERNAME"
+            }
+        },
+        "app": {
+            "title": "APP SETTINGS",
+            "appearance": {
+                "button": "Appearance",
+                "label": "APPEARANCE",
+                "theme": "THEME"
+            }
+        },
+        "accounts": {
+            "switch": {
+                "label": "Switch Account",
+                "button": "Switch",
+                "confirm": {
+                    "title": "Switch Account",
+                    "description": "Are you sure you want to switch to {name} account?"
+                }
+            },
+            "add": "Add Account",
+            "remove": {
+                "confirm": {
+                    "title": "Logout",
+                    "description": "Are you sure you want to logout of {name} account?"
+                }
+            },
+            "active": "Active Account",
+            "manage": "Manage Account",
+            "token": "BOT TOKEN"
+        },   
+        "logout": {
+            "label": "Logout",
+            "confirm": {
+                "title": "Are you sure about this action?",
+                "description": "Are you sure you want to log out of your current bot account?"
+            }
+        }
+    }
+}

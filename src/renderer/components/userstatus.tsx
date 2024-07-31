@@ -2,6 +2,7 @@ import { UserStatus } from "src/shared/types";
 import { getAsset } from "../../shared/utils";
 import { useRef } from "react";
 import { useHoverText } from "../hooks";
+import { t } from "i18next";
 
 export default function UserStatusC({ height, width, status }: { height: number, width: number, status: UserStatus }) {
     const icon = getAsset(`status/${status}.png`)
@@ -16,9 +17,9 @@ export default function UserStatusC({ height, width, status }: { height: number,
 
 function getStatusText(status: UserStatus): string {
     switch (status) {
-        case "online": return "Online"
-        case "idle": return "Idle"
-        case "dnd": return "Do Not Disturb"
-        default: return "Offline"
+        case "online":
+        case "idle":
+        case "dnd": return t(`status.${status}`)
+        default: return t("status.offline")
     }
 }

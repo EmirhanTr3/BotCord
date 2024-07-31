@@ -6,6 +6,9 @@ import { RouterProvider, createHashHistory, createRouter } from '@tanstack/react
 import { routeTree } from './routeTree.gen'
 import { StrictMode } from 'react';
 import { Member } from 'src/shared/types';
+import i18n from "i18next";
+import { initReactI18next } from "react-i18next";
+import ICU from 'i18next-icu';
 
 declare global {
     interface Window {
@@ -14,8 +17,17 @@ declare global {
 }
 window.api = window.require("electron").ipcRenderer
 
-const hashHistory = createHashHistory()
+const resources = await window.api.invoke("getLangResources")
+i18n
+    .use(ICU)
+    .use(initReactI18next)
+    .init({
+        resources,
+        lng: "en",
+        fallbackLng: "en",
+    })
 
+const hashHistory = createHashHistory()
 const router = createRouter({ routeTree, history: hashHistory })
 
 declare module '@tanstack/react-router' {
