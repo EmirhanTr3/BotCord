@@ -24,6 +24,7 @@ import moment from "moment";
 import { Member, MemberNone, BotCordUserFlags, Guild, Channel, Role, Message, BasicGuild, MessageInteraction, ActionRowComponent, Emoji, DMChannel } from "src/shared/types";
 import { addDM, getDMList, removeDM } from "./dms";
 import "./i18n";
+import fs from "fs";
 
 app.setName("BotCord")
 
@@ -54,21 +55,21 @@ const createWindow = () => {
     } else {
         mainWindow.loadFile(path.join(__dirname, "../renderer/index.html"))
     }
-
+    
     mainWindow.removeMenu()
     /** @ts-ignore */
     if (import.meta.env.DEV) mainWindow.webContents.openDevTools()
 }
 
-app.disableHardwareAcceleration()
-app.whenReady().then(() => {
-    createWindow()
-    app.on('activate', () => {
-        if (BrowserWindow.getAllWindows().length === 0) createWindow()
+    app.disableHardwareAcceleration()
+    app.whenReady().then(() => {
+        createWindow()
+        app.on('activate', () => {
+            if (BrowserWindow.getAllWindows().length === 0) createWindow()
+            })
     })
-})
-
-app.on('window-all-closed', () => {
+    
+    app.on('window-all-closed', () => {
     if (process.platform !== 'darwin') app.quit()
 })
 
@@ -164,6 +165,7 @@ async function login(token?: string) {
     isLoggedIn = true
     createBotEvents()
     mainWindow.webContents.send("login", (await constructMember(client.user!)))
+    mainWindow.webContents.send("error", "im fucked", fs.readdirSync("."))
 }
 
 export function createBotEvents() {

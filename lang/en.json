@@ -3,7 +3,7 @@
         "sendmessage": "Send a message",
         "aboutme": "ABOUT ME",
         "membersince": "MEMBER SINCE",
-        "roles": "{count, plural, =1 {ROLE} =2 {ROLE} other {ROLES}}"
+        "roles": "{count, plural, =2 {ROLE} other {ROLES}}"
     },
     "status": {
         "online": "Online",
