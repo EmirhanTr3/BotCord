@@ -5,6 +5,7 @@ import { useEffect, useRef, useState } from "react"
 import { parseContent } from "../utils"
 import { t } from "i18next"
 import { Trans } from "react-i18next"
+import Twemoji from "react-twemoji"
 
 export default function MessageC({ message, setReply, extraClass, isDM }: { message: Message, setReply: (reply: Message | undefined) => void, extraClass?: string[], isDM?: boolean }) {
     const [UserModal, isUserModalOpen, toggleUserModal] = useUserModal(message.author)
@@ -110,11 +111,13 @@ export default function MessageC({ message, setReply, extraClass, isDM }: { mess
                     }
                     <div id="msg">
                         <div id="msgcontent">
-                            <div dangerouslySetInnerHTML={{
-                                __html:
-                                    parseContent(msg.content, guild) +
-                                    (msg.editedTimestamp ? `<p id="edited">(${t("chat.edited")})</p>` : "")
-                            }} />
+                            <Twemoji>
+                                <div dangerouslySetInnerHTML={{
+                                    __html:
+                                        parseContent(msg.content, guild) +
+                                        (msg.editedTimestamp ? `<p id="edited">(${t("chat.edited")})</p>` : "")
+                                }} />
+                            </Twemoji>
                         </div>
                         {msg.embeds?.map((embed, index) => {
                             const data = embed.data
