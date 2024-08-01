@@ -30,6 +30,21 @@ export function getLangResources(): Resources {
     return resources
 }
 
+export function getLangResource(lang: string): Resources {
+    const resources: Resources = {};
+    const keys: LangKeys = JSON.parse(fs.readFileSync(`lang/${lang}.json`, {encoding: "utf-8"}))
+
+    resources[lang] = {
+        translation: keys
+    }
+    
+    return resources
+}
+
 ipcMain.handle("getLangResources", () => {
     return getLangResources()
+})
+
+ipcMain.handle("getLangResource", (e, lang) => {
+    return getLangResource(lang)
 })

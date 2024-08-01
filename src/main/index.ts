@@ -24,6 +24,7 @@ import moment from "moment";
 import { Member, MemberNone, BotCordUserFlags, Guild, Channel, Role, Message, BasicGuild, MessageInteraction, ActionRowComponent, Emoji, DMChannel } from "src/shared/types";
 import { addDM, getDMList, removeDM } from "./dms";
 import "./i18n";
+import "./settings";
 
 app.setName("BotCord")
 

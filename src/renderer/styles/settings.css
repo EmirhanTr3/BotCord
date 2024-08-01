@@ -14,8 +14,8 @@
 
 #settings #close {
     position: absolute;
-    right: 10rem;
-    top: 3rem;
+    right: 48px;
+    top: 48px;
     cursor: pointer;
     z-index: 1;
 }
@@ -86,9 +86,7 @@
 }
 
 #settings #content {
-    position: relative;
-    left: 35px;
-    top: 30px;
+    padding: 30px 35px;
 }
 
 #settings #content h1 {
@@ -101,6 +99,7 @@
 }
 
 /*! appearance settings */
+
 #settings #content input[type="color"] {
     width: 100%;
     height: 100%;
@@ -124,11 +123,13 @@
 }
 
 /*! account settings */
+
 #settings #content #account {
     width: 600px;
-    height: 260px;
+    height: 290px;
     background: #101010;
     border-radius: 10px;
+    position: relative;
 }
 
 #settings #content #account #useraccount {
@@ -196,6 +197,65 @@
     top: 5px;
     font-size: 15px;
 }
+
+/*! language settings */
+
+#languages {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+#language {
+    display: flex;
+    flex-direction: row;
+    background: #1d1d1d;
+    border-radius: 5px;
+    align-items: center;
+    max-width: 700px;
+    padding: 14px;
+    cursor: pointer;
+    justify-content: space-between;
+}
+
+#language:hover, #language.current {
+    background: #37373782;
+}
+
+#language div {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 10px;
+}
+
+#language #outline {
+    width: 15px;
+    height: 15px;
+    border-radius: 50px;
+    border: #dbdee1 solid 2px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#language #fill {
+    width: 9px;
+    height: 9px;
+    border-radius: 50px;
+    background: #dbdee1;
+}
+
+#language p {
+    margin: 0;
+    font-size: 15px;
+}
+
+#language img {
+    width: 27px;
+}
+
+/*! switch account */
 
 #switchaccountdiv {
     position: absolute;

@@ -1,0 +1,107 @@
+{
+    "usermodal": {
+        "sendmessage": "Mesaj gönder",
+        "aboutme": "HAKKIMDA",
+        "membersince": "Şu Tarihten Beri Üye",
+        "roles": "{count} ROL"
+    },
+    "status": {
+        "online": "Çevrimiçi",
+        "idle": "Boşta",
+        "dnd": "Rahatsız Etmeyin",
+        "offline": "Çevrimdışı"
+    },
+    "badges": {
+        "bot": "Uygulama",
+        "verified": "Doğrulanmış {name}",
+        "ai": "Yapay Zeka",
+        "webhook": "Webhook",
+        "serverowner": "Sunucu Sahibi"
+    },
+    "chat": {
+        "input": "Kanala mesaj gönder",
+        "replyingto": "<1>{name}</1> <0>kişisine yanıt veriliyor</0>",
+        "edited": "düzenlendi",
+        "download": "İndirmek için tıkla",
+        "usedcommand": "<1>/{command}</1> <0>kullandı</0>",
+        "autocomplete": {
+            "members": "ÜYELER",
+            "textchannels": "YAZI KANALLARI"
+        },
+        "contextmenu": {
+            "reply": "Yanıtla",
+            "copytext": "Metni Kopyala",
+            "copymessageid": "Mesaj ID'sini kopyala"
+        },
+        "selectmenu": {
+            "placeholder": "Bir seçenek seç"
+        },
+        "poll": {
+            "vote": "{count} oy"
+        }
+    },
+    "sidebar2": {
+        "settings": "Kullanıcı Ayarları",
+        "directmessages": "DİREKT MESAJLAR",
+        "deletedm": "DM Sil"
+    },
+    "messagebox": {
+        "confirm": "Onayla",
+        "cancel": "İptal et"
+    },
+    "settings": {
+        "user": {
+            "title": "KULLANICI AYARLARI",
+            "account": {
+                "button": "Hesap",
+                "label": "Hesap",
+                "username": "KULLANICI ADI"
+            }
+        },
+        "app": {
+            "title": "UYGULAMA AYARLARI",
+            "appearance": {
+                "button": "Görünüm",
+                "label": "Görünüm",
+                "theme": "TEMA"
+            },
+            "language": {
+                "button": "Dil",
+                "label": "Dil",
+                "select": "BİR DİL SEÇ"
+            }
+        },
+        "accounts": {
+            "switch": {
+                "label": "Hesap Değiştir",
+                "button": "Değiştir",
+                "confirm": {
+                    "title": "Hesap Değiştir",
+                    "description": "{name} isimli hesaba geçiş yapmak istediğine emin misin?"
+                }
+            },
+            "add": "Hesap Ekle",
+            "remove": {
+                "confirm": {
+                    "title": "Çıkış Yap",
+                    "description": "{name} isimli hesaptan çıkış yapmak istediğine emin misin?"
+                }
+            },
+            "active": "Aktif Hesap",
+            "manage": "Hesapları Yönet",
+            "token": "BOT TOKEN"
+        },   
+        "logout": {
+            "label": "Çıkış Yap",
+            "confirm": {
+                "title": "Bunu yapmak isteğine emin misin?",
+                "description": "Şu anki hesabından çıkış yapmak istediğine emin misin?"
+            }
+        }
+    },
+    "language": {
+        "en": "İngilizce",
+        "tr": "Türkçe",
+        "he": "İbranice"
+    }
+}

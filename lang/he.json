@@ -1,0 +1,107 @@
+{
+    "usermodal": {
+        "sendmessage": "שלח הודעה",
+        "aboutme": "אודותיי",
+        "membersince": "חבר בשרת מאז",
+        "roles": "{count, plural, =2 {רול} other {רולים}}"
+    },
+    "status": {
+        "online": "אונליין",
+        "idle": "בטיל",
+        "dnd": "נא לא להפריע",
+        "offline": "אופליין"
+    },
+    "badges": {
+        "bot": "בוט",
+        "verified": "מאומת {name}",
+        "ai": "בינה מלאכותית",
+        "webhook": "וובהוק",
+        "serverowner": "מנהל שרת"
+    },
+    "chat": {
+        "input": "שלח הודעה לערוץ",
+        "replyingto": "<1>{name}</1><0>מגיב ל-</0>",
+        "edited": "ערוך",
+        "download": "לחץ להורדה",
+        "usedcommand": "<0>הריץ</0> <1>/{command}</1>",
+        "autocomplete": {
+            "members": "חברי השרת",
+            "textchannels": "ערוצי טקסט"
+        },
+        "contextmenu": {
+            "reply": "הגב",
+            "copytext": "העתק טקסט",
+            "copymessageid": "העתק מספר הודעה"
+        },
+        "selectmenu": {
+            "placeholder": "בחר באפשרות"
+        },
+        "poll": {
+            "vote": "{count, plural, =1 {# הצבעה} other {# הצבעות}}"
+        }
+    },
+    "sidebar2": {
+        "settings": "הגדרות משתמש",
+        "directmessages": "הודעות",
+        "deletedm": "מחק הודעה"
+    },
+    "messagebox": {
+        "confirm": "אישור",
+        "cancel": "ביטול"
+    },
+    "settings": {
+        "user": {
+            "title": "הגדרות משתמש",
+            "account": {
+                "button": "חשבון",
+                "label": "חשבון",
+                "username": "שם משתמש"
+            }
+        },
+        "app": {
+            "title": "הגדרות אפליקציה",
+            "appearance": {
+                "button": "מראה",
+                "label": "מראה",
+                "theme": "ערכת נושא"
+            },
+            "language": {
+                "button": "שפה",
+                "label": "שפה",
+                "select": "בחר שפה"
+            }
+        },
+        "accounts": {
+            "switch": {
+                "label": "החלף חשבון",
+                "button": "החלף",
+                "confirm": {
+                    "title": "החלף חשבון",
+                    "description": "?{name} האם אתה בטוח שתרצה להחליף לחשבון"
+                }
+            },
+            "add": "הוסף חשבון",
+            "remove": {
+                "confirm": {
+                    "title": "צא מחשבון",
+                    "description": "?{name} האם אתה בטוח שתרצה לצאת מחשבון"
+                }
+            },
+            "active": "חשבון פעיל",
+            "manage": "נהל חשבון",
+            "token": "טוקן הבוט"
+        },   
+        "logout": {
+            "label": "צא",
+            "confirm": {
+                "title": "?האם אתה בטוח שתרצה לעשות פעולה זו",
+                "description": "?האם אתה בטוח שתרצה לצאת מחשבון הבוט הנוכחי שלה"
+            }
+        }
+    },
+    "language": {
+        "en": "אנגלית",
+        "tr": "תורכית",
+        "he": "עברית"
+    }
+}

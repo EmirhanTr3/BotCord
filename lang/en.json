@@ -54,7 +54,7 @@
             "title": "USER SETTINGS",
             "account": {
                 "button": "Account",
-                "label": "ACCOUNT",
+                "label": "Account",
                 "username": "USERNAME"
             }
         },
@@ -62,8 +62,13 @@
             "title": "APP SETTINGS",
             "appearance": {
                 "button": "Appearance",
-                "label": "APPEARANCE",
+                "label": "Appearance",
                 "theme": "THEME"
+            },
+            "language": {
+                "button": "Language",
+                "label": "Language",
+                "select": "SELECT A LANGUAGE"
             }
         },
         "accounts": {
@@ -93,5 +98,10 @@
                 "description": "Are you sure you want to log out of your current bot account?"
             }
         }
+    },
+    "language": {
+        "en": "English",
+        "tr": "Turkish",
+        "he": "Hebrew"
     }
 }

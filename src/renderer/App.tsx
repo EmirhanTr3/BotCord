@@ -13,17 +13,21 @@ import ICU from 'i18next-icu';
 declare global {
     interface Window {
         api: Electron.IpcRenderer
+        language: string
     }
 }
 window.api = window.require("electron").ipcRenderer
 
-const resources = await window.api.invoke("getLangResources")
+const currentLang = await window.api.invoke("getSetting", "language")
+window.language = currentLang || "en"
+const resources = await window.api.invoke("getLangResource", window.language)
+console.log("Current language:", window.language)
 i18n
     .use(ICU)
     .use(initReactI18next)
     .init({
         resources,
-        lng: "en",
+        lng: window.language,
         fallbackLng: "en",
     })
 

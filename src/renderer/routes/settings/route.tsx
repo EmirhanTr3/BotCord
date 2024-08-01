@@ -35,6 +35,7 @@ function Settings() {
                 <div id="seperator"></div>
                 <h1><T k="settings.app.title" /></h1>
                 <Link to="/settings/appearance" search={{redirect}}><p id="appearance" className="hover"><T k="settings.app.appearance.button" /></p></Link>
+                <Link to="/settings/language" search={{redirect}}><p id="language" className="hover"><T k="settings.app.language.button" /></p></Link>
                 <div id="seperator"></div>
                 <SwitchAccount />
                 <Logout />
