@@ -32,8 +32,12 @@ export function getLangResources(): Resources {
 
 export function getLangResource(lang: string): Resources {
     const resources: Resources = {};
+    const englishKeys: LangKeys = JSON.parse(fs.readFileSync(`lang/en.json`, {encoding: "utf-8"}))
     const keys: LangKeys = JSON.parse(fs.readFileSync(`lang/${lang}.json`, {encoding: "utf-8"}))
 
+    resources["en"] = {
+        translation: englishKeys
+    }
     resources[lang] = {
         translation: keys
     }

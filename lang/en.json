@@ -97,6 +97,10 @@
                 "title": "Are you sure about this action?",
                 "description": "Are you sure you want to log out of your current bot account?"
             }
+        },
+        "theme": {
+            "dark": "Dark",
+            "light": "Light"
         }
     },
     "language": {

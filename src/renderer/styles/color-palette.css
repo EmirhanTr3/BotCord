@@ -1,0 +1,48 @@
+:root {
+    --white: #ffffff;
+    --black: #000000;
+    --danger: #f95151;
+    --interactive: #1ab2fe;
+    --primary-text: #dbdee1;
+    --secondary-text: #b0b0b1;
+    --identifier: #e7e9ec;
+
+    --time-text: #979fa8;
+    --aboutme-text: #bdc1c7;
+    --active-account-text: #2dc770;
+    
+    --success-bg: #126f12;
+    --danger-bg: #b10e0e;
+
+    /*? all types of black used */
+    --bg-color-7: #101010; /*? 10 */
+    --bg-color-14: #151515; /*? 8 */
+    --bg-color-12: #191919; /*? 7 */
+    --bg-color-19: #1c1c1c; /*? 3 */
+    --bg-color-0: #222222;
+    --bg-color-24: #292929;
+    --bg-color-1: #303030; /*? 5 */
+    --bg-color-25: #353535; /*? 2 */
+    --bg-color-16: #3b3b3b; /*? 2 */
+    --bg-color-11: #404040; /*? 4 */
+    --bg-color-3: #46515a; /*? 2 */
+    --bg-color-30: #6d6f78; /*? 2 */
+
+    /*? used in bot badge, command interaction and mentions */
+    --bg-color-5: #5865f2;
+
+    --primary-button-bg: #0954a9;
+    --close-button-bg-1: #c3c3c3;
+    --close-button-bg-2: #e7e7e7;
+    --app-close-bg: #e74d4d;
+
+    /*? below has alpha */
+    --login-bg: #1111116e;
+    --popup-bg: #00000091;
+    --mention-bg: #5865F24D;
+    --timestamp-bg: #4f4f4f4d;
+    --reaction-bg: #3c3c9b60;
+    --reaction-border: #8b8bc980;
+    --button-bg-1: #33333390;
+    --button-bg-2: #333333aa;
+}

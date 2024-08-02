@@ -97,6 +97,10 @@
                 "title": "Bunu yapmak isteğine emin misin?",
                 "description": "Şu anki hesabından çıkış yapmak istediğine emin misin?"
             }
+        },
+        "theme": {
+            "dark": "Koyu",
+            "light": "Açık"
         }
     },
     "language": {

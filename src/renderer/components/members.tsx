@@ -11,7 +11,7 @@ export default function Members({ guild }: { guild: Guild }) {
             </Role>
         })}
         <Role key="everyone" role={guild.everyone!}>
-            {guild.members.filter(member => member.highestRole?.id == guild.everyone?.id).sort((a, b) => a.displayName.localeCompare(b.displayName)).map(member => {
+            {guild.members.filter(member => member.hoistRole?.id == guild.everyone?.id).sort((a, b) => a.displayName.localeCompare(b.displayName)).map(member => {
                 return <Member key={member.id} member={member} />
             })}
         </Role>

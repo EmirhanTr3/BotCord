@@ -13,11 +13,29 @@ import ICU from 'i18next-icu';
 declare global {
     interface Window {
         api: Electron.IpcRenderer
-        language: string
+        language: string,
+        theme: string
     }
 }
 window.api = window.require("electron").ipcRenderer
 
+//! THEME LOADING
+const currentTheme = await window.api.invoke("getSetting", "theme")
+window.theme = currentTheme || "dark"
+if (currentTheme && currentTheme != "dark") {
+    try {
+        await import(`./styles/themes/${currentTheme}.css`)
+        console.log("Current theme:", currentTheme)
+    } catch (e) {
+        console.log("Current theme: unknown")
+    }
+} else {
+    /** @ts-ignore */
+    await import("./styles/color-palette.css")
+    console.log("Current theme: dark")
+}
+
+//! LANGUAGE LOADING
 const currentLang = await window.api.invoke("getSetting", "language")
 window.language = currentLang || "en"
 const resources = await window.api.invoke("getLangResource", window.language)
@@ -31,6 +49,7 @@ i18n
         fallbackLng: "en",
     })
 
+//! ROUTER SHIT
 const hashHistory = createHashHistory()
 const router = createRouter({ routeTree, history: hashHistory })
 

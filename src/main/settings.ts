@@ -4,7 +4,8 @@ import fs from "fs"
 const filePath = path.join(app.getPath("userData"), "settings.file")
 
 type SettingsFile = {
-    language: String
+    language: string,
+    theme: string
 }
 
 export function getSettingsFile(): SettingsFile {
@@ -19,7 +20,7 @@ function stringify(value: any) {
 export function setSetting(setting: keyof SettingsFile, value: string) {
     const file = getSettingsFile()
 
-    if (setting == "language") file.language = value
+    file[setting] = value
 
     fs.writeFileSync(filePath, stringify(file))
 }

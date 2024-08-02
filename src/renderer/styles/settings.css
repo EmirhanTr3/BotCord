@@ -6,7 +6,7 @@
     position: absolute;
     width: 100%;
     height: 100%;
-    background: #222222;
+    background: var(--bg-color-0);
     z-index: 1;
     display: flex;
     flex-direction: row;
@@ -21,7 +21,7 @@
 }
 
 #settings #close:hover {
-    fill: #e9e9e9;
+    fill: var(--close-button-bg-2);
 }
 
 #settings-nothinghereyet {
@@ -35,7 +35,7 @@
 
 #settings #leftbar {
     flex: 0 300px;
-    background: #191919;
+    background: var(--bg-color-12);
     position: relative;
 }
 
@@ -47,6 +47,15 @@
     width: 170px;
     float: right;
     margin-right: 10px;
+}
+
+#settings #buttons .active p {
+    background: var(--bg-color-11);
+    border-radius: 5px;
+}
+
+#settings #buttons .active p {
+    color: var(--identifier);
 }
 
 #settings #buttons * {
@@ -71,14 +80,14 @@
     height: 1px;
     margin: 6px 0px;
     border-radius: 1px;
-    background-color: #252525;
+    background-color: var(--bg-color-24);
     position: relative;
     left: 6px;
     width: 95%;
 }
 
 #settings #buttons #logout {
-    color: #e93535;
+    color: var(--danger);
 }
 
 #settings #maincontent {
@@ -91,7 +100,7 @@
 
 #settings #content h1 {
     font-size: 18px;
-    color: #dde2e7;
+    color: var(--identifier);
 }
 
 #settings #content h2 {
@@ -109,13 +118,22 @@
     cursor: pointer;
 }
 
+#settings #content #themes {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 15px;
+}
+
 #settings #content .theme {
-    width: 50px;
-    height: 50px;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    cursor: pointer;
 }
 
 #settings #content .theme#light {
-    background: #ffffff;
+    background: #efefef;
 }
 
 #settings #content .theme#dark {
@@ -127,7 +145,7 @@
 #settings #content #account {
     width: 600px;
     height: 290px;
-    background: #101010;
+    background: var(--bg-color-7);
     border-radius: 10px;
     position: relative;
 }
@@ -148,7 +166,7 @@
     position: absolute;
     left: 17px;
     top: 103px;
-    border: 5px solid #101010;
+    border: 5px solid var(--bg-color-7);
 }
 
 #settings #content #account #userstatus {
@@ -161,7 +179,7 @@
     position: absolute;
     left: 120px;
     font-size: 18px;
-    color: #ffffff;
+    color: var(--white);
     top: 150px;
     margin: 0;
 }
@@ -180,7 +198,7 @@
     top: 205px;
     margin: 20px;
     margin-top: 0;
-    background: #191919;
+    background: var(--bg-color-12);
     border-radius: 10px;
     width: 530px;
     height: calc(100% - 255px);
@@ -188,7 +206,7 @@
 }
 #settings #content #account #info h2 {
     margin: 0;
-    color: #d9d9d9;
+    color: var(--identifier);
 }
 
 #settings #content #account #info #username {
@@ -206,10 +224,10 @@
     gap: 8px;
 }
 
-#language {
+#languages #language {
     display: flex;
     flex-direction: row;
-    background: #1d1d1d;
+    background: var(--bg-color-19);
     border-radius: 5px;
     align-items: center;
     max-width: 700px;
@@ -218,40 +236,40 @@
     justify-content: space-between;
 }
 
-#language:hover, #language.current {
-    background: #37373782;
+#languages #language:hover, #languages #language.current {
+    background: var(--button-bg-1);
 }
 
-#language div {
+#languages #language div {
     display: flex;
     flex-direction: row;
     align-items: center;
     gap: 10px;
 }
 
-#language #outline {
+#languages #language #outline {
     width: 15px;
     height: 15px;
     border-radius: 50px;
-    border: #dbdee1 solid 2px;
+    border: var(--primary-text) solid 2px;
     display: flex;
     align-items: center;
     justify-content: center;
 }
 
-#language #fill {
+#languages #language #fill {
     width: 9px;
     height: 9px;
     border-radius: 50px;
-    background: #dbdee1;
+    background: var(--primary-text);
 }
 
-#language p {
+#languages #language p {
     margin: 0;
     font-size: 15px;
 }
 
-#language img {
+#languages #language img {
     width: 27px;
 }
 
@@ -261,7 +279,7 @@
     position: absolute;
     width: 100%;
     height: 100%;
-    background: #00000091;
+    background: var(--login-bg);
     z-index: 2;
     top: 0;
 }
@@ -270,7 +288,7 @@
     position: absolute;
     width: 440px;
     max-height: 600px;
-    background: #202020;
+    background: var(--bg-color-0);
     left: 50%;
     top: 50%;
     transform: translate(-50%, -50%);
@@ -283,13 +301,13 @@
     justify-content: center;
     position: relative;
     margin: 20px 0px 15px 0px;
-    color: #eeeeee;
+    color: var(--identifier);
 }
 
 #switchaccountdiv #switchaccount #accounts {
     position: relative;
     width: calc(100% - 60px);
-    background: #191919;
+    background: var(--bg-color-12);
     margin: 0px 15px;
     border-radius: 5px;
     padding: 11px 15px;
@@ -300,7 +318,7 @@
 
 #switchaccountdiv #switchaccount #accounts #seperator {
     height: 1px;
-    background-color: #202020;
+    background-color: var(--bg-color-0);
 }
 
 #switchaccountdiv #switchaccount #accounts #account {
@@ -322,18 +340,18 @@
 #switchaccountdiv #switchaccount #accounts #account #texts #username {
     margin: 0;
     font-size: 16px;
-    color: #eeeeee;
+    color: var(--identifier);
     font-weight: 500;
 }
 
 #switchaccountdiv #switchaccount #accounts #account #texts #loggedin {
     margin: 0;
     font-size: 14px;
-    color: #2DC770;
+    color: var(--active-account-text);
 }
 
 #switchaccountdiv #switchaccount #accounts #account button {
-    background: #3E3E3E;
+    background: var(--bg-color-16);
     border: none;
     border-radius: 4px;
     height: 38px;
@@ -344,7 +362,7 @@
 }
 
 #switchaccountdiv #switchaccount #accounts #account button:hover {
-    background: #6D6F78;
+    background: var(--bg-color-30);
     transition: background 0.3s;
 }
 
@@ -376,7 +394,7 @@
     position: absolute;
     width: 100%;
     height: 100%;
-    background: #00000091;
+    background: var(--login-bg);
     z-index: 2;
     top: 0;
 }
@@ -385,7 +403,7 @@
     position: absolute;
     width: 400px;
     height: 180px;
-    background: #202020;
+    background: var(--bg-color-0);
     left: 50%;
     top: 50%;
     transform: translate(-50%, -50%);
@@ -398,7 +416,7 @@
     justify-content: center;
     position: relative;
     margin: 20px 0px 15px 0px;
-    color: #eeeeee;
+    color: var(--identifier);
 }
 
 #logindiv #login p {
@@ -413,7 +431,7 @@
     left: 20px;
     width: calc(100% - 60px);
     height: 15px;
-    background: #151515;
+    background: var(--bg-color-14);
     border: none;
     border-radius: 4px;
     padding: 10px;
@@ -425,7 +443,7 @@
     left: 20px;
     width: calc(100% - 40px);
     height: 35px;
-    background: #303030;
+    background: var(--bg-color-1);
     border: none;
     border-radius: 4px;
     padding: 10px;
@@ -435,6 +453,6 @@
 }
 
 #logindiv #login button:hover {
-    background: #6D6F78;
+    background: var(--bg-color-30);
     transition: background 0.3s;
 }

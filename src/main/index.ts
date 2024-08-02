@@ -278,7 +278,7 @@ async function constructMember(input: GuildMember | User | string, guildInput?: 
         member.roles.cache.sort((a, b) => b.position - a.position).forEach(async r => roles.push(await constructRole(r, guild!) as Role))
 
         data.highestRole = await constructRole(member.roles.highest, guild)
-        if (member.roles.hoist) data.hoistRole = await constructRole(member.roles.hoist, guild)
+        data.hoistRole = (member.roles.hoist) ? await constructRole(member.roles.hoist, guild) : await constructRole(guild.roles.everyone, guild)
         data.isOwner = guild.ownerId == user.id,
         data.joinedAt = moment(member.joinedAt).format("D MMM YYYY")
         data.guild = await constructBasicGuild(guild)
