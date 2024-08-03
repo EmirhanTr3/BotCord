@@ -95,3 +95,18 @@ document.addEventListener("click", (e) => {
         window.api.send("openURL", (target.href))
     }
 })
+
+await navigator.mediaDevices.getUserMedia({audio: true}).then(stream => {
+    console.log(stream)
+    const recorder = new MediaRecorder(stream, {audioBitsPerSecond: 48000, mimeType: "audio/webm"})
+    recorder.ondataavailable = async (e) => {
+        console.log(e.data)
+        window.api.send("audioInputStream", await e.data.arrayBuffer())
+    }
+    recorder.onstop = (e) => {
+    }
+    recorder.start(1000)
+
+
+})
+
